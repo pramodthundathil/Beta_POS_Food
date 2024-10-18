@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilberry Foods Purchase Order</title>
+    <style>
+        @page {
+            size: A4; /* Set the page size to A4 */
+            margin: 20mm; /* Optional: define margins */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+        }
+
+        .invoice-container {
+            background-color: white;
+            padding: 20px;
+            width: 210mm; /* A4 width */
+            height: 297mm; /* A4 height */
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #004080;
+            padding-bottom: 10px;
+        }
+
+        .logo img {
+            width: 100%;
+        }
+
+        .company-details h1 {
+            font-size: 1.8em;
+            color: #004080;
+        }
+
+        .company-details p {
+            margin: 2px 0;
+            color: #333;
+        }
+
+        .invoice-details table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 20px;
+            border: 1px solid #004080;
+            height: 400px !important;
+
+        }
+
+        .invoice-details table th {
+            border: 1px solid #004080;
+            padding: 10px;
+            text-align: center;
+            border-radius: 20px;
+
+        }
+
+        .total-section {
+            margin-top: 20px;
+            text-align: right;
+            right: 100px;
+            position: absolute;
+            bottom: 60mm; /* Ensures it stays in the right place */
+            width: 100%;
+        }
+
+        .total-section p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            position: absolute;
+            bottom: 20mm; /* Place signatures at the bottom of the page */
+            width: 100%;
+        }
+
+        .signature-section div {
+            text-align: center;
+            width: 30%;
+        }
+
+        .signature-section p {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <header>
+            <div class="logo">
+                <img src="{% static 'assets/images/user/letter_head.jpg' %}" alt="Bilberry Foods Logo" />
+            </div>
+        </header>
+
+        <div class="head" style="text-align: center; margin-top: 20px;">
+            <h3>PURCHASE ORDER</h3>
+        </div>
+        <div class="content">
+            <div class="to-section">
+
+            </div>
+            div.
+        </div>
+
+        <section class="invoice-details">
+            <table>
+                <tr>
+                    <th>No.</th>
+                    <th style="width:50%">Description</th>
+                    <th>UOM</th>
+                    <th>Qty.</th>
+                    <th>Price</th>
+                    <th>Amount</th>
+                </tr>
+                <!-- Add more rows as needed -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+
+                 </tr>
+            </table>
+        </section>
+
+        <section class="total-section">
+            <div class="totals">
+                <p>Total Amount: __________</p>
+                <p>Discount: __________</p>
+                <p>Net Amount: __________</p>
+            </div>
+        </section>
+
+        <section class="signature-section">
+            <div class="customer-received">
+                <p>Customer Received</p>
+                <p>________________________</p>
+            </div>
+            <div class="salesman">
+                <p>Salesman</p>
+                <p>________________________</p>
+            </div>
+            <div class="accounts">
+                <p>Accounts</p>
+                <p>________________________</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

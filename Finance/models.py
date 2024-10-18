@@ -1,0 +1,14 @@
+from django.db import models
+
+class Income(models.Model):
+    date = models.DateField(auto_now_add=True)
+    perticulers = models.CharField(max_length=255)
+    amount = models.FloatField()
+    other = models.CharField(max_length=255, default=" ")
+
+
+class Expence(models.Model):
+    date = models.DateField(auto_now_add=True)
+    perticulers = models.CharField(max_length=255)
+    amount = models.FloatField()
+    other = models.CharField(max_length=255, default=" ")

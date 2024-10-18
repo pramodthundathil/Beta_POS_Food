@@ -1,0 +1,64 @@
+{% extends 'index.html' %}
+{% block content %}
+
+<div class="category-add-list">
+    <div class="content-page">
+        <div class="container-fluid add-form-list">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between">
+                            <div class="header-title">
+                                <h4 class="card-title">Add Purchase</h4>
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-sm-12 col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header d-flex justify-content-between">
+                                            <h6>Purchase Bill Information</h6>
+                                
+                                        </div>
+                                        <div class="card-body">
+                                            {% for message in messages %}
+                                            <div class="alert {{message.tags}} " role="alert">
+                                                <div class="iq-alert-text"><b>Alert</b> {{message}}</div>
+                                            </div>
+                                            {% endfor %}
+                                            <form method="post" data-toggle="validator">
+                                                {% csrf_token %}
+                                                <div class="row">
+                                                {% for field in form %}
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            {{field.label_tag}}
+                                                            {{field}}
+                                                            <div class="help-block with-errors"></div>
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                <button type="submit" class="btn btn-primary mr-2">Create Purchase Order</button>
+                                                <button type="reset" class="btn btn-danger">Reset</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                
+                        <div class="card-body">
+
+
+                            {% include 'ajaxtemplates/purchase_items_table.html' %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
