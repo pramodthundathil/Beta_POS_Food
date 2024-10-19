@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from Finance.models import Income, Expence
 
 
 
@@ -119,6 +120,25 @@ def list_sale(request):
     return render(request,'list-sale.html',context)
 
 
+@login_required(login_url='SignIn')
+def list_sale_pending(request):
+    order = Order.objects.filter(payment_status1 = "UNPAID" ).order_by('-order_date')
+
+    context = {
+         "order":order
+    }
+    return render(request,'list-sale-pending.html',context)
+
+@login_required(login_url='SignIn')
+def list_sale_partial(request):
+    order = Order.objects.filter(payment_status1 = "PARTIALLY" ).order_by('-order_date')
+
+    context = {
+         "order":order
+    }
+    return render(request,'list-sale-partial.html',context)
+
+
 
 @login_required(login_url='SignIn')
 @csrf_exempt
@@ -128,6 +148,8 @@ def add_order_item(request,pk):
         print(product_id,")))))))))))))))))))))))))))))))))))))))))))")
         try:
             order = Order.objects.get(id=pk)
+            if order.save_status == True:
+                return JsonResponse({"success": False, "error": "Cannot Be added New Item to This order"})
             product = Product.objects.get(id=product_id)
             order_item, created = OrderItem.objects.get_or_create(order=order, product=product)
             if not created:
@@ -215,9 +237,10 @@ def update_order_payment(request, order_id):
         
         try:
             order = Order.objects.get(id=order_id)
+            
             order.payed_amount = payed_amount
             order.balance_amount = order.total_amount - payed_amount
-            
+                        
             if payed_amount == 0:
                 order.payment_status1 = 'UNPAID'
             elif payed_amount >= order.total_amount:
@@ -236,10 +259,20 @@ def update_order_payment(request, order_id):
 @login_required(login_url='SignIn')
 def save_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
-    
+    previous_paid_amount = order.payed_amount
     # Save the order and calculate totals
     order.update_totals()
     order.calculate_balance()
+    new_payedamount =  order.payed_amount - previous_paid_amount
+    print(new_payedamount,"----------------------------------------")
+    if new_payedamount > 0:
+        income = Income(
+            date = datetime.now(),
+            perticulers = f"received towerds bill no {order.invoice_number} from customer {order.customer}",
+            amount = new_payedamount
+
+        )
+        income.save()    
     
     # Adjust stock
     try:

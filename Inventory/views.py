@@ -6,6 +6,7 @@ from .forms import ProductForm, InventoryStockForm, PurchaseOrderForm, PurchaseF
 from django.http import HttpResponse
 from POS.models import *
 from django.contrib.auth.decorators import login_required
+from Finance.models import Income, Expence
 
 
 
@@ -174,11 +175,14 @@ def list_purchase_order(request):
 @login_required(login_url='SignIn')
 def edit_purchase_order(request,pk):
     purchase_order  = get_object_or_404(PurchaseOrder,id = pk)
+
     form = PurchaseOrderForm(instance=purchase_order)
     if request.method == "POST":
         form = PurchaseOrderForm(request.POST,instance=purchase_order)
         if form.is_valid():
             form.save()
+
+
             messages.success(request, 'Purchase Order Updated successfully')
             return redirect('list_purchase_order')  # Adjust this based on your URLs
         else:
@@ -191,10 +195,12 @@ def edit_purchase_order(request,pk):
     return render(request, 'inventory/update-purchase-order.html', context)
 
 
+@login_required(login_url='SignIn')
 def purchase_order_invoice(request):
     return render(request,"purchase_order.html")
 
 
+@login_required(login_url='SignIn')
 def purchase_from_order(request, order_id):
     purchase_order = get_object_or_404(PurchaseOrder, id=order_id)
     purchase_order.create_purchase()
@@ -205,22 +211,34 @@ def purchase_from_order(request, order_id):
 
     return redirect("purchase")
 
+@login_required(login_url='SignIn')
 def purchase(request):
     purchase = Purchase.objects.all()
     context = {
        "purchase":purchase 
     }
     return render(request,'purchase.html',context)
-
+import datetime
 
 @login_required(login_url='SignIn')
 def edit_purchase(request,pk):
     purchase  = get_object_or_404(Purchase,id = pk)
+    paid_amount = purchase.paid_amount
     form = PurchaseForm(instance=purchase)
     if request.method == "POST":
         form = PurchaseForm(request.POST,instance=purchase)
         if form.is_valid():
-            form.save()
+            new_purchase = form.save()
+            new_purchase.save()
+            now_paid = new_purchase.paid_amount - paid_amount
+            if now_paid != 0:
+                expence = Expence(
+                    perticulers = f"Amount Paid to  {new_purchase.supplier} towerd purchase {new_purchase.purchase_bill_number}",
+                    date = datetime.datetime.now(),
+                    amount = now_paid
+                )
+                expence.save()
+
             messages.success(request, 'Purchase Updated successfully')
             return redirect('purchase')  # Adjust this based on your URLs
         else:
@@ -249,6 +267,13 @@ def add_purchase(request):
             item = form.save()
             item.save()
             stock = item.purchase_item
+            if item.paid_amount > 0:
+                expence = Expence(
+                    perticulers = f"Amount Paid to  {item.supplier} towerd purchase {item.purchase_bill_number}",
+                    date = datetime.datetime.now(),
+                    amount = item.paid_amount
+                )
+                expence.save()
 
             if not stock:
                 raise ValueError("No inventory item selected for purchase.")

@@ -9,6 +9,8 @@ urlpatterns = [
     path("search_product",views.search_product,name="search_product"),
     path("CreateOrder",views.CreateOrder,name="CreateOrder"),
     path("list_sale",views.list_sale,name="list_sale"),
+    path("list_sale_pending",views.list_sale_pending,name="list_sale_pending"),
+    path("list_sale_partial",views.list_sale_partial,name="list_sale_partial"),
     path("update_order",views.update_order,name="update_order"),
     path('update_order_customer',views.update_order_customer, name='update_order_customer'),
     path('add_order_item/<int:pk>', views.add_order_item, name='add_order_item'),
@@ -19,7 +21,7 @@ urlpatterns = [
     path("AddDiscount",views.AddDiscount,name="AddDiscount"),
     path("Listdiscount",views.Listdiscount,name="Listdiscount"),
     path('update_order_item/<int:order_id>/', views.update_order_item, name='update_order_item'),
-    path("save_order/<int:order_id>",views.save_order,name="order_id")
+    path("save_order/<int:order_id>",views.save_order,name="save_order")
 
     
 

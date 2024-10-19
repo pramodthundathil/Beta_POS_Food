@@ -304,6 +304,22 @@ class Purchase(models.Model):
         # Generate purchase order number if it doesn't exist
         if not self.purchase_bill_number:
             self.purchase_bill_number = self.generate_order_number()
+
+        # Apply discount if available
+        discount_factor = 1 - (self.discount / 100) if self.discount else 1
+        total_amount = self.amount * discount_factor
+        
+        # Calculate balance amount
+        self.balance_amount = total_amount - self.paid_amount
+
+        # Update payment status
+        if self.balance_amount <= 0:
+            self.payment_status = "PAID"
+            self.balance_amount = 0  # Ensure no negative balance
+        elif 0 < self.paid_amount < total_amount:
+            self.payment_status = "PARTIALLY"
+        else:
+            self.payment_status = "UNPAID"
             
         super().save(*args, **kwargs)
 
