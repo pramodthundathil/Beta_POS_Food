@@ -3,11 +3,63 @@ from django.contrib import  messages
 from django.contrib.auth import authenticate, login, logout
 from .decorators import unautenticated_user
 from django.contrib.auth.decorators import login_required
+import datetime
+from Finance.models import Income, Expence
+from django.db.models import Sum
+from django.utils.timezone import now
+from POS.models import Order
 
-# Create your views here.
+
+
+def get_current_month_income_and_expense():
+    # Get current year and month
+    today = datetime.date.today()
+    current_month_start = today.replace(day=1)
+    current_month_end = (today.replace(day=28) + datetime.timedelta(days=4)).replace(day=1) - datetime.timedelta(days=1)
+    
+    # Filter and aggregate total income for the current month
+    total_income = Income.objects.filter(
+        date__gte=current_month_start,
+        date__lte=current_month_end
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+
+    # Filter and aggregate total expenses for the current month
+    total_expense = Expence.objects.filter(
+        date__gte=current_month_start,
+        date__lte=current_month_end
+    ).aggregate(Sum('amount'))['amount__sum'] or 0
+
+    return total_income, total_expense
+
+
+def get_current_month_orders():
+    # Get current year and month
+    today = datetime.date.today()
+    current_month_start = today.replace(day=1)
+    current_month_end = (today.replace(day=28) + datetime.timedelta(days=4)).replace(day=1) - datetime.timedelta(days=1)
+
+    # Filter orders for the current month and count them
+    total_orders = Order.objects.filter(
+        order_date__gte=current_month_start,
+        order_date__lte=current_month_end
+    ).count()
+
+    return total_orders
+
 @login_required(login_url='SignIn')
 def Index(request):
-    return render(request,"index.html")
+    month = now().strftime("%B")
+
+    total_income, total_expense = get_current_month_income_and_expense()
+    total_orders = get_current_month_orders()
+
+    context = {
+        "total_income":total_income,
+        "total_expense":total_expense,
+        "total_orders":total_orders,
+        "month":month
+    }
+    return render(request,"index.html",context)
 
 
 @unautenticated_user
