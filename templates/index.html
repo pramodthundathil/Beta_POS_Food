@@ -890,62 +890,23 @@
                             </div>
                             <div class="card-body">
                                 <ul class="list-unstyled row top-product mb-0">
+
+                                    {% for item in top_products%}
                                     <li class="col-lg-3">
                                         <div class="card card-block card-stretch card-height mb-0">
                                             <div class="card-body">
                                                 <div class="bg-warning-light rounded">
-                                                    <img src="../assets/images/product/01.png"
-                                                        class="style-img img-fluid m-auto p-3" alt="image">
+                                                    
                                                 </div>
                                                 <div class="style-text text-left mt-3">
-                                                    <h5 class="mb-1">Organic Cream</h5>
-                                                    <p class="mb-0">789 Item</p>
+                                                    <h5 class="mb-1">{{item}}</h5>
+                                                    <p class="mb-0">{{item.unit_quantity}} Stock</p>
                                                 </div>
                                             </div>
                                         </div>
                                     </li>
-                                    <li class="col-lg-3">
-                                        <div class="card card-block card-stretch card-height mb-0">
-                                            <div class="card-body">
-                                                <div class="bg-danger-light rounded">
-                                                    <img src="../assets/images/product/02.png"
-                                                        class="style-img img-fluid m-auto p-3" alt="image">
-                                                </div>
-                                                <div class="style-text text-left mt-3">
-                                                    <h5 class="mb-1">Rain Umbrella</h5>
-                                                    <p class="mb-0">657 Item</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="col-lg-3">
-                                        <div class="card card-block card-stretch card-height mb-0">
-                                            <div class="card-body">
-                                                <div class="bg-info-light rounded">
-                                                    <img src="../assets/images/product/03.png"
-                                                        class="style-img img-fluid m-auto p-3" alt="image">
-                                                </div>
-                                                <div class="style-text text-left mt-3">
-                                                    <h5 class="mb-1">Serum Bottle</h5>
-                                                    <p class="mb-0">489 Item</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="col-lg-3">
-                                        <div class="card card-block card-stretch card-height mb-0">
-                                            <div class="card-body">
-                                                <div class="bg-success-light rounded">
-                                                    <img src="../assets/images/product/02.png"
-                                                        class="style-img img-fluid m-auto p-3" alt="image">
-                                                </div>
-                                                <div class="style-text text-left mt-3">
-                                                    <h5 class="mb-1">Organic Cream</h5>
-                                                    <p class="mb-0">468 Item</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
+                                    {% endfor %}
+                                    
                                 </ul>
                             </div>
                         </div>
@@ -961,36 +922,24 @@
                                 </div>
                             </div>
                         </div>
+                        {% for item in top_products%}
+                        
                         <div class="card card-block card-stretch card-height-helf">
                             <div class="card-body card-item-right">
                                 <div class="d-flex align-items-top">
                                     <div class="bg-warning-light rounded">
-                                        <img src="../assets/images/product/04.png" class="style-img img-fluid m-auto"
-                                            alt="image">
+                                        
                                     </div>
                                     <div class="style-text text-left">
-                                        <h5 class="mb-2">Coffee Beans Packet</h5>
-                                        <p class="mb-2">Total Sell : 45897</p>
-                                        <p class="mb-0">Total Earned : $45,89 M</p>
+                                        <h5 class="mb-2">{{item}}</h5>
+                                        <p class="mb-2"></p>
+                                        <p class="mb-0">Price : QAR {{item.unit_price}}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card card-block card-stretch card-height-helf">
-                            <div class="card-body card-item-right">
-                                <div class="d-flex align-items-top">
-                                    <div class="bg-danger-light rounded">
-                                        <img src="../assets/images/product/05.png" class="style-img img-fluid m-auto"
-                                            alt="image">
-                                    </div>
-                                    <div class="style-text text-left">
-                                        <h5 class="mb-2">Bottle Cup Set</h5>
-                                        <p class="mb-2">Total Sell : 44359</p>
-                                        <p class="mb-0">Total Earned : $45,50 M</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
+                        
                     </div>
                     <div class="col-lg-4">
                         <div class="card card-block card-stretch card-height-helf">

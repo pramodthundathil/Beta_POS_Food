@@ -8,6 +8,7 @@ from Finance.models import Income, Expence
 from django.db.models import Sum
 from django.utils.timezone import now
 from POS.models import Order
+from Inventory.models import Product
 
 
 
@@ -46,17 +47,27 @@ def get_current_month_orders():
 
     return total_orders
 
+def get_top_selling_products():
+    # Annotate the total quantity sold for each product through OrderItem
+    top_products = Product.objects.annotate(
+        total_sold=Sum('orderitem__quantity')  # Sum quantity from related OrderItem model
+    ).order_by('-total_sold')[:5]  # Order by total_sold in descending order and limit to 5
+
+    return top_products
+
 @login_required(login_url='SignIn')
 def Index(request):
     month = now().strftime("%B")
 
     total_income, total_expense = get_current_month_income_and_expense()
     total_orders = get_current_month_orders()
+    top_products = get_top_selling_products()
 
     context = {
         "total_income":total_income,
         "total_expense":total_expense,
         "total_orders":total_orders,
+        "top_products":top_products,
         "month":month
     }
     return render(request,"index.html",context)
