@@ -65,6 +65,7 @@ urlpatterns = [
     path("delete_customer/<int:pk>",views.delete_customer,name="delete_customer"),
     path("update_customer/<int:pk>",views.update_customer,name="update_customer"),
 
+
     #api datas
 
     path("product_list",api_views.product_list,name="product_list"),
