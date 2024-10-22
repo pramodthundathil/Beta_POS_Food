@@ -5,6 +5,13 @@
 <div class="card" >
     <div class="card-header d-flex justify-content-between">
         <div class="header-title">
+            <h4 class="card-title">Sales Man</h4>
+            {{order.sales_man}}
+        </div>
+    </div>
+    <div class="card-header d-flex justify-content-between">
+        
+        <div class="header-title">
             <h4 class="card-title">Customer</h4>
         </div>
     </div>
@@ -16,7 +23,7 @@
                     {{order.customer.phone}}</p>
             </div>
             <div class="col">
-                <p><strong>GST: {{order.customer.gst_number}}</strong> <br>
+                <!-- <p><strong>GST: {{order.customer.gst_number}}</strong> <br> -->
                 <address id="customerAddress">
                     {{order.customer.city}} <br>
                     {{order.customer.state}} <br>

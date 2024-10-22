@@ -313,7 +313,7 @@
                             <form id="search-form">
                                 <input type="text" class="form-control" name="search" id="search-input" placeholder="Search Product By code or name">
                             </form>
-                            <div class="product-table mt-3 bg-light-info">
+                            <!-- <div class="product-table mt-3 bg-light-info">
                                 <div class="" style="height: 200px !important;overflow-y: scroll;">
                                     <div class="table table-striped">
                                         <div id="product-table-body" class="row p-3 justify-content-center">
@@ -323,7 +323,7 @@
 
                                                     <h4>{{product.name}}</h4> 
                                                     <h6>{{product.price}} ({{product.unit_quantity}})</h6>
-                                                    <!-- <p>Stock: {{product.stock }}</p>  -->
+                                                    <p>Stock: {{product.stock }}</p> 
                                                 </a>
 
                                             </div>
@@ -334,7 +334,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
@@ -362,12 +362,13 @@
                         <div class="card-body">
                             {% for message in messages %}
                             <div class="alert {{message.tags}} " role="alert">
-                                <div class="iq-alert-text"><b>Alert</b> {{message}}</div>
+                                <div class="iq-alert-text"><b></b> {{message}}</div>
                             </div>
                             {% endfor %}
                             <form id="orderForm">
                                 <div class="input-group mb-3">
                                     <input type="hidden" id="orderId" name="order_id" value="{{ order.id }}">
+                                    <label for="">Customer: </label>
                                     <input type="text" id="customerInput" name="customer" placeholder="Choose Customer"
                                         aria-describedby="button-addon2" class="form-control"
                                         value="{{ order.customer }}">
@@ -383,6 +384,15 @@
                                             <polyline points="17 11 19 13 23 9"></polyline>
                                         </svg>
                                     </button>
+                                </div>
+                            </form>
+                            <form id="salesmanform">
+                                <div class="input-group mb-3">
+                                    <label for="">Sales Man: </label>
+                                    <input type="hidden" id="orderId1" name="order_id" value="{{ order.id }}">
+                                    <input type="text" id="salesmanInput" name="salesman" placeholder="Choose Sales Man"
+                                        aria-describedby="button-addon2" class="form-control"
+                                        value="{{ order.sales_man }}">
                                 </div>
                             </form>
 
@@ -420,8 +430,8 @@
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <div class="form-group">
-                                                            <label>Gst Number:</label>
-                                                            <input type="text" class="form-control" name="gst"
+                                                            <!-- <label>Gst Number:</label> -->
+                                                            <input type="hidden" class="form-control" name="gst"
                                                                 id="lname" placeholder="Gst Number">
 
                                                         </div>
@@ -506,6 +516,62 @@
             </div>
         </div>
     </div>
+    <div class="container mt-4">
+        <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+            <div class="offcanvas-header">
+              <h5 class="offcanvas-title" id="offcanvasExampleLabel">Recent Invoices</h5>
+              <!-- <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
+            </div>
+            <div class="offcanvas-body">
+    
+                <div class="table-responsive rounded mb-3">
+                    <table class="data-tables table mb-0 tbl-server-info">
+                        <thead class="bg-white text-uppercase">
+                            <tr class="ligth ligth-data">
+                                <th>Order Number</th>
+                                
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="ligth-body">
+    
+                            {% for m in invoice %}
+                           
+                            <tr>
+                                <td>#{{m.invoice_number}}</td>
+                                <td>Rs {{m.total_amount}}</td>
+                                <th>
+                                    {% if m.payment_status1 == 'UNPAID' %}
+                                    <span class="badge bg-danger">{{m.payment_status1}}</span>
+                                    {% elif m.payment_status1 == 'PAID' %}
+                                    <span class="badge bg-success">{{m.payment_status1}}</span>
+                                    {% elif m.payment_status1 == 'PARTIALLY' %}
+                                    <span class="badge bg-warning">{{m.payment_status1}}</span>
+                                    {% else %}
+                                    <span class="badge bg-dark">UNKNOWN</span>
+                                    {% endif %}
+                                </th>
+                                <td>
+                                    <div class="d-flex align-items-center list-action">
+                                      
+                                        <a class="badge bg-success mr-2" data-toggle="tooltip"
+                                            data-placement="top" title="" data-original-title="Edit" href="{%url 'POS' m.id %}"><i
+                                                class="ri-pencil-line mr-0"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
+              
+            </div>
+          </div>
+    </div>
 
     <!-- Wrapper End-->
     <footer class="iq-footer">
@@ -529,60 +595,7 @@
             </div>
         </div>
     </footer>
-      <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasExampleLabel">Recent Invoices</h5>
-          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-
-            <div class="table-responsive rounded mb-3">
-                <table class="data-tables table mb-0 tbl-server-info">
-                    <thead class="bg-white text-uppercase">
-                        <tr class="ligth ligth-data">
-                            <th>Order Number</th>
-                            
-                            <th>Amount</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="ligth-body">
-
-                        {% for m in invoice %}
-                       
-                        <tr>
-                            <td>#{{m.invoice_number}}</td>
-                            <td>Rs {{m.total_amount}}</td>
-                            <th>
-                                {% if m.payment_status1 == 'UNPAID' %}
-                                <span class="badge bg-danger">{{m.payment_status1}}</span>
-                                {% elif m.payment_status1 == 'PAID' %}
-                                <span class="badge bg-success">{{m.payment_status1}}</span>
-                                {% elif m.payment_status1 == 'PARTIALLY' %}
-                                <span class="badge bg-warning">{{m.payment_status1}}</span>
-                                {% else %}
-                                <span class="badge bg-dark">UNKNOWN</span>
-                                {% endif %}
-                            </th>
-                            <td>
-                                <div class="d-flex align-items-center list-action">
-                                  
-                                    <a class="badge bg-success mr-2" data-toggle="tooltip"
-                                        data-placement="top" title="" data-original-title="Edit" href="{%url 'POS' m.id %}"><i
-                                            class="ri-pencil-line mr-0"></i></a>
-                                </div>
-                            </td>
-                        </tr>
-                        
-                        {% endfor %}
-                        
-                    </tbody>
-                </table>
-            </div>
-          
-        </div>
-      </div>
+      
     {% endblock %}
     <!-- Backend Bundle JavaScript -->
     <script src="{%static 'assets/js/backend-bundle.min.js' %}"></script>
@@ -642,6 +655,17 @@
                 {% endfor %}
             ];
 
+            var salesman = [
+                {% for man in salesmans %}
+                {
+                    id: "{{ man.id }}",
+                    value: "{{ man.employee_name }}",
+                    label: "{{ man.employee_name }}" + " {{man.emoloye_id}}",
+                  
+                },
+                {% endfor %}
+            ];
+
             // Customer autocomplete
             $("#customerInput").autocomplete({
                 source: customers,
@@ -669,6 +693,23 @@
                     $("#search-input").val(selectedProduct.label);
 
                     handleSelectedProduct(selectedProduct.id);
+
+                    return false;
+                }
+            }).on("focus", function () {
+                $(this).val("");
+            });
+
+             // Sales man autocomplete
+             $("#salesmanInput").autocomplete({
+                source: salesman,
+                select: function (event, ui) {
+                    var selectedSalesman = ui.item;
+                    console.log("Selected product details:", selectedSalesman);
+
+                    $("#search-input").val(selectedSalesman.label);
+
+                    updateSalesMan(selectedSalesman.id);
 
                     return false;
                 }
@@ -715,6 +756,26 @@
                     },
                     error: function (xhr, errmsg, err) {
                         console.log("Error adding product to order:", errmsg);
+                    }
+                });
+            }
+
+            function updateSalesMan(customerId) {
+                console.log("Updating order with customer ID:", customerId);
+                $.ajax({
+                    url: "{% url 'update_order_salesman' %}",
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        customer_id: customerId,
+                        order_id: '{{ order.id }}'
+                    },
+                    success: function (response) {
+                        console.log("Order Salesman updated successfully.");
+                        $("#customerdetails").html(response.html);
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log("Error updating order customer:", errmsg);
                     }
                 });
             }

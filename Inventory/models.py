@@ -38,7 +38,7 @@ class Vendor(models.Model):
         max_length=15,
         # validators=[RegexValidator(r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")]
     )
-    gst_number = models.CharField(max_length=15, unique=True, validators=[MinLengthValidator(15), MaxLengthValidator(15)], null=True, blank=True)
+    gst_number = models.CharField(max_length=15, validators=[MinLengthValidator(15), MaxLengthValidator(15)], null=True, blank=True)
     city = models.CharField(max_length=255)
     state = models.CharField(null=True,max_length=255)
     country = models.CharField(max_length=255)
@@ -159,7 +159,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=20, null=True)
     email = models.EmailField(null=True)
-    gst_number = models.CharField(max_length=15, unique=True, validators=[MinLengthValidator(15), MaxLengthValidator(15)], blank=True, null=True)
+    gst_number = models.CharField(max_length=15, validators=[MinLengthValidator(15), MaxLengthValidator(15)], blank=True, null=True)
     city = models.CharField(max_length=255)
     state = models.CharField(null=True,max_length=255)
     country = models.CharField(max_length=255)
@@ -176,7 +176,7 @@ class PurchaseOrder(models.Model):
     PURCHASE_TYPES = [
         ('Credit', 'Credit'),
         ('Cash', 'Cash'),
-        ('NO-TAX', 'NO-TAX'),
+       
     ]
     
     ORDER_STATUS_CHOICES = [
@@ -211,7 +211,7 @@ class PurchaseOrder(models.Model):
     def generate_order_number(self):
         # Loop to ensure uniqueness
         while True:
-            random_number = random.randint(10000, 99999)  # 5-digit random number
+            random_number = random.randint(10000, 999999)  # 5-digit random number
             order_number = f"PRO-{random_number}"
             if not PurchaseOrder.objects.filter(purchase_order_number=order_number).exists():
                 return order_number
@@ -270,7 +270,7 @@ class Purchase(models.Model):
     PURCHASE_TYPES = [
         ('Credit', 'Credit'),
         ('Cash', 'Cash'),
-        ('NO-TAX', 'NO-TAX'),
+        
     ]
     PAYMENT_STATUS = (
         ("UNPAID","UNPAID"),
@@ -327,7 +327,7 @@ class Purchase(models.Model):
     def generate_order_number(self):
         # Loop to ensure uniqueness
         while True:
-            random_number = random.randint(10000, 99999)  # 5-digit random number
+            random_number = random.randint(10000, 999999)  # 5-digit random number
             order_number = f"PR-{random_number}"
             if not Purchase.objects.filter(purchase_bill_number=order_number).exists():
                 return order_number

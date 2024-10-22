@@ -1,5 +1,6 @@
 from django.db import models
 from Inventory.models import  *
+from Home.models import Staff
 from django.contrib.auth.models import User  
 
 class Order(models.Model):
@@ -8,11 +9,13 @@ class Order(models.Model):
     invoice_number = models.CharField(max_length=20, unique=True)
     order_date = models.DateTimeField(auto_now_add=True)
     total_amount = models.FloatField(default=0)  # Set default to 0
+    total_amount_before_discount = models.FloatField(default=0)  # Set default to 0
     total_tax = models.FloatField(default=0)
     payment_status1 = models.CharField(max_length=20, default='UNPAID', choices=(("UNPAID","UNPAID"),("PAID","PAID"),("PARTIALLY","PARTIALLY")))
     payment_status = models.BooleanField(default=False)
     discount = models.FloatField(default=0)
     save_status = models.BooleanField(default=False)
+    sales_man = models.ForeignKey(Staff,on_delete=models.SET_NULL, null=True, blank=True)
 
     payed_amount = models.FloatField(default=0)
     balance_amount = models.FloatField()
@@ -38,6 +41,7 @@ class Order(models.Model):
         
         self.total_amount = total_amount
         self.total_tax = total_tax
+        # self.total_amount_before_discount = self.total_amount + self.discount
         self.save()
         
     def calculate_balance(self):

@@ -16,7 +16,27 @@
     <link rel="stylesheet" href="{%static 'assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
     <link rel="stylesheet" href="{%static 'assets/vendor/remixicon/fonts/remixicon.css' %}">
     <link rel="stylesheet" href="{%static 'assets/css/bootstrap_icons.min.css' %}">
-    
+
+    <style>
+        /* Ensure div containers have a fixed height */
+        #orderPurchaseChartContainer,
+        #revenueExpenseContainer {
+            width: 80%;
+            margin: 50px auto;
+        }
+
+        #orderPurchaseChartContainer {
+            height: 400px;
+            /* Set desired height for bar chart */
+        }
+
+        .pie-chart-container {
+            height: 400px;
+            /* Set desired height for pie charts */
+            margin-bottom: 50px;
+        }
+    </style>
+
 </head>
 
 <body class="  ">
@@ -88,12 +108,12 @@
                                         <i class="las la-minus"></i><span>Add Inventory</span>
                                     </a>
                                 </li>
-                                <li class="">
+                                <!-- <li class="">
                                     <a href="{%url 'add_product' %}">
                                         <i class="las la-minus"></i><span>Inventory Adjustments</span>
                                     </a>
-                                </li>
-                                
+                                </li> -->
+
                             </ul>
                         </li>
                         <li class=" ">
@@ -200,7 +220,7 @@
                                 </li>
                                 <li class="">
                                     <a href="{%url 'list_sale_partial' %}">
-                                        <i class="las la-minus"></i><span>Partialy Paid Invoices</span>
+                                        <i class="las la-minus"></i><span>Partially Paid Invoices</span>
                                     </a>
                                 </li>
                                 <li class="">
@@ -236,12 +256,12 @@
                                 </li>
                                 <li class="">
                                     <a href="{%url 'expence' %}">
-                                        <i class="las la-minus"></i><span>Expence</span>
+                                        <i class="las la-minus"></i><span>Expense</span>
                                     </a>
                                 </li>
                                 <li class="">
                                     <a href="{%url 'balance_sheet' %}">
-                                        <i class="las la-minus"></i><span>Income and Expence Chart</span>
+                                        <i class="las la-minus"></i><span>Income and Expense Chart</span>
                                     </a>
                                 </li>
                             </ul>
@@ -314,24 +334,29 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../backend/page-add-customers.html">
+                                    <a href="{%url 'add_customers' %}">
                                         <i class="las la-minus"></i><span>Add Customers</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../backend/page-list-users.html">
-                                        <i class="las la-minus"></i><span>Users</span>
+                                    <a href="{%url 'list_staff' %}">
+                                        <i class="las la-minus"></i><span>Staff</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="../backend/page-add-users.html">
-                                        <i class="las la-minus"></i><span>Add Users</span>
+                                    <a href="{%url 'add_staff' %}">
+                                        <i class="las la-minus"></i><span>Add Staff</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="{%url 'list_salary' %}">
+                                        <i class="las la-minus"></i><span>Staff Salary</span>
                                     </a>
                                 </li>
 
                             </ul>
                         </li>
-                       
+
                         <!-- <li class=" ">
                             <a href="#tax" class="collapsed" data-toggle="collapse" aria-expanded="false">
                                 <svg class="svg-icon" id="p-dash07" width="20" height="20"
@@ -431,15 +456,15 @@
                         <li class=" ">
                             <a href="#settings" class="collapsed" data-toggle="collapse" aria-expanded="false">
                                 <svg class="svg-icon" id="p-dash07" width="20" height="20"
-                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round">
-                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                            <polyline points="14 2 14 8 20 8"></polyline>
-                                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                                            <polyline points="10 9 9 9 8 9"></polyline>
-                                        </svg>
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
                                 <span class="ml-4">Settings</span>
                                 <svg class="svg-icon iq-arrow-right arrow-active" width="20" height="20"
                                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -456,17 +481,17 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="{%url 'AddTax'%}">
+                                    <a href="{%url 'AddTax' %}">
                                         <i class="las la-minus"></i><span>Profile</span>
                                     </a>
-                                </li>    
-                                
+                                </li>
+
                             </ul>
                         </li>
-                        
+
                     </ul>
                 </nav>
-                
+
                 <div class="p-3"></div>
             </div>
         </div>
@@ -483,8 +508,8 @@
                     </div>
                     <div class="iq-search-bar device-search">
                         <form action="#" class="searchbox">
-                            <a class="search-link" href="#"><i class="ri-search-line"></i></a>
-                            <input type="text" class="text search-input" placeholder="Search here...">
+                            <!-- <a class="search-link" href="#"><i class="ri-search-line"></i></a> -->
+                            <!-- <input type="text" class="text search-input" placeholder="Search here..."> -->
                         </form>
                     </div>
                     <div class="d-flex align-items-center">
@@ -492,20 +517,20 @@
                             data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                             aria-label="Toggle navigation">
                             <i class="ri-menu-3-line"></i>
-                    </a>
+                        </a>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ml-auto navbar-list align-items-center">
                                 <li class="nav-item nav-icon dropdown">
                                     <a href="{%url 'CreateOrder' %}" class=" dropdown-toggle btn border add-btn">
                                         POS
                                     </a>
-                                    
+
                                 </li>
-                                <li>
+                                <!-- <li>
                                     <a href="#" class="btn border add-btn shadow-none mx-2 d-none d-md-block"
                                         data-toggle="modal" data-target="#new-order"><i class="las la-plus mr-2"></i>New
                                         Order</a>
-                                </li>
+                                </li> -->
                                 <li class="nav-item nav-icon search-content">
                                     <a href="#" class="search-toggle rounded" id="dropdownSearch" data-toggle="dropdown"
                                         aria-haspopup="true" aria-expanded="false">
@@ -687,14 +712,15 @@
                                 <li class="nav-item nav-icon dropdown caption-content">
                                     <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton4"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <img src="{%static 'assets/images/user/1.png' %}" class="img-fluid rounded" alt="user">
+                                        <img src="{%static 'assets/images/user/1.png' %}" class="img-fluid rounded"
+                                            alt="user">
                                     </a>
                                     <div class="iq-sub-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton">
                                         <div class="card shadow-none m-0">
                                             <div class="card-body p-0 text-center">
                                                 <div class="media-body profile-detail text-center">
-                                                    <img src="{%static 'assets/images/page-img/profile-bg.jpg' %}" alt="profile-bg"
-                                                        class="rounded-top img-fluid mb-4">
+                                                    <img src="{%static 'assets/images/page-img/profile-bg.jpg' %}"
+                                                        alt="profile-bg" class="rounded-top img-fluid mb-4">
                                                     <img src="{%static 'assets/images/user/1.png' %}" alt="profile-img"
                                                         class="rounded profile-img img-fluid avatar-70">
                                                 </div>
@@ -702,8 +728,7 @@
                                                     <h5 class="mb-1">{{request.user}}</h5>
                                                     <p class="mb-0">Since {{request.user.added_date}}</p>
                                                     <div class="d-flex align-items-center justify-content-center mt-3">
-                                                        <a href=""
-                                                            class="btn border mr-2">Profile</a>
+                                                        <a href="" class="btn border mr-2">Profile</a>
                                                         <a href="{%url 'SignOut' %}" class="btn border">Sign Out</a>
                                                     </div>
                                                 </div>
@@ -761,7 +786,8 @@
                                     <div class="card-body">
                                         <div class="d-flex align-items-center mb-4 card-total-sale">
                                             <div class="icon iq-icon-box-2 bg-info-light">
-                                                <img src="{%static 'assets/images/product/1.png' %}" class="img-fluid" alt="image">
+                                                <img src="{%static 'assets/images/product/1.png' %}" class="img-fluid"
+                                                    alt="image">
                                             </div>
                                             <div>
                                                 <p class="mb-2">Total Income <br> ({{month}})</p>
@@ -780,7 +806,8 @@
                                     <div class="card-body">
                                         <div class="d-flex align-items-center mb-4 card-total-sale">
                                             <div class="icon iq-icon-box-2 bg-danger-light">
-                                                <img src="{%static 'assets/images/product/2.png' %}" class="img-fluid" alt="image">
+                                                <img src="{%static 'assets/images/product/2.png' %}" class="img-fluid"
+                                                    alt="image">
                                             </div>
                                             <div>
                                                 <p class="mb-2">Total Expense <br> ({{month}})</p>
@@ -799,7 +826,8 @@
                                     <div class="card-body">
                                         <div class="d-flex align-items-center mb-4 card-total-sale">
                                             <div class="icon iq-icon-box-2 bg-success-light">
-                                                <img src="{%static 'assets/images/product/3.png' %}" class="img-fluid" alt="image">
+                                                <img src="{%static 'assets/images/product/3.png' %}" class="img-fluid"
+                                                    alt="image">
                                             </div>
                                             <div>
                                                 <p class="mb-2">Total Invoices <br> ({{month}})</p>
@@ -837,7 +865,10 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div id="layout1-chart1"></div>
+                                <div id="orderPurchaseChartContainer">
+                                    <canvas id="orderPurchaseChart"></canvas>
+                                </div>
+                                <!-- <div id="layout1-chart1"></div> -->
                             </div>
                         </div>
                     </div>
@@ -863,7 +894,12 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div id="layout1-chart-2" style="min-height: 360px;"></div>
+                                <!-- <div id="layout1-chart-2" style="min-height: 360px;"></div> -->
+                                <div style="width: 100%; margin:  auto;max-height: 300px;">
+                                    <div id="revenueExpenseContainer" style="width: auto; margin: auto;height: 100%;">
+                                        <!-- Multiple pie charts will be inserted here dynamically -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -896,7 +932,7 @@
                                         <div class="card card-block card-stretch card-height mb-0">
                                             <div class="card-body">
                                                 <div class="bg-warning-light rounded">
-                                                    
+
                                                 </div>
                                                 <div class="style-text text-left mt-3">
                                                     <h5 class="mb-1">{{item}}</h5>
@@ -906,7 +942,7 @@
                                         </div>
                                     </li>
                                     {% endfor %}
-                                    
+
                                 </ul>
                             </div>
                         </div>
@@ -923,12 +959,12 @@
                             </div>
                         </div>
                         {% for item in top_products%}
-                        
+
                         <div class="card card-block card-stretch card-height-helf">
                             <div class="card-body card-item-right">
                                 <div class="d-flex align-items-top">
                                     <div class="bg-warning-light rounded">
-                                        
+
                                     </div>
                                     <div class="style-text text-left">
                                         <h5 class="mb-2">{{item}}</h5>
@@ -939,7 +975,7 @@
                             </div>
                         </div>
                         {% endfor %}
-                        
+
                     </div>
                     <div class="col-lg-4">
                         <div class="card card-block card-stretch card-height-helf">
@@ -1097,6 +1133,121 @@
 
     <!-- app JavaScript -->
     <script src="{%static 'assets/js/app.js' %}"></script>
+    <script src="{%static 'assets\js\chart.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch monthly data for Orders and Purchases
+            fetch('/get_monthly_data/')
+                .then(response => response.json())
+                .then(data => {
+                    const chartDiv = document.getElementById('orderPurchaseChartContainer');
+                    const ctx = document.getElementById('orderPurchaseChart').getContext('2d');
+
+                    // Set canvas size to match the container size
+                    ctx.canvas.width = chartDiv.offsetWidth;
+                    ctx.canvas.height = chartDiv.offsetHeight;
+
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.months,  // X-axis (Months)
+                            datasets: [
+                                {
+                                    label: 'Orders',
+                                    data: data.orders,  // Order data for each month
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)',  // Bar color for orders
+                                    borderColor: 'rgba(75, 192, 192, 1)',  // Border color for orders
+                                    borderWidth: 1
+                                },
+                                {
+                                    label: 'Purchases',
+                                    data: data.purchases,  // Purchase data for each month
+                                    backgroundColor: 'rgba(255, 99, 132, 0.6)',  // Bar color for purchases
+                                    borderColor: 'rgba(255, 99, 132, 1)',  // Border color for purchases
+                                    borderWidth: 1
+                                }
+                            ]
+                        },
+                        options: {
+                            maintainAspectRatio: false,  // Disable maintaining aspect ratio
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            },
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Monthly Orders and Purchases Comparison'
+                                }
+                            }
+                        }
+                    });
+                });
+
+            // Fetch monthly revenue and expense data for pie charts
+            fetch('/get_monthly_revenue_expense/')
+                .then(response => response.json())
+                .then(data => {
+                    // Create a canvas for each month and render pie charts
+                    const container = document.getElementById('revenueExpenseContainer');
+
+                    data.months.forEach((month, index) => {
+                        // Create a div and canvas element for each pie chart
+                        const pieChartDiv = document.createElement('div');
+                        pieChartDiv.classList.add('pie-chart-container');
+
+                        const canvas = document.createElement('canvas');
+                        canvas.id = `revenueExpenseChart${index}`;  // Unique ID for each chart
+                        pieChartDiv.appendChild(canvas);  // Append canvas to the div
+                        container.appendChild(pieChartDiv);  // Append div to the container
+
+                        const ctx = canvas.getContext('2d');
+
+                        // Set canvas size to match the container size
+                        ctx.canvas.width = pieChartDiv.offsetWidth;
+                        ctx.canvas.height = pieChartDiv.offsetHeight;
+
+                        new Chart(ctx, {
+                            type: 'pie',
+                            data: {
+                                labels: ['Income', 'Expense'],
+                                datasets: [{
+                                    label: `Revenue vs Expense - ${month}`,
+                                    data: [data.incomes[index], data.expenses[index]], // Revenue and Expense data
+                                    backgroundColor: [
+                                        'rgba(75, 192, 192, 0.6)',  // Color for Income
+                                        'rgba(255, 99, 132, 0.6)'   // Color for Expense
+                                    ],
+                                    borderColor: [
+                                        'rgba(75, 192, 192, 1)',
+                                        'rgba(255, 99, 132, 1)'
+                                    ],
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                maintainAspectRatio: false,  // Disable maintaining aspect ratio
+                                responsive: true,
+                                plugins: {
+                                    legend: {
+                                        position: 'top'
+                                    },
+                                    title: {
+                                        display: true,
+                                        text: `Income vs Expense for ${month}`
+                                    }
+                                }
+                            }
+                        });
+                    });
+                });
+        });
+    </script>
 </body>
 
 </html>

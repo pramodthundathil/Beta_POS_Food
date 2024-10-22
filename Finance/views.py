@@ -1,8 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib import messages
 from .models import *
+from POS.models import Order
 from .forms import *
-
+from django.shortcuts import render
+from django.utils.timezone import now
+from .models import Income, Expence
+from itertools import chain
+from operator import attrgetter
+from django.template.loader import get_template
 
 def income(request):
     inocme = Income.objects.all()
@@ -51,11 +57,7 @@ def add_expense(request):
     return render(request, 'finance/add-expense.html', {'form': form})
 
 
-from django.shortcuts import render
-from django.utils.timezone import now
-from .models import Income, Expence
-from itertools import chain
-from operator import attrgetter
+
 
 def balance_sheet(request):
     # Get the current date
@@ -143,6 +145,213 @@ def balance_sheet_selected(request):
 
 def reports(request):
     return render(request,"reports.html")
+
+
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from django.http import HttpResponse
+from io import BytesIO
+import pandas as pd
+
+
+def expence_report_excel(request):
+    if request.method == "POST":
+        # Get the start and end date from the form
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+
+        # Filter expenses based on the date range
+        expenses = Expence.objects.filter(date__range=[start_date, end_date])
+
+        # Convert expenses to a Pandas DataFrame
+        data = {
+            'Date': [exp.date for exp in expenses],
+            'Particulars': [exp.perticulers for exp in expenses],
+            'Amount': [exp.amount for exp in expenses],
+            'Other': [exp.other for exp in expenses],
+        }
+        df = pd.DataFrame(data)
+
+        # Create an HttpResponse object with Excel content type
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="expense_report_{start_date}_to_{end_date}.xlsx"'
+
+        # Write the DataFrame to an Excel file
+        df.to_excel(response, index=False, engine='openpyxl')
+
+        return response
+
+
+def expence_report_pdf(request):
+    if request.method == "POST":
+        # Get the start and end date from the form
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+
+        # Filter expenses based on the date range
+        expenses = Expence.objects.filter(date__range=[start_date, end_date])
+
+        # Render the data to a template
+        template_path = 'expence_report_pdf.html'
+        context = {
+            'expenses': expenses,
+            'start_date': start_date,
+            'end_date': end_date,
+        }
+        html = render_to_string(template_path, context)
+
+        # Create a PDF
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="expense_report_{start_date}_to_{end_date}.pdf"'
+
+        # Create PDF using xhtml2pdf
+        pisa_status = pisa.CreatePDF(
+            html, dest=response
+        )
+
+        # If there's an error, show it in the response
+        if pisa_status.err:
+            return HttpResponse('We had some errors with the report')
+
+        return response
+
+
+def income_report_excel(request):
+    if request.method == "POST":
+        # Get the start and end date from the form
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+
+        # Filter expenses based on the date range
+        expenses = Income.objects.filter(date__range=[start_date, end_date])
+
+        # Convert expenses to a Pandas DataFrame
+        data = {
+            'Date': [exp.date for exp in expenses],
+            'Perticulers': [exp.perticulers for exp in expenses],
+            'Amount': [exp.amount for exp in expenses],
+            'Other': [exp.other for exp in expenses],
+        }
+        df = pd.DataFrame(data)
+
+        # Create an HttpResponse object with Excel content type
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="Income_report_{start_date}_to_{end_date}.xlsx"'
+
+        # Write the DataFrame to an Excel file
+        df.to_excel(response, index=False, engine='openpyxl')
+
+        return response
+
+
+def income_report_pdf(request):
+    if request.method == "POST":
+        # Get the start and end date from the form
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+
+        # Filter expenses based on the date range
+        expenses = Income.objects.filter(date__range=[start_date, end_date])
+
+        # Render the data to a template
+        template_path = 'income_report_pdf.html'
+        context = {
+            'expenses': expenses,
+            'start_date': start_date,
+            'end_date': end_date,
+        }
+        html = render_to_string(template_path, context)
+
+        # Create a PDF
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="income_report_{start_date}_to_{end_date}.pdf"'
+
+        # Create PDF using xhtml2pdf
+        pisa_status = pisa.CreatePDF(
+            html, dest=response
+        )
+
+        # If there's an error, show it in the response
+        if pisa_status.err:
+            return HttpResponse('We had some errors with the report')
+
+        return response
+    
+
+
+
+def sale_report_excel(request):
+    if request.method == "POST":
+        # Get the start and end date from the form
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+        category = request.POST.get("category")
+
+        # Filter orders based on the date range
+        if not category:
+            orders = Order.objects.filter(order_date__range=[start_date, end_date])
+        else:
+            orders = Order.objects.filter(order_date__range=[start_date, end_date], payment_status1=category)
+
+        # Prepare data for the report
+        data = {
+            'Date': [order.order_date.replace(tzinfo=None) for order in orders],
+            'Invoice Number': [order.invoice_number for order in orders],
+            # Concatenate the product names from OrderItem for each order
+            'Products': [', '.join([item.product.name for item in order.orderitem_set.all()]) for order in orders],
+            'Amount': [order.total_amount for order in orders],
+            'Payed Amount': [order.payed_amount for order in orders],
+            'Balance Amount': [order.balance_amount for order in orders],
+            'Payment Status': [order.payment_status1 for order in orders],
+        }
+        df = pd.DataFrame(data)
+
+        # Create an HttpResponse object with Excel content type
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="sale_report_{start_date}_to_{end_date}.xlsx"'
+
+        # Write the DataFrame to an Excel file
+        df.to_excel(response, index=False, engine='openpyxl')
+
+        return response
+    
+def sale_report_pdf(request):
+    if request.method == "POST":
+        # Get the start and end date from the form
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+        category = request.POST.get("category")
+
+        # Filter orders based on the date range
+        if not category:
+            orders = Order.objects.filter(order_date__range=[start_date, end_date])
+        else:
+            orders = Order.objects.filter(order_date__range=[start_date, end_date], payment_status1=category)
+
+        # Prepare the context for the PDF template
+        context = {
+            'orders': orders,
+            'start_date': start_date,
+            'end_date': end_date,
+        }
+
+        # Load the HTML template
+        template = get_template('sale_report_pdf.html')
+        html = template.render(context)
+
+        # Create a PDF response
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="sale_report_{start_date}_to_{end_date}.pdf"'
+
+        # Create the PDF
+        pisa_status = pisa.CreatePDF(html, dest=response)
+
+        if pisa_status.err:
+            return HttpResponse(f'We had some errors: {pisa_status.err}')
+        return response
+
+
+
 
 
 

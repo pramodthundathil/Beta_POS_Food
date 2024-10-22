@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Income Report</title>
+</head>
+<body >
+    <h1>Expense Report</h1>
+    <p>From {{ start_date }} to {{ end_date }}</p>
+    <table border="1" >
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Perticulers</th>
+                <th>Amount</th>
+                <th>Other</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense.date }}</td>
+                <td>{{ expense.perticulers }}</td>
+                <td>{{ expense.amount }}</td>
+                <td>{{ expense.other }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

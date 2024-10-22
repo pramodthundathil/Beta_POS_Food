@@ -116,6 +116,7 @@ def add_inventory(request):
 @login_required(login_url='SignIn')
 def edit_inventory(request,pk):
     inventory  = get_object_or_404(InventoryStock,id = pk)
+    purchase = Purchase.objects.filter(purchase_item = inventory)
     form = InventoryStockForm(instance=inventory)
     if request.method == "POST":
         form = InventoryStockForm(request.POST,instance=inventory)
@@ -128,7 +129,8 @@ def edit_inventory(request,pk):
     
     context = {
         'form': form,
-        "inventory":inventory
+        "inventory":inventory,
+        "purchase":purchase
     }
     return render(request, 'inventory/update-inventory.html', context)
 

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+          @page {
+            size: A4;
+            margin: 10mm;
+        }
+        .body{
+            margin: 0;
+            padding: 0;
+        }
+        .top-margin {
+            height: 100px;
+        }
+        .invoice-deatils{
+            display: flex !important;
+            justify-content: space-between;
+        }
+        .invoice-deatils td{
+            padding: 4px;
+        }
+        .items-container tr:first-child{
+            width: 70%;
+        }
+        .footer{
+            display: flex;
+
+        }
+    </style>
+</head>
+<body onload="printInvoice()">
+    <div class="invoice" id="invoice-content">
+        <div class="top-margin">
+
+        </div>
+        <div class="invoice-deatils">
+            <div class="items-container">
+                <h5>Customer/اسم العميل</h5>
+                <p>{{ order.customer.name }}</p>
+                <p>{{ order.customer.city }}</p>
+
+            </div>
+            <div class="items-comtainer">
+                <table style="width:100%">
+                    <tr>
+                        <td>Date</td>
+                        <td>{{ order.order_date }}</td>
+                    </tr>
+                    <tr>
+                        <td>Invoice Number</td>
+                        <td>{{ order.invoice_number }}</td>
+                    </tr>
+                    <tr>
+                        <td>Sales Rep</td>
+                        <td>{{ order.sales_man }}</td>
+                    </tr>
+                    <tr>
+                        <td>Payment</td>
+                        <td>{{ order.payment_status1 }}</td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+        <div class="header_" style="height: 20px;"></div>
+        <div class="item-details" style="margin-top:20px;height:550px; padding: 10px;box-sizing: border-box; ">
+            <table style="width: 100%;">
+                {% for item in order.orderitem_set.all %}
+                <tr>
+                    <td style="width: 10%;">{{forloop.counter}}</td>
+                    <td style="width: 50%;">{{ item.product.name }}</td>
+                    <td style="width: 10%;">{{ item.product.unit_quantity }} {{item.product.unit}}</td>
+                    <td style="width: 10%;">{{ item.quantity }}</td>
+                    <td style="width: 10%;">{{ item.unit_price }}</td>
+                    <td style="width: 10%;">{{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="footer">
+            <div class="foot-items" style="flex-grow: 8;text-align: center;">
+                    <h6 class="text-center mt-2"> {{total_in_words}}  Qatari Riyal Only</h6>
+            </div>
+            <div class="foot-items" style="flex-grow: 4;text-align: right;padding-right: 40px;">
+                <p>{{order.total_amount_before_discount}}</p>
+                <p>{{order.discount}}</p>
+                <p>{{order.total_amount}}</p>
+
+            </div>
+        </div>
+
+    </div>
+    <script>
+        function printInvoice() {
+            var printContents = document.getElementById('invoice-content').innerHTML;
+            var originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+
+            setTimeout(function () {
+                window.close(); // Close the window after printing
+            }, 100); // 100ms delay, adjust if needed
+        }
+    </script>
+</body>
+</html>

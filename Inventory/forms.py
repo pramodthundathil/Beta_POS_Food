@@ -149,7 +149,7 @@ class PurchaseForm(forms.ModelForm):
         fields = [
             'purchase_type', 'supplier', 'payment_terms', 'due_date', 'place_of_supply',
              'purchase_item', 'quantity',
-            'purchase_price', 'discount', 'unit', 'tax', 'amount', 'paid_amount', 
+            'purchase_price', 'discount', 'unit', 'amount', 'paid_amount', 
             'balance_amount', 'payment_status', 'shipping_cost', 'recived_date'
         ]
         widgets = {
@@ -165,7 +165,7 @@ class PurchaseForm(forms.ModelForm):
             'purchase_price': forms.NumberInput(attrs={'class': 'form-control', 'id': 'purchase_price'}),
             'discount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'discount'}),
             'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
-            'tax': forms.NumberInput(attrs={'class': 'form-control', 'id': 'tax'}),
+            # 'tax': forms.NumberInput(attrs={'class': 'form-control', 'id': 'tax'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'amount'}),
             'paid_amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'paid_amount'}),
             'balance_amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'balance_amount'}),

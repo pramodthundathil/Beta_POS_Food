@@ -9,7 +9,9 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from Finance.models import Income, Expence
-
+from django.template.loader import get_template
+from django.http import HttpResponse
+from xhtml2pdf import pisa
 
 
 
@@ -23,7 +25,7 @@ def generate_serial_number():
 
 
 @login_required(login_url='SignIn')
-def CreateOrder(resuest):
+def CreateOrder(request):
     TokenU = generate_serial_number()
 
     order = Order.objects.create(invoice_number=TokenU)
@@ -38,12 +40,14 @@ def POS(request,pk):
     order = Order.objects.get(id = pk)
     product = Product.objects.all()
     invoice = Order.objects.all().order_by('-id')[:6]
+    salesmans = Staff.objects.filter(designation = "Sales Man")
 
     context = {
         "customer":customer,
         "order":order,
         'product':product,
-        "invoice":invoice
+        "invoice":invoice,
+        "salesmans":salesmans
     }
     return render(request,'pos.html',context)
 
@@ -92,6 +96,27 @@ def update_order_customer(request):
             order = Order.objects.get(id=order_id)
             customer = Customer.objects.get(id=customer_id)
             order.customer = customer
+            order.save()
+            customer_details_html = render_to_string('ajaxtemplates/customerdetailsonpos.html', {'customers': customer,"order" : order})
+            print(customer_details_html)
+            return JsonResponse({"success": True, "html": customer_details_html})
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+        except Customer.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Customer not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+@login_required(login_url='SignIn')
+@csrf_exempt
+def update_order_salesman(request):
+    if request.method == 'POST':
+        customer_id = request.POST.get('customer_id')
+        order_id = request.POST.get('order_id')
+        try:
+            order = Order.objects.get(id=order_id)
+            customer = Staff.objects.get(id=customer_id)
+            order.sales_man = customer
             order.save()
             customer_details_html = render_to_string('ajaxtemplates/customerdetailsonpos.html', {'customers': customer,"order" : order})
             print(customer_details_html)
@@ -191,6 +216,7 @@ def update_order_item(request, order_id):
         try:
         # Update order totals
             order.update_totals()
+            order.calculate_balance()
 
         # Prepare the updated data to return as a JSON response
             return JsonResponse({
@@ -213,17 +239,14 @@ def update_order_item_quantity(request):
         action = request.POST.get('action')
         try:
             order_item = OrderItem.objects.get(id=item_id)
-            if action == 'increase':
-                order_item.quantity += 1
-            elif action == 'decrease' and order_item.quantity > 1:
-                order_item.quantity -= 1
-            order_item.save()
+            order = order_item.order
+            order_item.delete()
 
             # Update order totals
             order_item.order.update_totals()
 
             # Render the order items table
-            order_items_html = render_to_string('ajaxtemplates/order_items_table.html', {'order': order_item.order})
+            order_items_html = render_to_string('ajaxtemplates/order_items_table.html', {'order': order})
             return JsonResponse({"success": True, "html": order_items_html})
         except OrderItem.DoesNotExist:
             return JsonResponse({"success": False, "error": "Order item not found"})
@@ -234,11 +257,12 @@ def update_order_item_quantity(request):
 def update_order_payment(request, order_id):
     if request.method == 'POST':
         payed_amount = float(request.POST.get('payed_amount'))
+        discount = float(request.POST.get('discount'))
         
         try:
-            order = Order.objects.get(id=order_id)
-            
+            order = Order.objects.get(id=order_id)    
             order.payed_amount = payed_amount
+            order.discount = discount
             order.balance_amount = order.total_amount - payed_amount
                         
             if payed_amount == 0:
@@ -289,8 +313,19 @@ def save_order(request, order_id):
     except ValueError as e:
         messages.info(request,"Not Enough stock...")
         return redirect("POS",pk = order_id)
+    
+from io import BytesIO
 
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
 
+from num2words import num2words
 
 @login_required(login_url='SignIn')
 def invoice(request,pk):
@@ -306,11 +341,21 @@ def invoice(request,pk):
             order.adjust_stock()  # Deduct the stock
             order.save_status = True
             order.save()
+
+        # order = Order.objects.get(pk=pk)
+        # context = {
+        #     'order': order
+        # }
+        # pdf = render_to_pdf('invoice_template.html', context)
+        # if pdf:
+        #     return HttpResponse(pdf, content_type='application/pdf')
+        # return HttpResponse("Error generating PDF")
         context = {
         "order": order,
         "order_items": order_items,
+        "total_in_words": num2words(order.total_amount).title()
         }
-        return render(request,"invoice.html",context)
+        return render(request,'invoice_template.html',context)
 
       # Get all OrderItems for the specific order
     except ValueError as e:
@@ -320,23 +365,24 @@ def invoice(request,pk):
     
 
 
-@csrf_exempt
-def update_order_payment(request, order_id):
-    if request.method == 'POST':
-        order = Order.objects.get(id=order_id)
-        payed_amount = float(request.POST.get('payed_amount', 0))
-        discount = float(request.POST.get('discount', 0))
+# @csrf_exempt
+# def update_order_payment(request, order_id):
+#     if request.method == 'POST':
+#         order = Order.objects.get(id=order_id)
+#         payed_amount = float(request.POST.get('payed_amount', 0))
+#         discount = float(request.POST.get('discount', 0))
 
-        # Update the order
-        order.payed_amount = payed_amount
-        order.discount = discount
-        order.calculate_balance()
+#         # Update the order
+#         order.payed_amount = payed_amount
+#         order.discount = discount
+#         order.total_amount -= order.discount
+#         order.calculate_balance()
         
-         # Render the order items table
-        order_items_html = render_to_string('ajaxtemplates/order_items_table.html', {'order': order})
-        return JsonResponse({"success": True, "html": order_items_html})
+#          # Render the order items table
+#         order_items_html = render_to_string('ajaxtemplates/order_items_table.html', {'order': order})
+#         return JsonResponse({"success": True, "html": order_items_html})
         
-    return JsonResponse({"success": False, "error": "Invalid request"})
+#     return JsonResponse({"success": False, "error": "Invalid request"})
 
 
 def AddDiscount(request):
