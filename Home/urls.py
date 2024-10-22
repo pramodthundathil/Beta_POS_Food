@@ -8,6 +8,7 @@ urlpatterns = [
     path("Index",views.Index,name="Index"),
     path('',views.SignIn,name="SignIn"),
     path('SignOut', views.SignOut, name='SignOut'),
+    path('profile', views.profile, name='profile'),
     path("get_monthly_data/",views.get_monthly_data,name="get_monthly_data"),
     path("get_monthly_revenue_expense/",views.get_monthly_revenue_expense,name="get_monthly_revenue_expense"),
     path("add-staff/",views.add_staff,name="add_staff"),

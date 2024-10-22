@@ -94,7 +94,7 @@ class InventoryStock(models.Model):
 
 class Product(models.Model):
     product_code = models.CharField(max_length=20, null=True)
-    category = models.ForeignKey(ProductCategory, on_delete=models.DO_NOTHING)
+    category = models.ForeignKey(ProductCategory, on_delete=models.SET_NULL, null =True, blank=True)
     name = models.CharField(max_length=255)
     inventory = models.ForeignKey(InventoryStock, on_delete=models.SET_NULL, null=True, blank=True)
     # image = models.FileField(upload_to='foodimage', null=True, blank=True)

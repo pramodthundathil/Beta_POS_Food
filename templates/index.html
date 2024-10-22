@@ -481,7 +481,7 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="{%url 'AddTax' %}">
+                                    <a href="{%url 'profile' %}">
                                         <i class="las la-minus"></i><span>Profile</span>
                                     </a>
                                 </li>
@@ -548,7 +548,7 @@
                                     </div>
                                 </li>
                                 <li class="nav-item nav-icon dropdown">
-                                    <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton2"
+                                    <!-- <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton2"
                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -559,7 +559,7 @@
                                             <polyline points="22,6 12,13 2,6"></polyline>
                                         </svg>
                                         <span class="bg-primary"></span>
-                                    </a>
+                                    </a> -->
                                     <div class="iq-sub-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton2">
                                         <div class="card shadow-none m-0">
                                             <div class="card-body p-0 ">
@@ -728,7 +728,7 @@
                                                     <h5 class="mb-1">{{request.user}}</h5>
                                                     <p class="mb-0">Since {{request.user.added_date}}</p>
                                                     <div class="d-flex align-items-center justify-content-center mt-3">
-                                                        <a href="" class="btn border mr-2">Profile</a>
+                                                        <a href="{%url 'profile' %}" class="btn border mr-2">Profile</a>
                                                         <a href="{%url 'SignOut' %}" class="btn border">Sign Out</a>
                                                     </div>
                                                 </div>

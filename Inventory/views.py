@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.contrib import messages
-from .forms import ProductForm, InventoryStockForm, PurchaseOrderForm, PurchaseForm
+from .forms import ProductForm, InventoryStockForm, PurchaseOrderForm, PurchaseForm, VendorForm, CustomerForm
 from django.http import HttpResponse
 from POS.models import *
 from django.contrib.auth.decorators import login_required
@@ -90,6 +90,26 @@ def list_vendor(request):
     return render(request,'list-vendors.html',context)
 
 
+@login_required(login_url='SignIn')
+def update_vendor(request, pk):
+    vendor = get_object_or_404(Vendor, pk=pk)
+    if request.method == 'POST':
+        form = VendorForm(request.POST, instance=vendor)
+        if form.is_valid():
+            form.save()
+            return redirect('list_vendor')  # Redirect to a list or relevant page
+    else:
+        form = VendorForm(instance=vendor)
+    return render(request, 'vendor_update.html', {'form': form})
+
+
+@login_required(login_url='SignIn')
+def delete_vendor(request,pk):
+    vendor = Vendor.objects.get(id = pk)
+    vendor.delete()
+    messages.info(request,"vendor deleted....")
+    return redirect("list_vendor")
+
 
 ############################ Inventory Management #################################
 
@@ -123,7 +143,7 @@ def edit_inventory(request,pk):
         if form.is_valid():
             form.save()
             messages.success(request, 'Inventory Updated successfully')
-            return redirect('list_purchase_order')  # Adjust this based on your URLs
+            return redirect('list_inventory')  # Adjust this based on your URLs
         else:
             messages.error(request, 'Failed to add Purchase Order. Please check the details.')
     
@@ -144,6 +164,13 @@ def list_inventory(request):
         "product":product
     }
     return render(request,'inventory/list-inventory.html',context)
+
+@login_required(login_url='SignIn')
+def delete_inventory(request,pk):
+    inventory = get_object_or_404(InventoryStock,id = pk)
+    inventory.delete()
+    messages.success(request,"Inventory Deleted successfully....")
+    return redirect(list_inventory)
 
 
 @login_required(login_url='SignIn')
@@ -330,6 +357,13 @@ def list_category(request):
     }
     return render(request,"list-category.html",context)
 
+@login_required(login_url='SignIn')
+def delete_category(request,pk):
+    cat =get_object_or_404(ProductCategory,id = pk)
+    cat.delete()
+    messages.success(request,"Category Deleted...")
+    return redirect("list_category")
+
 
 
 @login_required(login_url='SignIn')
@@ -473,6 +507,8 @@ def ListTax(request):
     return render(request,"list-tax.html",context)
 
 
+
+
 @login_required(login_url='SignIn')
 def add_customer(request,pk):
     if request.method == "POST":
@@ -522,6 +558,46 @@ def list_customer(request):
         "customer":customer
     }
     return render(request,"list-customers.html",context)
+
+
+
+@login_required(login_url='SignIn')
+def add_customers(request):
+    if request.method == 'POST':
+        form = CustomerForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Customer Added.....")
+            return redirect('list_customer')  # Redirect to the customer list or relevant page
+    else:
+        form = CustomerForm()
+    return render(request, 'add-customers.html', {'form': form})
+
+# Update customer
+@login_required(login_url='SignIn')
+def update_customer(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    if request.method == 'POST':
+        form = CustomerForm(request.POST, instance=customer)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"Customer Updated.....")
+
+            return redirect('list_customer')  # Redirect to the customer list or relevant page
+    else:
+        form = CustomerForm(instance=customer)
+    return render(request, 'update_customer.html', {'form': form})
+
+# Delete customer
+@login_required(login_url='SignIn')
+def delete_customer(request, pk):
+    customer = get_object_or_404(Customer, pk=pk)
+    
+    customer.delete()
+    messages.success(request,"Customer deleted.....")
+
+    return redirect('list_customer')  # Redirect to the customer list after deletion
+    
 
 
 # Purchases.................................................

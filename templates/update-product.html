@@ -85,7 +85,7 @@
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" style="display: none;">
                                         <div class="form-group">
                                             <label>Tax Method *</label>
                                             <select name="tax" class="selectpicker form-control" data-style="py-0">
@@ -95,10 +95,10 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="col-md-12">
+                                    <div class="col-md-12" style="display: none;">
                                         <div class="form-group">
                                             <label>Tax Value <small>(in Percentage %)</small> *</label>
-                                            <select name="tax_value" class="selectpicker form-control" required data-style="py-0">
+                                            <select name="tax_value" class="selectpicker form-control"  data-style="py-0">
                                                 <option selected disabled>--------------------------------------</option>
                                                 {% for t in tax %}
                                                 <option value="{{ t.id }}" {% if product.tax_value and product.tax_value.id == t.id %} selected {% endif %}>
@@ -144,7 +144,7 @@
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-body">
-                                                Are You Sure You Want to Disable?
+                                                Are You Sure You Want to Change Status of Product ?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"

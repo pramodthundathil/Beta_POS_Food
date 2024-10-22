@@ -68,7 +68,7 @@
 
                                 <td>{{m.product_stock}} {{m.unit}}</td>
                                 <th>
-                                    {% if m.stock_alert == True %}
+                                    {% if m.product_stock <= m.min_stock_level %}
                                     <span class="badge bg-danger">Stock Low</span>
                                     {% else %}
                                     <span class="badge bg-success">Available</span>
@@ -91,12 +91,12 @@
                                                 <div class="modal-content">
 
                                                     <div class="modal-body">
-                                                        Are You Sure Do you Want to Disable ?
+                                                        Are You Sure Do you Want to Delete ?
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary"
                                                             data-dismiss="modal">No</button>
-                                                        <a href="" class="btn btn-danger">Yes</a>
+                                                        <a href="{%url 'delete_inventory' m.id %}" class="btn btn-danger">Yes</a>
                                                     </div>
                                                 </div>
                                             </div>

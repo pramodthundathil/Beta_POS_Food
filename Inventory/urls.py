@@ -23,16 +23,20 @@ urlpatterns = [
 
     path("add_vendor",views.add_vendor,name="add_vendor"),
     path("list_vendor",views.list_vendor,name="list_vendor"),
+    path("update_vendor/<int:pk>",views.update_vendor,name="update_vendor"),
+    path("delete_vendor/<int:pk>",views.delete_vendor,name="delete_vendor"),
 
     # inventory management ....................................
 
     path("add_inventory",views.add_inventory,name="add_inventory"),
     path("edit_inventory/<int:pk>",views.edit_inventory,name="edit_inventory"),
+    path("delete_inventory/<int:pk>",views.delete_inventory,name="delete_inventory"),
     path("list_inventory",views.list_inventory,name="list_inventory"),
     path("add_purchase_order",views.add_purchase_order,name="add_purchase_order"),
     path("list_purchase_order",views.list_purchase_order,name="list_purchase_order"),
     path("purchase_order_invoice",views.purchase_order_invoice,name="purchase_order_invoice"),
     path("edit_purchase_order/<int:pk>",views.edit_purchase_order,name="edit_purchase_order"),
+    path("delete_category/<int:pk>",views.delete_category,name="delete_category"),
     # ###### purchases....................
 
     path("purchase",views.purchase,name="purchase"),
@@ -57,8 +61,9 @@ urlpatterns = [
 
     path("add_customer/<int:pk>",views.add_customer,name="add_customer"),
     path("list_customer",views.list_customer,name="list_customer"),
-
-    
+    path("add_customers",views.add_customers,name="add_customers"),
+    path("delete_customer/<int:pk>",views.delete_customer,name="delete_customer"),
+    path("update_customer/<int:pk>",views.update_customer,name="update_customer"),
 
     #api datas
 

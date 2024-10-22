@@ -264,6 +264,34 @@ def update_order_payment(request, order_id):
             order.payed_amount = payed_amount
             order.discount = discount
             order.balance_amount = order.total_amount - payed_amount
+
+            if Income.objects.filter(bill_number = order.invoice_number).exists():
+                expense = Income.objects.filter(bill_number = order.invoice_number)
+                total = 0
+                
+                for ex in expense:
+                    total = total + ex.amount
+                
+                amount = payed_amount - total
+                if amount > 0:
+                    expense = Income(
+                        perticulers = f"Amount Against order {order.invoice_number}",
+                        amount =  amount,
+                        bill_number = order.invoice_number
+                    
+                    )
+             
+                    expense.save() 
+            else:
+                expense = Income(
+                        perticulers = f"Amount Against order {order.invoice_number}",
+                        amount =  payed_amount,
+                        bill_number = order.invoice_number
+                    
+                    )
+             
+                expense.save() 
+
                         
             if payed_amount == 0:
                 order.payment_status1 = 'UNPAID'

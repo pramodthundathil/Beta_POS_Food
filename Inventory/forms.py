@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product, Purchase
+from .models import Product, Purchase, Vendor, Customer
 from .models import InventoryStock, PurchaseOrder
 
 
@@ -192,4 +192,44 @@ class ProductForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'id': 'description', 'rows': 3}),
             'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
         }
+
+
+
+
+class VendorForm(forms.ModelForm):
+    class Meta:
+        model = Vendor
+        fields = ['name', 'email', 'phone_number', 'city', 'state', 'country', 'pincode', 'contact_info', 'supply_product']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_name'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'vendor_email'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_phone_number'}),
+            # 'gst_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_gst_number'}),
+            'city': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_city'}),
+            'state': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_state'}),
+            'country': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_country'}),
+            'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_pincode'}),
+            'contact_info': forms.Textarea(attrs={'class': 'form-control', 'id': 'vendor_contact_info', 'rows': 3}),
+            'supply_product': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_supply_product'}),
+            # 'status': forms.CheckboxInput(attrs={'class': 'form-check-input', 'id': 'vendor_status'}),
+        }
+
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['name', 'phone', 'email', 'city', 'state', 'country', 'pincode', 'contact_info']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_name'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_phone'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'customer_email'}),
+            # 'gst_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_gst_number'}),
+            'city': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_city'}),
+            'state': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_state'}),
+            'country': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_country'}),
+            'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_pincode'}),
+            'contact_info': forms.Textarea(attrs={'class': 'form-control', 'id': 'customer_contact_info', 'rows': 3}),
+            # 'status': forms.CheckboxInput(attrs={'class': 'form-check-input', 'id': 'customer_status'}),
+        }
+
 

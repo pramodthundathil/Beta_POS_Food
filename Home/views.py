@@ -140,6 +140,42 @@ def SignOut(request):
     logout(request)
     return redirect('SignIn')
 
+
+@login_required(login_url='SignIn')
+def profile(request):
+    if request.method == "POST":
+        opass = request.POST.get("opswd")
+        pswd = request.POST.get("pswd")
+        cpswd = request.POST.get("cpswd")
+
+        # Get current user
+        user = request.user
+
+        # Check if old password is correct
+        if user.check_password(opass):
+            # Check if new password and confirm password match
+            if pswd == cpswd:
+                # Set the new password
+                user.set_password(pswd)
+                user.save()
+                
+                # Re-authenticate and log the user back in
+                user = authenticate(username=user.username, password=pswd)
+                if user is not None:
+                    login(request, user)
+                    messages.success(request, "Password changed successfully.")
+                    return redirect("profile")
+            else:
+                messages.error(request, "Passwords do not match.")
+                return redirect("profile")
+
+        else:
+            messages.error(request, "Old password is incorrect.")
+            return redirect("profile")
+
+
+    return render(request, "profile.html")
+
 # In views.py
 from django.shortcuts import render
 

@@ -8,6 +8,10 @@ urlpatterns = [
     path("balance_sheet_selected",views.balance_sheet_selected, name= "balance_sheet_selected"),
     path('add_income/', views.add_income, name='add_income'),
     path('add_expense/', views.add_expense, name='add_expense'),
+    path('delete_income/<int:pk>', views.delete_income, name='delete_income'),
+    path('delete_expense/<int:pk>', views.delete_expense, name='delete_expense'),
+    path('update_income/<int:pk>', views.update_income, name='update_income'),
+    path('update_expense/<int:pk>', views.update_expense, name='update_expense'),
 
 
     # reports
@@ -18,6 +22,14 @@ urlpatterns = [
     path('income_report_pdf/', views.income_report_pdf, name='income_report_pdf'),
     path('sale_report_excel/', views.sale_report_excel, name='sale_report_excel'),
     path('sale_report_pdf/', views.sale_report_pdf, name='sale_report_pdf'),
+    path('sale_report_excel_sales_man/', views.sale_report_excel_sales_man, name='sale_report_excel_sales_man'),
+    path('export_purchase_report_excel/', views.export_purchase_report_excel, name='export_purchase_report_excel'),
+    path('export_purchase_report_pdf/', views.export_purchase_report_pdf, name='export_purchase_report_pdf'),
+    
+
+    #DB download.......................
+
+    path("download_db",views.download_db,name="download_db"),
     
     
 ]
