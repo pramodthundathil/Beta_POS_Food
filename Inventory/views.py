@@ -772,6 +772,69 @@ def delete_bulk_staff_salary(request):
             messages.warning(request, 'No items were selected for deletion.')
     return redirect("list_salary")
 
+import xlrd
+from openpyxl import load_workbook
+
+@login_required(login_url="login")
+def import_data_from_excel_inventory(request):
+    if request.method == 'POST' and request.FILES['excel_file']:
+        excel_file = request.FILES['excel_file']
+        if str(excel_file).split(".")[-1].lower() == 'xls':
+            workbook = xlrd.open_workbook(file_contents=excel_file.read())
+            worksheet = workbook.sheet_by_index(0)
+        else:
+            workbook = load_workbook(excel_file)
+            worksheet = workbook.active
+
+        for row in worksheet.iter_rows(min_row=2, values_only=True):
+
+            if row[0] == None or row[1] == None:
+                continue
+            else:
+
+                print(str(row[0]),str(row[1]),str(row[3]),str(row[3]))
+                
+
+                try:
+                   
+                    product_name = str(row[0])
+                except:
+                    continue
+                try:
+                    pro_stock = float(row[1])
+                except:
+                    continue
+                try:
+                    unit = str(row[2])
+                except:
+                    unit = "kg" 
+                try:
+                    min_stock=float(row[3])
+                except:
+                    min_stock = 0
+      
+
+                if InventoryStock.objects.filter(product_name=product_name,unit = unit ).exists():
+                    try:
+
+                        stock = InventoryStock.objects.filter(product_name=product_name,unit = unit )[0]
+                        stock.product_stock += pro_stock
+                        stock.save()
+                    except:
+                        continue
+
+
+                else:
+                    InventoryStock.objects.create(
+                        product_name = product_name,
+                        unit = unit,
+                        product_stock = pro_stock,
+                        min_stock_level = min_stock
+                    )
+        messages.info(request,"excel File Updated....")
+                
+    return redirect("list_inventory")
+
 
 
 

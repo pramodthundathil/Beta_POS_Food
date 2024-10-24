@@ -142,7 +142,7 @@ def get_current_month_orders():
     current_month_start = today.replace(day=1)
     current_month_end = (today.replace(day=28) + datetime.timedelta(days=4)).replace(day=1) - datetime.timedelta(days=1)
 
-    # Filter orders for the current month and count them
+    # Filter orders for the current month and count them gunicorn Beta_POS.wsgi:application
     total_orders = Order.objects.filter(
         order_date__gte=current_month_start,
         order_date__lte=current_month_end

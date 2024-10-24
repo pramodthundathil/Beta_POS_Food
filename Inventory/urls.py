@@ -44,6 +44,10 @@ urlpatterns = [
     path("purchase_from_order/<int:order_id>",views.purchase_from_order,name="purchase_from_order"),
     path("edit_purchase/<int:pk>",views.edit_purchase,name="edit_purchase"),
     path("deletepurchase/<int:pk>",views.deletepurchase,name="deletepurchase"),
+
+    #data import
+
+    path("import_data_from_excel_inventory",views.import_data_from_excel_inventory,name="import_data_from_excel_inventory"),
     
     #product management........................................
 
