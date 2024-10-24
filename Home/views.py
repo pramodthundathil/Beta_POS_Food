@@ -13,7 +13,106 @@ from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
 from .models import Staff, StaffSalary
 from .forms import StaffForm, StaffSalaryForm
+import calendar
+from datetime import timedelta
 
+
+
+def monthly_income_view():
+    today = datetime.datetime.today()
+    
+    # Get the first and last day of the current month
+    first_day_of_month = today.replace(day=1)
+    next_month = first_day_of_month.replace(month=today.month % 12 + 1, day=1) if today.month != 12 else first_day_of_month.replace(year=today.year + 1, month=1)
+    last_day_of_month = next_month - timedelta(days=1)
+
+    # Get all income and expense entries for the current month
+    income_entries = Income.objects.filter(date__range=[first_day_of_month, last_day_of_month])
+    expense_entries = Expence.objects.filter(date__range=[first_day_of_month, last_day_of_month])
+
+    # Calculate weekly income
+    weekly_income = []
+    weekly_expense = []
+    current_start = first_day_of_month
+    while current_start <= last_day_of_month:
+        current_end = min(current_start + timedelta(days=6), last_day_of_month)
+
+        # Income for the week
+        weekly_total_income = income_entries.filter(date__range=[current_start, current_end]).aggregate(Sum('amount'))['amount__sum'] or 0
+        weekly_income.append(weekly_total_income)
+
+        # Expense for the week
+        weekly_total_expense = expense_entries.filter(date__range=[current_start, current_end]).aggregate(Sum('amount'))['amount__sum'] or 0
+        weekly_expense.append(weekly_total_expense)
+
+        current_start = current_end + timedelta(days=1)
+
+    # Pass the weekly income and expense data to the template
+    
+    
+    
+
+    return weekly_income, weekly_expense
+
+
+def dashboard_view():
+    from django.utils.timezone import now, timedelta
+    from django.db.models.functions import ExtractMonth
+    from django.db.models import Count
+    from POS.models import Order
+    from Inventory.models import InventoryStock, Product, Purchase
+    # Get current date and one year ago date
+    current_date = now()
+    one_year_ago = current_date - timedelta(days=365)
+
+    # Group Orders, Products, Purchases, Inventory by month
+    orders_by_month = Order.objects.filter(order_date__gte=one_year_ago) \
+        .annotate(month=ExtractMonth('order_date')) \
+        .values('month') \
+        .annotate(total=Count('id')) \
+        .order_by('month')
+
+    purchases_by_month = Purchase.objects.filter(bill_date__gte=one_year_ago) \
+        .annotate(month=ExtractMonth('bill_date')) \
+        .values('month') \
+        .annotate(total=Count('id')) \
+        .order_by('month')
+
+    products_by_month = Product.objects.filter(create_date__gte=one_year_ago) \
+        .annotate(month=ExtractMonth('create_date')) \
+        .values('month') \
+        .annotate(total=Count('id')) \
+        .order_by('month')
+
+    inventory_by_month = InventoryStock.objects.filter(date_added__gte=one_year_ago) \
+        .annotate(month=ExtractMonth('date_added')) \
+        .values('month') \
+        .annotate(total=Count('id')) \
+        .order_by('month')
+
+    # Data for each month (Jan - Dec, or 1 - 12)
+    months = range(1, 13)
+    orders_data = {item['month']: item['total'] for item in orders_by_month}
+    purchases_data = {item['month']: item['total'] for item in purchases_by_month}
+    products_data = {item['month']: item['total'] for item in products_by_month}
+    inventory_data = {item['month']: item['total'] for item in inventory_by_month}
+
+    # Ensure zero values for missing months
+    orders_list = [orders_data.get(month, 0) for month in months]
+    purchases_list = [purchases_data.get(month, 0) for month in months]
+    products_list = [products_data.get(month, 0) for month in months]
+    inventory_list = [inventory_data.get(month, 0) for month in months]
+
+    # Pass data to the template
+    
+    orders = orders_list,
+    purchases = purchases_list,
+    products = products_list,
+    inventory = inventory_list,
+  
+    return orders, purchases, products, inventory
+    
+    
 
 
 def get_current_month_income_and_expense():
@@ -105,13 +204,21 @@ def Index(request):
     total_income, total_expense = get_current_month_income_and_expense()
     total_orders = get_current_month_orders()
     top_products = get_top_selling_products()
-
+    weekly_income,weekly_expense = monthly_income_view()
+    orders, purchases, products, inventory = dashboard_view()
     context = {
         "total_income":total_income,
         "total_expense":total_expense,
         "total_orders":total_orders,
         "top_products":top_products,
-        "month":month
+        "weekly_income":weekly_income,
+        "weekly_expense":weekly_expense,
+        "month":month,
+        "orders":orders,
+        "purchases":purchases,
+        "products":products,
+        "inventory":inventory
+
     }
     return render(request,"index.html",context)
 

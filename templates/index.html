@@ -859,9 +859,9 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-right shadow-none"
                                             aria-labelledby="dropdownMenuButton001">
-                                            <a class="dropdown-item" href="#">Year</a>
+                                            
                                             <a class="dropdown-item" href="#">Month</a>
-                                            <a class="dropdown-item" href="#">Week</a>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -888,9 +888,9 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-right shadow-none"
                                             aria-labelledby="dropdownMenuButton002">
-                                            <a class="dropdown-item" href="#">Yearly</a>
+                                            
                                             <a class="dropdown-item" href="#">Monthly</a>
-                                            <a class="dropdown-item" href="#">Weekly</a>
+                                           
                                         </div>
                                     </div>
                                 </div>
@@ -919,9 +919,9 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-right shadow-none"
                                             aria-labelledby="dropdownMenuButton006">
-                                            <a class="dropdown-item" href="#">Year</a>
+                                           
                                             <a class="dropdown-item" href="#">Month</a>
-                                            <a class="dropdown-item" href="#">Week</a>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -985,24 +985,26 @@
                                 <div class="d-flex align-items-top justify-content-between">
                                     <div class="">
                                         <p class="mb-0">Income</p>
-                                        <h5>$ 98,7800 K</h5>
+                                        <h5>QAR {{total_income}}</h5>
                                     </div>
                                     <div class="card-header-toolbar d-flex align-items-center">
                                         <div class="dropdown">
                                             <span class="dropdown-toggle dropdown-bg btn" id="dropdownMenuButton003"
                                                 data-toggle="dropdown">
-                                                This Month<i class="ri-arrow-down-s-line ml-1"></i>
+                                                {{month}}<i class="ri-arrow-down-s-line ml-1"></i>
                                             </span>
                                             <div class="dropdown-menu dropdown-menu-right shadow-none"
                                                 aria-labelledby="dropdownMenuButton003">
-                                                <a class="dropdown-item" href="#">Year</a>
-                                                <a class="dropdown-item" href="#">Month</a>
-                                                <a class="dropdown-item" href="#">Week</a>
+                                                
+                                                <a class="dropdown-item" href="#">{{month}}</a>
+                                                
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="layout1-chart-3" class="layout-chart-1"></div>
+                                <div id="layout1-chart-10" class="layout-chart-1">
+                                    <canvas id="incomeChart"></canvas>
+                                </div>
                             </div>
                         </div>
                         <div class="card card-block card-stretch card-height-helf">
@@ -1010,24 +1012,26 @@
                                 <div class="d-flex align-items-top justify-content-between">
                                     <div class="">
                                         <p class="mb-0">Expenses</p>
-                                        <h5>$ 45,8956 K</h5>
+                                        <h5>QAR {{total_expense}}</h5>
                                     </div>
                                     <div class="card-header-toolbar d-flex align-items-center">
                                         <div class="dropdown">
                                             <span class="dropdown-toggle dropdown-bg btn" id="dropdownMenuButton004"
                                                 data-toggle="dropdown">
-                                                This Month<i class="ri-arrow-down-s-line ml-1"></i>
+                                                {{month}}<i class="ri-arrow-down-s-line ml-1"></i>
                                             </span>
                                             <div class="dropdown-menu dropdown-menu-right shadow-none"
                                                 aria-labelledby="dropdownMenuButton004">
-                                                <a class="dropdown-item" href="#">Year</a>
-                                                <a class="dropdown-item" href="#">Month</a>
-                                                <a class="dropdown-item" href="#">Week</a>
+                                               
+                                                <a class="dropdown-item" href="#">{{month}}</a>
+                                               
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="layout1-chart-4" class="layout-chart-2"></div>
+                                <div id="layout1-chart-40" class="layout-chart-2">
+                                    <canvas id="expenseChart"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1045,9 +1049,9 @@
                                         </span>
                                         <div class="dropdown-menu dropdown-menu-right shadow-none"
                                             aria-labelledby="dropdownMenuButton005">
-                                            <a class="dropdown-item" href="#">Year</a>
+                                           
                                             <a class="dropdown-item" href="#">Month</a>
-                                            <a class="dropdown-item" href="#">Week</a>
+                                           
                                         </div>
                                     </div>
                                 </div>
@@ -1089,7 +1093,9 @@
                                 </div>
                             </div>
                             <div class="card-body pt-0">
-                                <div id="layout1-chart-5"></div>
+                                <div class="card-body pt-0">
+                                    <canvas id="layout1-chart-100" width="400" height="200"></canvas>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1249,6 +1255,124 @@
                     });
                 });
         });
+
+        // income line chart 
+
+       
+    var ctx = document.getElementById('incomeChart').getContext('2d');
+    var incomeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'], // Adjust automatically based on the month
+            datasets: [{
+                label: 'Income',
+                data: {{ weekly_income|safe }},  // Pass the weekly income data from the view
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                borderWidth: 2,
+                tension: 0.4,  // To get the smooth curve effect
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+
+    // Expense Chart
+    var ctx2 = document.getElementById('expenseChart').getContext('2d');
+    var expenseChart = new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],  // Adjust automatically based on the month
+            datasets: [{
+                label: 'Expense',
+                data: {{ weekly_expense|safe }},  // Pass the weekly expense data from the view
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        var ctx = document.getElementById('layout1-chart-100').getContext('2d');
+
+        // Data from Django (replace with your data)
+        var dataFromDjango = {{ data|safe }};
+
+        // Months Labels (1 to 12)
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                      'July', 'August', 'September', 'October', 'November', 'December'];
+
+        // Data for Chart.js
+        var data = {
+            labels: months,
+            datasets: [
+                {
+                    label: 'Orders',
+                    data: dataFromDjango.orders,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Purchases',
+                    data: dataFromDjango.purchases,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Products',
+                    data: dataFromDjango.products,
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Inventory Stocks',
+                    data: dataFromDjango.inventory,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                }
+            ]
+        };
+
+        // Create the chart
+        var myChart = new Chart(ctx, {
+            type: 'line', // For a line chart
+            data: data,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
     </script>
 </body>
 
