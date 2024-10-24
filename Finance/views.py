@@ -272,7 +272,7 @@ def income_report_excel(request):
         # Convert expenses to a Pandas DataFrame
         data = {
             'Date': [exp.date for exp in expenses],
-            'Perticulers': [exp.perticulers for exp in expenses],
+            'Particulars': [exp.perticulers for exp in expenses],
             'Amount': [exp.amount for exp in expenses],
             'Other': [exp.other for exp in expenses],
         }
@@ -344,7 +344,7 @@ def sale_report_excel(request):
             # Concatenate the product names from OrderItem for each order
             'Products': [', '.join([item.product.name for item in order.orderitem_set.all()]) for order in orders],
             'Amount': [order.total_amount for order in orders],
-            'Payed Amount': [order.payed_amount for order in orders],
+            'Paid Amount': [order.payed_amount for order in orders],
             'Balance Amount': [order.balance_amount for order in orders],
             'Payment Status': [order.payment_status1 for order in orders],
         }
@@ -483,9 +483,9 @@ from django.http import HttpResponse
 
 def export_purchase_report_pdf(request):
     if request.method == 'POST':
-        start_date = request.POST['sdate']
-        end_date = request.POST['edate']
-    
+        start_date = request.POST.get('sdate')
+        end_date = request.POST.get('edate')
+
         purchases = Purchase.objects.filter(bill_date__range=[start_date, end_date])
 
         # Create the response object
@@ -505,24 +505,34 @@ def export_purchase_report_pdf(request):
         p.setFont("Helvetica-Bold", 10)
         p.drawString(50, y, "Bill Number")
         p.drawString(150, y, "Supplier")
-        p.drawString(150, y, "Product")
-
-        p.drawString(250, y, "Bill Date")
-        p.drawString(350, y, "Amount")
-        p.drawString(450, y, "Paid")
-        p.drawString(500, y, "Balance")
+        p.drawString(250, y, "Product")
+        p.drawString(350, y, "Bill Date")
+        p.drawString(450, y, "Amount")
+        p.drawString(500, y, "Paid")
+        p.drawString(550, y, "Balance")
 
         # Draw data rows
         p.setFont("Helvetica", 10)
         for purchase in purchases:
             y -= 20
-            p.drawString(50, y, purchase.purchase_bill_number)
-            p.drawString(150, y, purchase.supplier.name if purchase.supplier else '')
-            p.drawString(50, y, purchase.purchase_item)
-            p.drawString(250, y, purchase.bill_date.strftime('%Y-%m-%d'))
-            p.drawString(350, y, f"{purchase.amount}")
-            p.drawString(450, y, f"{purchase.paid_amount}")
-            p.drawString(500, y, f"{purchase.balance_amount}")
+
+            # Use str() to ensure no None values are passed, provide defaults for None fields
+            bill_number = purchase.purchase_bill_number if purchase.purchase_bill_number else "N/A"
+            supplier_name = purchase.supplier.name if purchase.supplier and purchase.supplier.name else "Unknown"
+            product_name = str(purchase.purchase_item) if purchase.purchase_item else "No Product"
+            bill_date = purchase.bill_date.strftime('%Y-%m-%d') if purchase.bill_date else "N/A"
+            amount = f"{purchase.amount}" if purchase.amount else "0.00"
+            paid_amount = f"{purchase.paid_amount}" if purchase.paid_amount else "0.00"
+            balance_amount = f"{purchase.balance_amount}" if purchase.balance_amount else "0.00"
+
+            # Draw data
+            p.drawString(50, y, bill_number)
+            p.drawString(150, y, supplier_name)
+            p.drawString(250, y, product_name)
+            p.drawString(350, y, bill_date)
+            p.drawString(450, y, amount)
+            p.drawString(500, y, paid_amount)
+            p.drawString(550, y, balance_amount)
 
         # Finalize the PDF
         p.showPage()

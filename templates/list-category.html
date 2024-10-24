@@ -26,13 +26,18 @@
                 </div>
             </div>
             <div class="col-lg-12">
+                <form method="post" action="{% url 'delete_bulk_category' %}">
+                    {% csrf_token %}
+                    <div class="text-right mt-2 mb-2">
+                        <button onclick="return confirm('Are You Sure Do You Want To Delete Selected Items?')" type="submit" class="btn btn-danger">Delete</button>
+                    </div>
                 <div class="table-responsive rounded mb-3">
                     <table class="data-tables table mb-0 tbl-server-info">
                         <thead class="bg-white text-uppercase">
                             <tr class="ligth ligth-data">
                                 <th>
                                     <div class="checkbox d-inline-block">
-                                        <input type="checkbox" class="checkbox-input" id="checkbox1">
+                                        <input  type="checkbox" id="select-all" aria-checked="false" class="checkbox-input">
                                         <label for="checkbox1" class="mb-0"></label>
                                     </div>
                                 </th>
@@ -49,7 +54,7 @@
                             <tr >
                                 <td class="m-status-false">
                                     <div class="checkbox d-inline-block">
-                                        <input type="checkbox" class="checkbox-input" id="checkbox2">
+                                        <input type="checkbox" value="{{m.id}}" name="contact_id[]" class="checkbox-input contact-checkbox">
                                         <label for="checkbox2" class="mb-0"></label>
                                     </div>
                                 </td>
@@ -106,6 +111,7 @@
                         </tbody>
                     </table>
                 </div>
+                </form>
             </div>
         </div>
         <!-- <div class="row justify-content-between mt-3">
@@ -139,4 +145,28 @@
     </div>
     
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectAllCheckbox = document.getElementById('select-all');
+        const contactCheckboxes = document.querySelectorAll('.contact-checkbox');
+  
+        selectAllCheckbox.addEventListener('change', function () {
+            const isChecked = this.checked;
+            contactCheckboxes.forEach(function (checkbox) {
+                checkbox.checked = isChecked;
+            });
+        });
+  
+        contactCheckboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                const allChecked = [...contactCheckboxes].every(function (checkbox) {
+                    return checkbox.checked;
+                });
+                selectAllCheckbox.checked = allChecked;
+            });
+        });
+    });
+    
+  </script>
 {% endblock %}

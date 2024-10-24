@@ -603,8 +603,174 @@ def delete_customer(request, pk):
 # Purchases.................................................
 
 
+#Bulk Delete
+
+def delete_bulk_inventory(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            InventoryStock.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_inventory")
 
 
+
+
+def delete_bulk_purchase(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Purchase.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("purchase")
+
+
+def delete_bulk_purchase_order(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            PurchaseOrder.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_purchase_order")
+
+
+def delete_bulk_products(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Product.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_products")
+
+
+def delete_bulk_invoice(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Order.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_sale")
+
+
+def delete_bulk_invoice_pending(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Order.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_sale_pending")
+
+
+def delete_bulk_invoice_partial(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Order.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_sale_partial")
+
+
+def delete_bulk_income(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Income.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("income")
+
+def delete_bulk_expense(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Expence.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("expence")
+
+
+def delete_bulk_category(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            ProductCategory.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_category")
+
+def delete_bulk_supplier(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Vendor.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_vendor")
+
+
+def delete_bulk_customers(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Customer.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_customer")
+
+
+def delete_bulk_staff(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Staff.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_staff")
+
+from Home.models import StaffSalary
+def delete_bulk_staff_salary(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            StaffSalary.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_salary")
 
 
 

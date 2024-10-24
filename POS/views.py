@@ -130,7 +130,7 @@ def update_order_salesman(request):
 
 
 @login_required(login_url='SignIn')
-def AddItemsToorder(reuest):
+def AddItemsToorder(request):
      return redirect('POS',pk=10)
 
 

@@ -65,7 +65,24 @@ urlpatterns = [
     path("delete_customer/<int:pk>",views.delete_customer,name="delete_customer"),
     path("update_customer/<int:pk>",views.update_customer,name="update_customer"),
 
+    #bulk delete
 
+    path("delete_bulk_inventory",views.delete_bulk_inventory,name="delete_bulk_inventory"),
+    path("delete_bulk_purchase",views.delete_bulk_purchase,name="delete_bulk_purchase"),
+    path("delete_bulk_purchase_order",views.delete_bulk_purchase_order,name="delete_bulk_purchase_order"),
+    path("delete_bulk_products",views.delete_bulk_products,name="delete_bulk_products"),
+    path("delete_bulk_invoice",views.delete_bulk_invoice,name="delete_bulk_invoice"),
+    path("delete_bulk_invoice_partial",views.delete_bulk_invoice_partial,name="delete_bulk_invoice_partial"),
+    path("delete_bulk_invoice_pending",views.delete_bulk_invoice_pending,name="delete_bulk_invoice_pending"),
+    path("delete_bulk_income",views.delete_bulk_income,name="delete_bulk_income"),
+    path("delete_bulk_expense",views.delete_bulk_expense,name="delete_bulk_expense"),
+    path("delete_bulk_category",views.delete_bulk_category,name="delete_bulk_category"),
+    path("delete_bulk_supplier",views.delete_bulk_supplier,name="delete_bulk_supplier"),
+    path("delete_bulk_customers",views.delete_bulk_customers,name="delete_bulk_customers"),
+    path("delete_bulk_staff",views.delete_bulk_staff,name="delete_bulk_staff"),
+    path("delete_bulk_staff_salary",views.delete_bulk_staff_salary,name="delete_bulk_staff_salary"),
+
+   
     #api datas
 
     path("product_list",api_views.product_list,name="product_list"),
