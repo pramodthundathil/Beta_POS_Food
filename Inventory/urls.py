@@ -55,6 +55,14 @@ urlpatterns = [
     path("list_category/",views.list_category,name="list_category"),
     path("list_products",views.list_products,name="list_products"),
     path("add_product",views.add_product,name="add_product"),
+    path("create_batch/<int:product_id>",views.create_batch,name="create_batch"),
+    path("update_batch/<int:pk>",views.update_batch,name="update_batch"),
+
+    #barcodes
+
+    path("product_barcode_image/<int:pk>",views.product_barcode_image,name="product_barcode_image"),
+    path("barcode_view/<int:pk>",views.barcode_view,name="barcode_view"),
+    
 
     path("disable_product/<int:pk>",views.disable_product,name="disable_product"),
     path("product_update/<int:product_id>",views.product_update,name="product_update"),

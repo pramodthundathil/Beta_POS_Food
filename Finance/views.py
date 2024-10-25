@@ -14,7 +14,7 @@ from Inventory.models import Purchase
 
 @login_required(login_url="SignIn")
 def income(request):
-    income = Income.objects.all()
+    income = Income.objects.all().order_by("-id")
 
     context = {
         "income":income
@@ -61,7 +61,7 @@ def delete_income(request,pk):
 
 @login_required(login_url="SignIn")
 def expence(request):
-    ex = Expence.objects.all()
+    ex = Expence.objects.all().order_by("-id")
     context = {
         "expence":ex
     }

@@ -1,5 +1,6 @@
 from django import forms
-from .models import Product, Purchase, Vendor, Customer, InventoryStock, PurchaseOrder
+from .models import Product, Purchase, Vendor, Customer, InventoryStock, PurchaseOrder, Batch
+from datetime import timezone
 
 
 class InventoryStockForm(forms.ModelForm):
@@ -120,3 +121,36 @@ class CustomerForm(forms.ModelForm):
             'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_pincode'}),
             'contact_info': forms.Textarea(attrs={'class': 'form-control', 'id': 'customer_contact_info', 'rows': 3}),
         }
+
+
+class BatchForm(forms.ModelForm):
+    class Meta:
+        model = Batch
+        fields = ['product', 'expiry_date', 'stock_quantity', 'manufactured_date']
+        widgets = {
+            'product': forms.Select(attrs={
+                'class': 'form-control',
+                'id': 'batch-product'
+            }),
+            
+            'expiry_date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'id': 'batch-expiry_date',
+                'placeholder': 'YYYY-MM-DD',
+                'type': 'date'
+            }),
+            'stock_quantity': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'id': 'batch-stock_quantity',
+                'min': 0,
+                'placeholder': 'Enter stock quantity'
+            }),
+            'manufactured_date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'id': 'batch-manufactured_date',
+                'placeholder': 'YYYY-MM-DD',
+                'type': 'date'
+            }),
+        }
+
+    

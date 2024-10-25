@@ -2,7 +2,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.contrib import messages
-from .forms import ProductForm, InventoryStockForm, PurchaseOrderForm, PurchaseForm, VendorForm, CustomerForm
+from .forms import ProductForm, InventoryStockForm, PurchaseOrderForm, PurchaseForm, VendorForm, CustomerForm, BatchForm
 from django.http import HttpResponse
 from POS.models import *
 from django.contrib.auth.decorators import login_required
@@ -15,7 +15,7 @@ from Finance.models import Income, Expence
 # units add updating funtions#####################################################
 
 def list_units(request):
-    units = Units.objects.all()
+    units = Units.objects.all().order_by("-id")
     return render(request,"list-units.html",{"units":units})
 # View for adding a unit
 
@@ -82,7 +82,7 @@ def add_vendor(request):
 
 @login_required(login_url='SignIn')
 def list_vendor(request):
-    vendor = Vendor.objects.all()
+    vendor = Vendor.objects.all().order_by("-id")
 
     context = {
         "vendor":vendor
@@ -159,7 +159,7 @@ def edit_inventory(request,pk):
 
 @login_required(login_url='SignIn')
 def list_inventory(request):
-    product = InventoryStock.objects.all()
+    product = InventoryStock.objects.all().order_by("-id")
     context = {
         "product":product
     }
@@ -194,7 +194,7 @@ def add_purchase_order(request):
 
 @login_required(login_url='SignIn')
 def list_purchase_order(request):
-    order = PurchaseOrder.objects.all()
+    order = PurchaseOrder.objects.all().order_by("-id")
     context = {
         "order":order
     }
@@ -242,7 +242,7 @@ def purchase_from_order(request, order_id):
 
 @login_required(login_url='SignIn')
 def purchase(request):
-    purchase = Purchase.objects.all()
+    purchase = Purchase.objects.all().order_by("-id")
     context = {
        "purchase":purchase 
     }
@@ -351,7 +351,7 @@ def add_category(request):
 
 @login_required(login_url='SignIn')
 def list_category(request):
-    category = ProductCategory.objects.all()
+    category = ProductCategory.objects.all().order_by("-id")
     context = {
         "category":category
     }
@@ -368,7 +368,7 @@ def delete_category(request,pk):
 
 @login_required(login_url='SignIn')
 def list_products(request):
-    product = Product.objects.all()
+    product = Product.objects.all().order_by("-id")
     context = {
         "product":product
     }
@@ -378,11 +378,28 @@ def list_products(request):
 @login_required(login_url='SignIn')
 def add_product(request):
     form = ProductForm()
+    
     if request.method == 'POST':
         form = ProductForm(request.POST)
+        ex_date = request.POST.get("ex_date")
+        man_date = request.POST.get("man_date")
         if form.is_valid():
             product = form.save()
             product.save()
+            try:
+                batch = Batch(
+                    product = product,
+                    expiry_date = ex_date,
+                    manufactured_date = man_date,
+                    stock_quantity = product.Number_of_stock
+                )
+                batch.save()
+            except:
+                batch = Batch(
+                    product = product,
+                    stock_quantity = product.Number_of_stock
+                )
+                batch.save()
             inventory = product.inventory  # Get the linked inventory
             try:
             # Fetch the number of units added from the form
@@ -408,7 +425,7 @@ def add_product(request):
             return redirect('list_products')  # Redirect to the product list or another page
     
     context = {
-        "form":form
+        "form":form,
 
     }
     return render(request,'add-product.html',context)
@@ -419,6 +436,8 @@ def product_update(request, product_id):
     food_category = ProductCategory.objects.all()
     tax = Tax.objects.all()
     form = ProductForm(instance=Product)
+    batch_form = BatchForm(initial={'product': product})
+    batch = Batch.objects.filter(product = product)
 
 
     if request.method == 'POST':
@@ -445,8 +464,39 @@ def product_update(request, product_id):
         'product': product,
         'food_category': food_category,
         'tax': tax,
+        "batch_form":batch_form,
+        "batch":batch
     }
     return render(request, 'update-product.html', context)
+
+
+def create_batch(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if request.method == 'POST':
+        form = BatchForm(request.POST)
+        if form.is_valid():
+            batch = form.save(commit=False)
+            batch.product = product  # Assign the product to the batch
+            batch.save()
+
+            product.Number_of_stock += batch.stock_quantity
+            product.save()
+            messages.success(request,"Batch Created.....")
+            return redirect('product_update', product_id=product.id)
+    else:
+        
+        return redirect('product_update', product_id=product.id)
+    
+
+def update_batch(request,pk):
+    batch = get_object_or_404(Batch, id = pk)
+    form = BatchForm(instance=batch)
+    context = {
+        "form":form,
+        "batch":batch
+    }
+    return render(request,"update-batch.html",context)
 
 
 
@@ -460,22 +510,37 @@ def incresse_product_stock(request, product_id):
         try:
             # Fetch the number of units added from the form
             units_to_add = float(request.POST['stock'])
+            try:
+                batch = get_object_or_404(Batch,id = int(request.POST['batch']))
+            except:
+                batch = None
 
             # Calculate the total increase in stock based on product's unit_quantity
             total_increase = units_to_add * product.unit_quantity  # For example, 100g * 10 = 1000g
             
             # Convert the total increase to kilograms if inventory is in kg
-            if inventory.unit == 'kg':
-                total_increase_kg = total_increase / 1000  # Convert grams to kilograms
-                inventory.reduce_stock(total_increase_kg)  # Reduce inventory stock by this amount
-            else:
-                # If the inventory unit is in grams, reduce directly
-                inventory.reduce_stock(total_increase)
+            try:
+                if inventory.unit == 'kg':
+                    total_increase_kg = total_increase / 1000  # Convert grams to kilograms
+                    inventory.reduce_stock(total_increase_kg)
+                    inventory.save() # Reduce inventory stock by this amount
+                else:
+                    # If the inventory unit is in grams, reduce directly
+                    inventory.reduce_stock(total_increase)
+                    inventory.save()
+
+            except:
+                messages.info(request,"No Inventory on this Product To Adjust")
             
             # Increase the product stock
             product.Number_of_stock += int(units_to_add)
+            try:
+                batch.stock_quantity += int(units_to_add)
+                batch.save()
+            except:
+                pass
+            
             product.save()
-            inventory.save()
             
             messages.success(request, f"Successfully increased stock for {product.name} by {units_to_add} units.")
         except (ValueError, KeyError):
@@ -918,6 +983,47 @@ def import_data_from_excel_product(request):
     return redirect("list_inventory")
 
 
+
+# barcode generation
+
+import barcode
+from barcode.writer import ImageWriter
+from django.core.files import File
+from io import BytesIO
+
+def generate_barcode(batch):
+    product  = batch.product
+    """Generate a barcode image for the product."""
+    if product.barcode_number:
+        ean = barcode.get('code128', product.barcode_number, writer=ImageWriter())
+        buffer = BytesIO()
+        ean.write(buffer)
+        return buffer
+    return None
+
+
+def product_barcode_image(request, pk):
+    batch = get_object_or_404(Batch,id = pk)
+    product = batch.product
+    barcode_buffer = generate_barcode(batch = batch)
+
+    if barcode_buffer:
+        response = HttpResponse(barcode_buffer.getvalue(), content_type='image/png')
+        response['Content-Disposition'] = f'inline; filename={product.barcode_number}.png'
+        return response
+    else:
+        return HttpResponse("No barcode available", status=404)
+    
+
+def barcode_view(request,pk):
+    batch = get_object_or_404(Batch, id = pk)
+    if request.method == "POST":
+        num = request.POST.get("bnum")
+        return render(request,"barcode.html",{"batch":batch,'range': range(int(num))})
+    else:
+        return render(request,"barcode.html",{"batch":batch,'range': range(1)})
+
+        
 
 
 

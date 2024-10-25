@@ -327,14 +327,15 @@ def save_order(request, order_id):
         
             expense.save() 
     else:
-        expense = Income(
-                perticulers = f"Amount Against order {order.invoice_number}",
-                amount =  order.payed_amount,
-                bill_number = order.invoice_number
+        if order.payed_amount > 0:
+            expense = Income(
+                    perticulers = f"Amount Against order {order.invoice_number}",
+                    amount =  order.payed_amount,
+                    bill_number = order.invoice_number
+                
+                )
             
-            )
-        
-        expense.save()   
+            expense.save()   
     
     # Adjust stock
     try:

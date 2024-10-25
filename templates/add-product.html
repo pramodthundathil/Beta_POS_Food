@@ -41,6 +41,25 @@
                                             </div>
                                         </div>
                                         {% endfor %}
+
+                                     
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                               <label for="">Expiry Date <sup>(optional)</sup> </label>
+                                                <input type="date" name="ex_date" class="form-control" id="ex_date">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                               <label for="">Manufacture Date <sup>(optional)</sup></label>
+                                                <input type="date" name="man_date" class="form-control" id="man_date">
+                                                <div class="help-block with-errors"></div>
+                                            </div>
+                                        </div>
+                      
+
+                                        
                                     </div>
                                 
                                 <button type="submit" class="btn btn-primary mr-2">Add Product</button>
@@ -54,5 +73,17 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    // Get today's date in YYYY-MM-DD format
+    var today = new Date().toISOString().split('T')[0];
+
+    // Set the minimum value for the Expiry Date to today's date
+    document.getElementById("ex_date").setAttribute('min', today);
+
+    // Set the maximum value for the Manufacture Date to today's date
+    document.getElementById("man_date").setAttribute('max', today);
+</script>
 
 {% endblock %}

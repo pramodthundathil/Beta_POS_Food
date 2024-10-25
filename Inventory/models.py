@@ -165,7 +165,7 @@ class Batch(models.Model):
     expiry_date = models.DateField(null=True, blank=True)  # Expiry date for this batch
     stock_quantity = models.PositiveIntegerField(default=0)  # Stock for this specific batch
     manufactured_date = models.DateField(null=True, blank=True)
-    
+
     def save(self, *args, **kwargs):
         if not self.batch_code:
                 self.batch_code = self.generate_batch_code()
@@ -187,7 +187,7 @@ class Batch(models.Model):
         return False
 
     def __str__(self):
-        return f"Batch {self.batch_code} of {self.product.name}"
+        return f"{self.batch_code} of {self.product.name} expiry {self.expiry_date}"
 
     
 

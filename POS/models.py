@@ -23,25 +23,69 @@ class Order(models.Model):
 
     def adjust_stock(self):
         # Loop through each OrderItem in the order and deduct stock
+        # for item in self.orderitem_set.all():
+        #     product = item.product
+        #     if product.Number_of_stock >= item.quantity:
+        #         product.Number_of_stock -= item.quantity
+        #         product.save()
+                
+        #     else:
+        #         raise ValueError(f"Not enough stock for product: {product.name}")
+
         for item in self.orderitem_set.all():
             product = item.product
+            remaining_quantity = item.quantity
+
+            # First, try to adjust stock from batches
+            while remaining_quantity > 0:
+                # Get the oldest non-expired batch
+                batch = product.batches.filter(expiry_date__gt=timezone.now().date(), stock_quantity__gt=0).order_by('expiry_date').first()
+
+                if not batch:
+                    # If no more batches are available, break out and adjust stock from the product level
+                    break
+
+                if batch.stock_quantity >= remaining_quantity:
+                    # If the batch has enough stock to fulfill the order
+                    batch.stock_quantity -= remaining_quantity
+                    batch.save()
+                    remaining_quantity = 0
+                else:
+                    # If the batch doesn't have enough stock, use all its stock and move to the next batch
+                    remaining_quantity -= batch.stock_quantity
+                    batch.stock_quantity = 0
+                    batch.save()
+    
+
             if product.Number_of_stock >= item.quantity:
                 product.Number_of_stock -= item.quantity
                 product.save()
             else:
                 raise ValueError(f"Not enough stock for product: {product.name}")
 
+
     def update_totals(self):
-        # Calculate total amount and total tax from associated OrderItems
+        total_amount_before_discount = 0
         total_amount = 0
         total_tax = 0
+        total_discount = 0
+
         for item in self.orderitem_set.all():
-            total_amount += item.total_price
+            # Calculate the total amount before discount
+            item_total_before_discount = item.unit_price * item.quantity
+            total_amount_before_discount += item_total_before_discount
+            
+            # Sum up the discount for each item
+            total_discount += item.discount
+
+            # Calculate the total price (after discount) and total tax for each item
+            total_amount += item.total_price  # `total_price` already includes the discount
             total_tax += item.total_tax
-        
-        self.total_amount = total_amount
+
+        self.total_amount_before_discount = total_amount_before_discount
+        self.total_amount = total_amount  # Already discounted total amount
         self.total_tax = total_tax
-        # self.total_amount_before_discount = self.total_amount + self.discount
+        self.discount = total_discount  # Set the order discount as the sum of item discounts
         self.save()
         
     def calculate_balance(self):
