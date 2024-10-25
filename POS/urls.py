@@ -22,9 +22,13 @@ urlpatterns = [
     path("AddDiscount",views.AddDiscount,name="AddDiscount"),
     path("Listdiscount",views.Listdiscount,name="Listdiscount"),
     path('update_order_item/<int:order_id>/', views.update_order_item, name='update_order_item'),
-    path("save_order/<int:order_id>",views.save_order,name="save_order")
+    path("save_order/<int:order_id>",views.save_order,name="save_order"),
 
     
+# delete invoice
 
+    path("delete_invoice/<int:pk>",views.delete_invoice,name="delete_invoice"),
+    path("delete_invoice_partial/<int:pk>",views.delete_invoice_partial,name="delete_invoice_partial"),
+    path("delete_invoice_pending/<int:pk>",views.delete_invoice_pending,name="delete_invoice_pending"),
     
 ]

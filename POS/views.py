@@ -163,6 +163,24 @@ def list_sale_partial(request):
     }
     return render(request,'list-sale-partial.html',context)
 
+def delete_invoice(request,pk):
+    order = get_object_or_404(Order,id = pk)
+    order.delete()
+    messages.success(request,"Invoice Deleted.....")
+    return redirect("list_sale")
+
+def delete_invoice_partial(request,pk):
+    order = get_object_or_404(Order,id = pk)
+    order.delete()
+    messages.success(request,"Invoice Deleted.....")
+    return redirect("list_sale_partial")
+
+def delete_invoice_pending(request,pk):
+    order = get_object_or_404(Order,id = pk)
+    order.delete()
+    messages.success(request,"Invoice Deleted.....")
+    return redirect("list_sale_pending")
+
 
 
 @login_required(login_url='SignIn')
@@ -265,33 +283,7 @@ def update_order_payment(request, order_id):
             order.discount = discount
             order.balance_amount = order.total_amount - payed_amount
 
-            if Income.objects.filter(bill_number = order.invoice_number).exists():
-                expense = Income.objects.filter(bill_number = order.invoice_number)
-                total = 0
-                
-                for ex in expense:
-                    total = total + ex.amount
-                
-                amount = payed_amount - total
-                if amount > 0:
-                    expense = Income(
-                        perticulers = f"Amount Against order {order.invoice_number}",
-                        amount =  amount,
-                        bill_number = order.invoice_number
-                    
-                    )
-             
-                    expense.save() 
-            else:
-                expense = Income(
-                        perticulers = f"Amount Against order {order.invoice_number}",
-                        amount =  payed_amount,
-                        bill_number = order.invoice_number
-                    
-                    )
-             
-                expense.save() 
-
+            
                         
             if payed_amount == 0:
                 order.payment_status1 = 'UNPAID'
@@ -317,14 +309,32 @@ def save_order(request, order_id):
     order.calculate_balance()
     new_payedamount =  order.payed_amount - previous_paid_amount
     print(new_payedamount,"----------------------------------------")
-    if new_payedamount > 0:
-        income = Income(
-            date = datetime.now(),
-            perticulers = f"received towerds bill no {order.invoice_number} from customer {order.customer}",
-            amount = new_payedamount
-
-        )
-        income.save()    
+    if Income.objects.filter(bill_number = order.invoice_number).exists():
+        expense = Income.objects.filter(bill_number = order.invoice_number)
+        total = 0
+        
+        for ex in expense:
+            total = total + ex.amount
+        
+        amount = order.payed_amount - total
+        if amount > 0:
+            expense = Income(
+                perticulers = f"Amount Against order {order.invoice_number}",
+                amount =  amount,
+                bill_number = order.invoice_number
+            
+            )
+        
+            expense.save() 
+    else:
+        expense = Income(
+                perticulers = f"Amount Against order {order.invoice_number}",
+                amount =  order.payed_amount,
+                bill_number = order.invoice_number
+            
+            )
+        
+        expense.save()   
     
     # Adjust stock
     try:
@@ -369,6 +379,33 @@ def invoice(request,pk):
             order.adjust_stock()  # Deduct the stock
             order.save_status = True
             order.save()
+
+        if Income.objects.filter(bill_number = order.invoice_number).exists():
+            expense = Income.objects.filter(bill_number = order.invoice_number)
+            total = 0
+            
+            for ex in expense:
+                total = total + ex.amount
+            
+            amount = order.payed_amount - total
+            if amount > 0:
+                expense = Income(
+                    perticulers = f"Amount Against order {order.invoice_number}",
+                    amount =  amount,
+                    bill_number = order.invoice_number
+                
+                )
+            
+                expense.save() 
+        else:
+            expense = Income(
+                    perticulers = f"Amount Against order {order.invoice_number}",
+                    amount =  order.payed_amount,
+                    bill_number = order.invoice_number
+                
+                )
+            
+            expense.save()
 
         # order = Order.objects.get(pk=pk)
         # context = {

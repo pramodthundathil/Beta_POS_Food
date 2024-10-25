@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User 
 import random
+from django.utils import timezone
 
 class Tax(models.Model):
     tax_name = models.CharField(max_length=20)
@@ -98,7 +99,7 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     inventory = models.ForeignKey(InventoryStock, on_delete=models.SET_NULL, null=True, blank=True)
     # image = models.FileField(upload_to='foodimage', null=True, blank=True)
-    unit_quantity = models.FloatField(default=0)
+    unit_quantity = models.FloatField()
     unit_price = models.FloatField()
     status = models.BooleanField(default=True)
     Number_of_stock = models.IntegerField()
@@ -108,6 +109,9 @@ class Product(models.Model):
     price_before_tax = models.FloatField(null=True, blank=True, default=0)
     tax_amount = models.FloatField(null=True, blank=True,)
     unit = models.ForeignKey(Units, on_delete=models.SET_NULL, null=True, blank=True)
+
+    # product description
+    barcode_number = models.CharField(max_length=200, null= True, blank=True)
 
     # Tax calculation
     TAX_CHOICES = (
@@ -153,6 +157,38 @@ class Product(models.Model):
 
     def __str__(self):
         return str (self.name + " " +str(self.unit_quantity) + " " + self.unit.unit) 
+    
+
+class Batch(models.Model):
+    product = models.ForeignKey(Product, related_name='batches', on_delete=models.CASCADE)
+    batch_code = models.CharField(max_length=64, unique=True)  # Batch code for tracking
+    expiry_date = models.DateField(null=True, blank=True)  # Expiry date for this batch
+    stock_quantity = models.PositiveIntegerField(default=0)  # Stock for this specific batch
+    manufactured_date = models.DateField(null=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.batch_code:
+                self.batch_code = self.generate_batch_code()
+
+        super(Batch, self).save(*args, **kwargs)
+
+    def generate_batch_code(self):
+        # Loop to ensure uniqueness
+        while True:
+            random_number = random.randint(1000, 9999)  # 5-digit random number
+            order_number = f"BATCH-{random_number}"
+            if not Batch.objects.filter(batch_code=order_number).exists():
+                return order_number
+
+    def is_expired(self):
+        """Check if the batch is expired."""
+        if self.expiry_date and timezone.now().date() > self.expiry_date:
+            return True
+        return False
+
+    def __str__(self):
+        return f"Batch {self.batch_code} of {self.product.name}"
+
     
 
 class Customer(models.Model):
@@ -281,7 +317,7 @@ class Purchase(models.Model):
     purchase_type = models.CharField(max_length=20, choices=PURCHASE_TYPES)
     bill_date = models.DateTimeField(auto_now_add=True)
     supplier = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
-    payment_terms = models.IntegerField(help_text='Number of days, Credit Period', null=True, blank=True)
+    payment_terms = models.CharField(help_text='Number of days, Credit Period',max_length=255, null=True, blank=True)
     due_date = models.DateField(null=True, blank=True)
     place_of_supply = models.CharField(max_length=100)
     purchase_bill_number = models.CharField(max_length=255, null=True, blank=True)

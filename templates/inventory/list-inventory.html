@@ -80,8 +80,25 @@
                                     </td>
                                     <td>
                                         <a class="badge bg-success mr-2" href="{% url 'edit_inventory' m.id %}">Edit</a>
-                                        <button class="badge bg-warning mr-2" data-toggle="modal"
-                                            data-target="#deletemodel{{m.id}}">Delete</button>
+                                        <a class="badge bg-warning mr-2" data-toggle="modal"
+                                            data-target="#deletemodel{{m.id}}">Delete</a>
+                                            <div class="modal fade" id="deletemodel{{m.id}}" tabindex="-1" role="dialog"
+                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+
+                                                    <div class="modal-body">
+                                                        Are You Sure Do you Want to Delete ?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">No</button>
+                                                        <a href="{%url 'delete_inventory' m.id %}"
+                                                            class="btn btn-danger">Yes</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -132,7 +149,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalCenterTitle">Upload Excel</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <!-- <button type="button" class="btn" data-bs-dismiss="modal" aria-label="Close">X</button> -->
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -141,9 +158,11 @@
                         {% csrf_token %}
                         <div class="col mb-3">
                             <label for="nameWithTitle" class="form-label">Upload Excel Sheet To Create Database</label>
-                            <input type="file" id="nameWithTitle" class="form-control" name="excel_file"> <br><br>
+                            <input type="file" id="nameWithTitle" class="form-controls" name="excel_file"> <br><br>
                             <button type="submit" class="btn btn-primary">Upload File</button>
 
+                            <br>
+                            <p class="text-danger">Note: After uploading the Excel inventory, if an item with the same name and units already exists, its stock value will be updated. If the inventory item does not exist, a new one will be created.</p>
                         </div>
                 </div>
                 </form>

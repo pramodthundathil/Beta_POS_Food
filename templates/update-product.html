@@ -55,7 +55,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Category *</label>
-                                            <select name="category" class="selectpicker form-control" data-style="py-0"
+                                            <select name="category" class="selectpicker form-control"  data-style="py-0"
                                                 required>
                                                 <option selected disabled>Select Category</option>
                                                 {% for i in food_category %}
@@ -72,7 +72,7 @@
                                             <label>Price *</label>
                                             <input type="number" name="price" class="form-control"
                                                 value="{{ product.price_before_tax }}" placeholder="Enter Cost"
-                                                data-errors="Please Enter Price." required>
+                                                data-errors="Please Enter Price." step="0.01" min="0" required>
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
@@ -81,6 +81,15 @@
                                             <label>Stock *</label>
                                             <input type="number" name="stock" class="form-control"
                                                 value="{{ product.Number_of_stock }}" placeholder="Enter Stock" readonly
+                                                required>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Barcode *</label>
+                                            <input type="number" name="barcode" class="form-control"
+                                                value="{{ product.barcode_number }}" placeholder="Barcode" 
                                                 required>
                                             <div class="help-block with-errors"></div>
                                         </div>

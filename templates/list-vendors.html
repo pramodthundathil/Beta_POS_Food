@@ -44,7 +44,6 @@
                                 <th>Supplier Name</th>
                                 <th>Code</th>
                                 <th>Product</th>
-                                <th>GST No:</th>
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>City</th>
@@ -70,7 +69,6 @@
                                 <!-- <td>{{m.code}}</td> -->
                                 <td class="m-status-false">#{{m.id}}</td>
                                 <td class="m-status-false">{{m.supply_product}} </td>
-                                <td class="m-status-false">{{m.gst_number}}</td>
                                 <td class="m-status-false">{{m.phone_number}}</td>
                                 <td class="m-status-false">{{m.email}}</td>
                                 
@@ -95,9 +93,9 @@
                                             data-placement="top" title="" data-original-title="Edit" href="{%url 'update_vendor' m.id %}"><i
                                                 class="ri-pencil-line mr-0"></i></a>
 
-                                                <button class="badge bg-danger mr-2" data-toggle="modal"
+                                                <a class="badge bg-danger mr-2" data-toggle="modal"
                                                 data-target="#deletemodel" data-original-title="Delete" href="#"><i
-                                                    class="ri-delete-bin-line mr-0"></i></button>
+                                                    class="ri-delete-bin-line mr-0"></i></a>
                                             <!-- Delete Modal -->
                                             <div class="modal fade" id="deletemodel" tabindex="-1" role="dialog"
                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -110,7 +108,7 @@
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">No</button>
-                                                            <a href="{%url 'delete_vendor' m.id%}"
+                                                            <a href="{%url 'delete_vendor' m.id %}"
                                                                 class="btn btn-danger">Yes</a>
                                                         </div>
                                                     </div>

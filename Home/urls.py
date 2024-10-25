@@ -18,5 +18,7 @@ urlpatterns = [
     path("update_staff/<int:pk>/",views.update_staff,name="update_staff"),
     path("list_salary",views.list_salary,name="list_salary"),
     path("add_salary",views.add_salary,name="add_salary"),
+    path("delete_staff_salary/<int:pk>",views.delete_staff_salary,name="delete_staff_salary"),
+
     
 ]

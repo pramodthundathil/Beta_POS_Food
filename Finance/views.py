@@ -295,12 +295,12 @@ def income_report_pdf(request):
         end_date = request.POST['edate']
 
         # Filter expenses based on the date range
-        expenses = Income.objects.filter(date__range=[start_date, end_date])
+        income = Income.objects.filter(date__range=[start_date, end_date])
 
         # Render the data to a template
         template_path = 'income_report_pdf.html'
         context = {
-            'expenses': expenses,
+            'income': income,
             'start_date': start_date,
             'end_date': end_date,
         }

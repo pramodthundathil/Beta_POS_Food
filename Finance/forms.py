@@ -5,6 +5,11 @@ class IncomeForm(forms.ModelForm):
     class Meta:
         model = Income
         fields = ['perticulers', 'amount', 'other']
+        labels = {
+            'perticulers': 'Particulars',
+            'amount': 'Amount',
+            'other': 'Other Details',
+        }
         widgets = {
             'perticulers': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -14,7 +19,8 @@ class IncomeForm(forms.ModelForm):
             'amount': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'id': 'income-amount',
-                'placeholder': 'Enter amount'
+                'placeholder': 'Enter amount',
+                "min":0
             }),
             'other': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -27,6 +33,11 @@ class ExpenceForm(forms.ModelForm):
     class Meta:
         model = Expence
         fields = ['perticulers', 'amount', 'other']
+        labels = {
+            'perticulers': 'Particulars',
+            'amount': 'Amount',
+            'other': 'Other Details',
+        }
         widgets = {
             'perticulers': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -36,11 +47,13 @@ class ExpenceForm(forms.ModelForm):
             'amount': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'id': 'expence-amount',
-                'placeholder': 'Enter amount'
+                'placeholder': 'Enter amount',
+                "min":0
             }),
             'other': forms.TextInput(attrs={
                 'class': 'form-control',
                 'id': 'expence-other',
-                'placeholder': 'Other details'
+                'placeholder': 'Other details',
+               
             }),
         }

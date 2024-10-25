@@ -341,7 +341,7 @@ def update_staff(request,pk):
         if form.is_valid():
             form.save()
             messages.info(request,"Staff Updated")
-            return redirect("update_staff", pk = pk)
+            return redirect("list_staff")
     
     return render(request,"update_staff.html",{"form":form, "staff":staff,"salary":salary})
 
@@ -376,3 +376,10 @@ def add_salary(request):
             return redirect("list_salary")
         
     return render(request,"add-salary.html",{"form":form})
+
+
+def delete_staff_salary(request,pk):
+    salary = get_object_or_404(StaffSalary,id = pk)
+    salary.delete()
+    messages.success(request,"Salary deleted")
+    return redirect("list_salary")
