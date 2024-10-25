@@ -25,6 +25,8 @@ urlpatterns = [
     path('sale_report_excel_sales_man/', views.sale_report_excel_sales_man, name='sale_report_excel_sales_man'),
     path('export_purchase_report_excel/', views.export_purchase_report_excel, name='export_purchase_report_excel'),
     path('export_purchase_report_pdf/', views.export_purchase_report_pdf, name='export_purchase_report_pdf'),
+    path('sale_report_product_excel/', views.sale_report_product_excel, name='sale_report_product_excel'),
+    path('sale_report_excel_customer_wise/', views.sale_report_excel_customer_wise, name='sale_report_excel_customer_wise'),
     
 
     #DB download.......................

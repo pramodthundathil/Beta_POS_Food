@@ -185,10 +185,21 @@ def balance_sheet_selected(request):
 
 # in finance i am desided to add report generation through this application 
 # below methods are the report generation 
+from Inventory.models import Customer, Product
+from Home.models import Staff
 
 
 def reports(request):
-    return render(request,"reports.html")
+    customer = Customer.objects.all()
+    product = Product.objects.all()
+    salesman  = Staff.objects.filter(designation = "Sales Man")
+
+    context = {
+        "customer":customer,
+        "product":product,
+        "salesman":salesman
+    }
+    return render(request,"reports.html",context)
 
 
 from django.template.loader import render_to_string
@@ -196,6 +207,7 @@ from xhtml2pdf import pisa
 from django.http import HttpResponse
 from io import BytesIO
 import pandas as pd
+from openpyxl.styles import Border, Side
 
 
 def expence_report_excel(request):
@@ -348,7 +360,24 @@ def sale_report_excel(request):
             'Balance Amount': [order.balance_amount for order in orders],
             'Payment Status': [order.payment_status1 for order in orders],
         }
+
+        # Convert the data into a DataFrame
         df = pd.DataFrame(data)
+
+        # Calculate totals
+        totals = {
+            'Date': 'Total',  # Label for the total row
+            'Invoice Number': '',
+            'Products': '',
+            'Amount': df['Amount'].sum(),
+            'Paid Amount': df['Paid Amount'].sum(),
+            'Balance Amount': df['Balance Amount'].sum(),
+            'Payment Status': '',
+        }
+
+        # Append total row to the DataFrame
+        totals_df = pd.DataFrame([totals])
+        df = pd.concat([df, totals_df], ignore_index=True)
 
         # Create an HttpResponse object with Excel content type
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -356,8 +385,10 @@ def sale_report_excel(request):
 
         # Write the DataFrame to an Excel file
         df.to_excel(response, index=False, engine='openpyxl')
+        
 
         return response
+
     
 def sale_report_pdf(request):
     if request.method == "POST":
@@ -372,11 +403,19 @@ def sale_report_pdf(request):
         else:
             orders = Order.objects.filter(order_date__range=[start_date, end_date], payment_status1=category)
 
+        # Calculate totals
+        total_amount = sum(order.total_amount for order in orders)
+        total_paid = sum(order.payed_amount for order in orders)
+        total_balance = sum(order.balance_amount for order in orders)
+
         # Prepare the context for the PDF template
         context = {
             'orders': orders,
             'start_date': start_date,
             'end_date': end_date,
+            'total_amount': total_amount,
+            'total_paid': total_paid,
+            'total_balance': total_balance,
         }
 
         # Load the HTML template
@@ -395,20 +434,18 @@ def sale_report_pdf(request):
         return response
     
 
-
-
 def sale_report_excel_sales_man(request):
     if request.method == "POST":
         # Get the start and end date from the form
         start_date = request.POST['sdate']
         end_date = request.POST['edate']
-        category = request.POST.get("category")
+        sales_man = request.POST.get("sales_man")
         
         # Filter orders based on the date range and optionally by category (payment status)
-        if not category:
+        if not sales_man:
             orders = Order.objects.filter(order_date__range=[start_date, end_date])
         else:
-            orders = Order.objects.filter(order_date__range=[start_date, end_date], payment_status1=category)
+            orders = Order.objects.filter(order_date__range=[start_date, end_date], sales_man_id=sales_man)
 
         # Prepare data classified by Salesman
         data = {
@@ -428,6 +465,143 @@ def sale_report_excel_sales_man(request):
         
         # Sort the DataFrame by Salesman and Customer
         df = df.sort_values(by=['Salesman', 'Customer'])
+
+        # Calculate totals
+        totals = {
+            'Salesman': 'Total',
+            'Customer': '',
+            'Date': '',
+            'Invoice Number': '',
+            'Products': '',
+            'Amount': df['Amount'].sum(),
+            'Payed Amount': df['Payed Amount'].sum(),
+            'Balance Amount': df['Balance Amount'].sum(),
+            'Payment Status': '',
+        }
+
+        # Append total row to the DataFrame
+        totals_df = pd.DataFrame([totals])
+        df = pd.concat([df, totals_df], ignore_index=True)
+
+        # Create an HttpResponse object with Excel content type
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="sale_report_{start_date}_to_{end_date}.xlsx"'
+
+        # Write the DataFrame to an Excel file
+        df.to_excel(response, index=False, engine='openpyxl')
+
+        return response
+
+    
+
+
+
+def sale_report_excel_customer_wise(request):
+    if request.method == "POST":
+        # Get the start and end date from the form, along with the selected customer
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+        selected_customer = request.POST.get("customer")  # Customer filter
+
+        # Filter orders based on the date range and customer (if selected)
+        if selected_customer:
+            orders = Order.objects.filter(
+                order_date__range=[start_date, end_date],
+                customer_id=selected_customer
+            )
+        else:
+            orders = Order.objects.filter(order_date__range=[start_date, end_date])
+
+        # Prepare product-wise data
+        data = {
+            'Customer': [],
+            'Product': [],
+            'Quantity': [],
+            'Total Price': [],
+            'Order Date': [],
+            'Invoice Number': [],
+            'Paid Amount': [],
+            'Discount': [],
+            'Balance Amount': [],
+            'Payment Status': [],
+        }
+
+        for order in orders:
+            for item in order.orderitem_set.all():
+                data['Customer'].append(order.customer.name if order.customer else 'Cash Customer')
+                data['Product'].append(item.product.name)
+                data['Quantity'].append(item.quantity)
+                data['Total Price'].append(item.total_price)
+                data['Order Date'].append(order.order_date.replace(tzinfo=None))
+                data['Invoice Number'].append(order.invoice_number)
+                data['Paid Amount'].append(order.payed_amount)
+                data['Discount'].append(order.discount)
+                data['Balance Amount'].append(order.balance_amount)
+                data['Payment Status'].append(order.payment_status1)
+
+        # Convert the data into a DataFrame
+        df = pd.DataFrame(data)
+
+        # Calculate totals
+        total_row = {
+            'Customer': 'Total',
+            'Product': '',
+            'Quantity': '',
+            'Total Price': df['Total Price'].sum(),
+            'Order Date': '',
+            'Invoice Number': '',
+            'Paid Amount': df['Paid Amount'].sum(),
+            'Discount': df['Discount'].sum(),
+            'Balance Amount': df['Balance Amount'].sum(),
+            'Payment Status': '',
+        }
+
+        # Convert total_row to DataFrame and concatenate
+        total_df = pd.DataFrame([total_row])
+        df = pd.concat([df, total_df], ignore_index=True)
+
+        # Create an HttpResponse object with Excel content type
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="Customer_sale_report_{start_date}_to_{end_date}.xlsx"'
+
+        # Write the DataFrame to an Excel file
+        df.to_excel(response, index=False, engine='openpyxl')
+
+        return response
+
+    
+from POS.models import OrderItem
+
+def sale_report_product_excel(request):
+    if request.method == "POST":
+        # Get the start and end date from the form
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+        product_id = request.POST.get("product")
+
+        # Filter OrderItems based on the date range and optionally by product
+        order_items = OrderItem.objects.filter(
+            order__order_date__range=[start_date, end_date]
+        )
+
+        # If a product is specified, filter by product as well
+        if product_id:
+            order_items = order_items.filter(product_id=product_id)
+
+        # Prepare data for the report
+        data = {
+            'Order Number': [order_item.order.invoice_number for order_item in order_items],
+            'Date of Order': [order_item.order.order_date.replace(tzinfo=None) for order_item in order_items],
+            'Product': [order_item.product.name for order_item in order_items],
+            'Quantity': [order_item.quantity for order_item in order_items],
+            'Unit Price': [order_item.unit_price for order_item in order_items],
+            'Discount': [order_item.discount for order_item in order_items],
+            'Total Price': [order_item.total_price for order_item in order_items],
+            
+        }
+
+        # Create a DataFrame from the data
+        df = pd.DataFrame(data)
 
         # Create an HttpResponse object with Excel content type
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
