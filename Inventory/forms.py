@@ -53,6 +53,10 @@ class PurchaseForm(forms.ModelForm):
             'purchase_item', 'quantity', 'purchase_price', 'discount', 'unit', 
             'amount', 'paid_amount', 'balance_amount', 'payment_status', 'shipping_cost', 'recived_date'
         ]
+        labels = {
+            'purchase_price':'Purchase Unit Price',
+            "recived_date":'received Date'
+        }
         widgets = {
             'purchase_type': forms.Select(attrs={'class': 'form-control', 'id': 'purchase_type'}),
             'supplier': forms.Select(attrs={'class': 'form-control', 'id': 'supplier'}),
