@@ -661,7 +661,7 @@ def sale_report_pdf_customer_wise(request):
 
         # Generate the PDF from HTML
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="Customer_sale_report_{start_date}_to_{end_date}.pdf"'
+        response['Content-Disposition'] = f'attachment; filename="{customer}_sale_report_{start_date}_to_{end_date}.pdf"'
         pisa_status = pisa.CreatePDF(html, dest=response)
 
         # Check for errors
@@ -769,7 +769,7 @@ def sale_report_pdf_salesman_wise(request):
 
             # Generate the PDF from HTML
             response = HttpResponse(content_type='application/pdf')
-            response['Content-Disposition'] = f'attachment; filename="Salesman_sale_report_{start_date}_to_{end_date}.pdf"'
+            response['Content-Disposition'] = f'attachment; filename="Salesman_{salesman}_sale_report_{start_date}_to_{end_date}.pdf"'
             pisa_status = pisa.CreatePDF(html, dest=response)
 
             # Check for errors
