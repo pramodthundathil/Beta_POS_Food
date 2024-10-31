@@ -7,7 +7,7 @@
     <style>
           @page {
             size: A4;
-            margin: 10mm;
+            margin: 0mm;
         }
         .body{
             margin: 0;
@@ -48,7 +48,7 @@
                 <p>{{ order.customer.city }}</p>
 
             </div>
-            <div class="items-comtainer head-table" >
+            <div class="items-comtainer head-table margin-top:50px;" >
                 <table style="width:100%;position: relative;left: 50px;" >
                     <tr>
                         <td>Date</td>
@@ -71,15 +71,15 @@
             </div>
         </div>
         <div class="header_" style="height: 20px;"></div>
-        <div class="item-details" style="margin-top:50px;height:550px; padding: 10px;box-sizing: border-box;padding-left: 0; ">
+        <div class="item-details" style="margin-top:30px;height:550px; padding: 10px;box-sizing: border-box;padding-left: 0;margin-right: 30px; ">
             <table style="width: 100%;">
                 {% for item in order.orderitem_set.all %}
                 <tr>
-                    <td style="width: 5%;">{{forloop.counter}}</td>
-                    <td style="width: 50%;">{{ item.product.name }}</td>
+                    <td style="width: 10%;">{{forloop.counter}}</td>
+                    <td style="width: 60%;">{{ item.product.name }}</td>
                     <td style="width: 10%;">{{ item.product.unit_quantity }} {{item.product.unit}}</td>
-                    <td style="width: 20%;">{{ item.quantity }}</td>
-                    <td style="width: 10%;">{{ item.unit_price }}</td>
+                    <td style="width: 10%;">{{ item.quantity }}</td>
+                    <td style="width: 20%;">{{ item.unit_price }}</td>
                     <td style="width: 10%;">{{ item.total_price }}</td>
                 </tr>
                 {% endfor %}
@@ -89,7 +89,7 @@
             <div class="foot-items" style="flex-grow: 8;text-align: center;">
                     <h6 class="text-center mt-2"> {{total_in_words}}  Qatari Riyal Only</h6>
             </div>
-            <div class="foot-items" style="flex-grow: 4;text-align: right;padding-right: 40px;">
+            <div class="foot-items" style="flex-grow: 4;text-align: right;padding-right: 20px;">
                 <p>{{order.total_amount_before_discount}}</p>
                 <p>{{order.discount}}</p>
                 <p>{{order.total_amount}}</p>

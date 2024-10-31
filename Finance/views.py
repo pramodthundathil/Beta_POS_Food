@@ -502,6 +502,7 @@ def sale_report_excel_customer_wise(request):
         start_date = request.POST['sdate']
         end_date = request.POST['edate']
         selected_customer = request.POST.get("customer")  # Customer filter
+        payment_status = request.POST.get("payment_status")
 
         # Filter orders based on the date range and customer (if selected)
         if selected_customer:
@@ -511,6 +512,15 @@ def sale_report_excel_customer_wise(request):
             )
         else:
             orders = Order.objects.filter(order_date__range=[start_date, end_date])
+
+        if payment_status == "PAID":
+            orders = orders.filter(payment_status1 = "PAID")
+        elif payment_status == "UNPAID":
+            orders = orders.filter(payment_status1 = "UNPAID")
+        elif payment_status == "PARTIALLY":
+            orders = orders.filter(payment_status1 = "PARTIALLY")
+        elif payment_status == "pending":
+            orders = orders.filter(Q(payment_status1="PARTIALLY") | Q(payment_status1="UNPAID") )
 
         # Prepare product-wise data
         data = {
@@ -569,7 +579,209 @@ def sale_report_excel_customer_wise(request):
 
         return response
 
-    
+
+from django.db.models import Q
+def sale_report_pdf_customer_wise(request):
+    from datetime import datetime
+
+    if request.method == "POST":
+        # Get the start and end date from the form, along with the selected customer
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+        selected_customer = request.POST.get("customer")
+        payment_status = request.POST.get("payment_status")
+
+        # Filter orders based on the date range and customer
+        if selected_customer:
+            orders = Order.objects.filter(
+                order_date__range=[start_date, end_date],
+                customer_id=selected_customer
+            )
+            customer = Customer.objects.get(id = selected_customer)
+        else:
+            orders = Order.objects.filter(order_date__range=[start_date, end_date])
+            customer = {"name":"All Customers"}
+
+        if payment_status == "PAID":
+            orders = orders.filter(payment_status1 = "PAID")
+        elif payment_status == "UNPAID":
+            orders = orders.filter(payment_status1 = "UNPAID")
+        elif payment_status == "PARTIALLY":
+            orders = orders.filter(payment_status1 = "PARTIALLY")
+        elif payment_status == "pending":
+            orders = orders.filter(Q(payment_status1="PARTIALLY") | Q(payment_status1="UNPAID") )
+
+
+        # Prepare data and calculate totals
+        data = []
+        grand_total_sum = 0
+        paid_amount_sum = 0
+        open_amount_sum = 0
+
+        for order in orders:
+            due_date = order.order_date.date() if isinstance(order.order_date, datetime) else order.order_date
+            days_due = (datetime.now().date() - due_date).days
+            grand_total = order.total_amount
+            paid_amount = order.payed_amount
+            open_amount = grand_total - paid_amount
+
+            # Update total sums
+            grand_total_sum += grand_total
+            paid_amount_sum += paid_amount
+            open_amount_sum += open_amount
+
+            row = {
+                'invoice_no': order.invoice_number,
+                'order_no': 0,
+                'date': order.order_date.strftime('%d-%b-%Y'),
+                'payment_term_days': "Immediate",
+                'due_date': due_date.strftime('%d-%b-%Y'),
+                'grand_total': f"{grand_total:.2f}",
+                'paid_amount': f"{paid_amount:.2f}",
+                'open_amount': f"{open_amount:.2f}",
+                'days_past_due': days_due if days_due > 0 else "N/A"
+            }
+            data.append(row)
+
+        # Define the context for rendering the HTML template, including totals
+        context = {
+            'start_date': start_date,
+            'end_date': end_date,
+            'data': data,
+            'totals': {
+                'grand_total_sum': f"{grand_total_sum:.2f}",
+                'paid_amount_sum': f"{paid_amount_sum:.2f}",
+                'open_amount_sum': f"{open_amount_sum:.2f}"
+            },
+            "customer":customer
+        }
+
+        # Render the HTML template to a string
+        html = render_to_string('sale_report_template.html', context)
+
+        # Generate the PDF from HTML
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="Customer_sale_report_{start_date}_to_{end_date}.pdf"'
+        pisa_status = pisa.CreatePDF(html, dest=response)
+
+        # Check for errors
+        if pisa_status.err:
+            return HttpResponse("An error occurred while generating the PDF", status=500)
+        return response
+
+from django.db.models import Q
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+from datetime import datetime
+
+
+
+def sale_report_pdf_salesman_wise(request):
+    if request.method == "POST":
+        # Get form inputs
+        start_date = request.POST.get('sdate')
+        end_date = request.POST.get('edate')
+        selected_sales_man = request.POST.get("sales_man")
+        payment_status = request.POST.get("payment_status")
+
+        # Validate date inputs
+        if not start_date or not end_date:
+            return HttpResponse("Please provide a valid date range.", status=400)
+        
+        try:
+            # Filter orders based on selected salesman and payment status
+            orders = Order.objects.filter(order_date__range=[start_date, end_date])
+            salesman = "All Salesmen"
+
+            if selected_sales_man:
+                orders = orders.filter(sales_man_id=selected_sales_man)
+                salesman = Staff.objects.get(id=selected_sales_man)
+            
+            # Filter based on payment status
+            if payment_status == "PAID":
+                orders = orders.filter(payment_status1="PAID")
+            elif payment_status == "UNPAID":
+                orders = orders.filter(payment_status1="UNPAID")
+            elif payment_status == "PARTIALLY":
+                orders = orders.filter(payment_status1="PARTIALLY")
+            elif payment_status == "pending":
+                orders = orders.filter(Q(payment_status1="PARTIALLY") | Q(payment_status1="UNPAID"))
+
+            # Group data by customer and calculate totals
+            data = {}
+            grand_total_sum = 0
+            paid_amount_sum = 0
+            open_amount_sum = 0
+
+            for order in orders:
+                due_date = order.order_date if isinstance(order.order_date, datetime) else datetime.strptime(order.order_date, '%Y-%m-%d')
+                days_due = (datetime.now().date() - due_date.date()).days
+                grand_total = order.total_amount
+                paid_amount = order.payed_amount
+                open_amount = grand_total - paid_amount
+                customer = order.customer.name if order.customer else "Unknown Customer"
+
+                # Calculate overall totals
+                grand_total_sum += grand_total
+                paid_amount_sum += paid_amount
+                open_amount_sum += open_amount
+
+                # Aggregate data for each customer
+                if customer not in data:
+                    data[customer] = []
+                data[customer].append({
+                    'invoice_no': order.invoice_number,
+                    'date': order.order_date.strftime('%d-%b-%Y'),
+                    'payment_term_days': "Immediate",
+                    'due_date': due_date.strftime('%d-%b-%Y'),
+                    'grand_total': grand_total,
+                    'paid_amount': paid_amount,
+                    'open_amount': open_amount,
+                    'days_past_due': days_due if days_due > 0 else "N/A"
+                })
+
+            # Calculate totals for each customer
+            customer_totals = {}
+            for customer, transactions in data.items():
+                customer_totals[customer] = {
+                    'amount': sum(item['grand_total'] for item in transactions),
+                    'paid': sum(item['paid_amount'] for item in transactions),
+                    'balance': sum(item['open_amount'] for item in transactions)
+                }
+
+            # Context for rendering the HTML template
+            context = {
+                'start_date': start_date,
+                'end_date': end_date,
+                'data': data,
+                'totals': {
+                    'amount': f"{grand_total_sum:.2f}",
+                    'paid': f"{paid_amount_sum:.2f}",
+                    'balance': f"{open_amount_sum:.2f}"
+                },
+                "salesman": salesman,
+                "customer_totals": customer_totals  # Passing customer subtotals to template
+            }
+
+            # Render HTML template to string
+            html = render_to_string('sale_report_template_salesman.html', context)
+
+            # Generate the PDF from HTML
+            response = HttpResponse(content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="Salesman_sale_report_{start_date}_to_{end_date}.pdf"'
+            pisa_status = pisa.CreatePDF(html, dest=response)
+
+            # Check for errors
+            if pisa_status.err:
+                return HttpResponse("An error occurred while generating the PDF", status=500)
+            return response
+
+        except Exception as e:
+            return HttpResponse(f"An error occurred: {str(e)}", status=500)
+
+
+
 from POS.models import OrderItem
 
 def sale_report_product_excel(request):

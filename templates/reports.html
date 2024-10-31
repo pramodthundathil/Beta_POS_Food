@@ -5,8 +5,7 @@
         <div class="container-fluid add-form-list">
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="card"
-                        >
+                    <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
                                 <h4 class="card-title">Reports
@@ -17,96 +16,113 @@
                             </div>
                         </div>
                     </div>
-                        <div class="content" >
-                           
+                    <div class="content">
 
-                            <div class="row">
 
-                                <div class="col-md-6 mt-3">
-                                    <div class="card" style="padding: 20px;">
-                                        <h5>Expense Report</h5>
-        
-                                        <div class="btn-group btn-group-toggle btn-group-edges" style="width: 300px; margin: auto;"> 
-                                            <a class="button btn button-icon bg-info" data-toggle="modal" data-target="#expense_exl" href="#">Excel</a>
-                                            <a class="button btn button-icon bg-danger" data-toggle="modal" data-target="#expense_pdf" target="_blank" href="#">PDF</a>
-                                         </div>
+                        <div class="row">
 
-                                         <!-- Modal expense EXl and PDF -->
-                                            <div class="modal fade" id="expense_exl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Generate Excel Expense Report</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form action="{%url 'expence_report_excel' %}" method="post">
-                                                            {% csrf_token %}
-                                                            <label for="">Start Date</label>
-                                                            <input type="date" class="form-control" name="sdate" required>
-                                                            <label for="">End Date</label>
-                                                            <input type="date" class="form-control" name="edate" required>
-                                                    </div>
-                                                      
-                                                      <div class="modal-footer">
-                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                         <button type="submit" class="btn btn-primary">Generate</button>
-                                                      </div>
-                                                      </form>
-                                                </div>
-                                                </div>
-                                            </div>
+                            <div class="col-md-6 mt-3">
+                                <div class="card" style="padding: 20px;">
+                                    <h5>Expense Report</h5>
 
-                                            <div class="modal fade" id="expense_pdf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="exampleModalLabel">Generate PDF Expense Report</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form action="{%url 'expence_report_pdf' %}" method="post">
-                                                            {% csrf_token %}
-                                                            <label for="">Start Date</label>
-                                                            <input type="date" class="form-control" name="sdate" required>
-                                                            <label for="">End Date</label>
-                                                            <input type="date" class="form-control" name="edate" required>
-                                                    </div>
-                                                      
-                                                      <div class="modal-footer">
-                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                         <button type="submit" class="btn btn-primary">Generate</button>
-                                                      </div>
-                                                    </form>
-
-                                                </div>
-                                                </div>
-                                            </div>
-        
+                                    <div class="btn-group btn-group-toggle btn-group-edges"
+                                        style="width: 300px; margin: auto;">
+                                        <a class="button btn button-icon bg-info" data-toggle="modal"
+                                            data-target="#expense_exl" href="#">Excel</a>
+                                        <a class="button btn button-icon bg-danger" data-toggle="modal"
+                                            data-target="#expense_pdf" target="_blank" href="#">PDF</a>
                                     </div>
-                                </div>
-                                <div class="col-md-6 mt-3">
-                                    <div class="card" style="padding: 20px;">
-                                        <h5>Income Report</h5>
-        
-                                        <div class="btn-group btn-group-toggle btn-group-edges" style="width: 300px; margin: auto;"> 
-                                            <a class="button btn button-icon bg-info" data-toggle="modal" data-target="#income_exl" href="#">Excel</a>
-                                            <a class="button btn button-icon bg-danger" data-toggle="modal" data-target="#income_pdf" href="#">PDF</a>
-                                         </div>
 
-                                         
-                                         <!-- Modal income EXl and PDF -->
-                                         <div class="modal fade" id="income_exl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
+                                    <!-- Modal expense EXl and PDF -->
+                                    <div class="modal fade" id="expense_exl" tabindex="-1" role="dialog"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Generete Excel Income Report</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
+                                                    <h5 class="modal-title" id="exampleModalLabel">Generate Excel
+                                                        Expense Report</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="{%url 'expence_report_excel' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <label for="">Start Date</label>
+                                                        <input type="date" class="form-control" name="sdate" required>
+                                                        <label for="">End Date</label>
+                                                        <input type="date" class="form-control" name="edate" required>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                                </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="expense_pdf" tabindex="-1" role="dialog"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Generate PDF Expense
+                                                        Report</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="{%url 'expence_report_pdf' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <label for="">Start Date</label>
+                                                        <input type="date" class="form-control" name="sdate" required>
+                                                        <label for="">End Date</label>
+                                                        <input type="date" class="form-control" name="edate" required>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                                </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <div class="card" style="padding: 20px;">
+                                    <h5>Income Report</h5>
+
+                                    <div class="btn-group btn-group-toggle btn-group-edges"
+                                        style="width: 300px; margin: auto;">
+                                        <a class="button btn button-icon bg-info" data-toggle="modal"
+                                            data-target="#income_exl" href="#">Excel</a>
+                                        <a class="button btn button-icon bg-danger" data-toggle="modal"
+                                            data-target="#income_pdf" href="#">PDF</a>
+                                    </div>
+
+
+                                    <!-- Modal income EXl and PDF -->
+                                    <div class="modal fade" id="income_exl" tabindex="-1" role="dialog"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Generete Excel Income
+                                                        Report</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
@@ -117,23 +133,27 @@
                                                         <label for="">End Date</label>
                                                         <input type="date" class="form-control" name="edate" required>
                                                 </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generete</button>
-                                                  </div>
-                                                  </form>
-                                            </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Generete</button>
+                                                </div>
+                                                </form>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <div class="modal fade" id="income_pdf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
+                                    <div class="modal fade" id="income_pdf" tabindex="-1" role="dialog"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Generate PDF income Report</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
+                                                    <h5 class="modal-title" id="exampleModalLabel">Generate PDF income
+                                                        Report</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
@@ -144,258 +164,450 @@
                                                         <label for="">End Date</label>
                                                         <input type="date" class="form-control" name="edate" required>
                                                 </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generate</button>
-                                                  </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                                </div>
                                                 </form>
 
                                             </div>
-                                            </div>
                                         </div>
-        
                                     </div>
 
                                 </div>
 
-                                <div class="col-md-6 mt-3">
-                                    <div class="card" style="padding: 20px;">
-                                        <h5>Sale Report</h5>
-        
-                                        <div class="btn-group btn-group-toggle btn-group-edges" style="width: 300px; margin: auto;"> 
-                                            <a class="button btn button-icon bg-info" data-toggle="modal" data-target="#sale_exl"  href="#">Excel</a>
-                                            <a class="button btn button-icon bg-danger"  data-toggle="modal" data-target="#sale_pdf" href="#">PDF</a>
-                                            <a class="button btn button-icon bg-primary"  data-toggle="modal" data-target="#sale_sm" href="#">Sales Man Excel</a>
-                                         </div>
+                            </div>
 
-                                         <div class= "btn-group-edges mt-5" style="margin: auto;"> 
-                                            <a class="button btn button-icon bg-info" data-toggle="modal" data-target="#product_wise_sale" href="#">Product Sales Report</a>
-                                            <!-- <a class="button btn button-icon bg-danger" data-toggle="modal" data-target="#sale_pdf" href="#">Salesperson Performance Report</a> -->
-                                            <a class="button btn button-icon bg-dark" data-toggle="modal" data-target="#customer_wise_sale" href="#">Customer Sales Report</a>
-                                            
-                                         </div>
+                            <div class="col-md-6 mt-3">
+                                <div class="card" style="padding: 20px;">
+                                    <h5>Sale Report</h5>
 
-                                         
+                                    <div class="btn-group btn-group-toggle btn-group-edges"
+                                        style="width: 300px; margin: auto;">
+                                        <a class="button btn button-icon bg-info" data-toggle="modal"
+                                            data-target="#sale_exl" href="#">Excel</a>
+                                        <a class="button btn button-icon bg-danger" data-toggle="modal"
+                                            data-target="#sale_pdf" href="#">PDF</a>
+                                        <a class="button btn button-icon bg-primary" data-toggle="modal"
+                                            data-target="#sale_sm" href="#">Sales Man Excel</a>
+                                    </div>
 
-                                         <!-- sale report excel and pdf  -->
-                                        
-                                         <div class="modal fade" id="sale_exl" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Generate Excel Sale Report</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="{%url 'sale_report_excel' %}" method="post">
-                                                        {% csrf_token %}
-                                                        <label for="">Start Date</label>
-                                                        <input type="date" class="form-control" name="sdate" required>
-                                                        <label for="">End Date</label>
-                                                        <input type="date" class="form-control" name="edate" required>
-                                                        <label for="">Category Of Sale</label>
-                                                        <select name="category" class="form-control">
-                                                            <option value="" selected >All</option>
-                                                            <option value="UNPAID">Unpaid</option>
-                                                            <option value="PAID">Paid</option>
-                                                            <option value="PARTIALLY">PARTIALLY Paid</option>
-                                                        </select>
-                                                </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generate</button>
-                                                  </div>
-                                                  </form>
-                                            </div>
-                                            </div>
-                                        </div>
+                                    <div class="btn-group btn-group-toggle btn-group-edges mt-3" style="margin: auto;">
+                                        <a class="button btn button-icon bg-info" data-toggle="modal"
+                                            data-target="#product_wise_sale" href="#">Product Sales Report</a>
+                                        <a class="button btn button-icon bg-danger" data-toggle="modal"
+                                            data-target="#sale_pdf" href="#">Product Sale Report PDF</a>
+                                    </div>
 
+                                    <div class="btn-group btn-group-toggle btn-group-edges mt-3" style="margin: auto;">
+                                        <a class="button btn button-icon bg-primary" data-toggle="modal"
+                                            data-target="#sale_sm" href="#">Sale Salesman Excel</a>
+                                        <a class="button btn button-icon bg-danger" data-toggle="modal"
+                                            data-target="#sale_sm_pdf" href="#">Sale Salesman PDF</a>
+                                    </div>
 
-                                        <div class="modal fade" id="sale_pdf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Generate PDF Sale Report</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="{%url 'sale_report_pdf' %}" method="post">
-                                                        {% csrf_token %}
-                                                        <label for="">Start Date</label>
-                                                        <input type="date" class="form-control" name="sdate" required>
-                                                        <label for="">End Date</label>
-                                                        <input type="date" class="form-control" name="edate" required>
-                                                        <label for="">Category Of Sale</label>
-                                                        <select name="category" class="form-control">
-                                                            <option value="" selected >All</option>
-                                                            <option value="UNPAID">Unpaid</option>
-                                                            <option value="PAID">Paid</option>
-                                                            <option value="PARTIALLY">PARTIALLY Paid</option>
-                                                        </select>
-                                                </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generate</button>
-                                                  </div>
-                                                  </form>
-                                            </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="modal fade" id="sale_sm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Generate Excel Sale Report</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="{%url 'sale_report_excel_sales_man' %}" method="post">
-                                                        {% csrf_token %}
-                                                        <label for="">Start Date</label>
-                                                        <input type="date" class="form-control" name="sdate" required>
-                                                        <label for="">End Date</label>
-                                                        <input type="date" class="form-control" name="edate" required>
-                                                        <label for="">Sales Man</label>
-                                                        <select name="sales_man" class="form-control">
-                                                            <option value="" selected >All</option>
-                                                            {% for item in salesman %}
-                                                            <option value="{{item.id}}">{{item}}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                        
-                                                </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generate</button>
-                                                  </div>
-                                                  </form>
-                                            </div>
-                                            </div>
-                                        </div>
-                                       
-                                        <!-- product wise report  -->
-                                        <div class="modal fade" id="product_wise_sale" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Product Sales Repor</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="{%url 'sale_report_product_excel' %}" method="post">
-                                                        {% csrf_token %}
-                                                        <label for="">Start Date</label>
-                                                        <input type="date" class="form-control" name="sdate" required>
-                                                        <label for="">End Date</label>
-                                                        <input type="date" class="form-control" name="edate" required>
-                                                        <label for="">Product</label>
-                                                        <select name="category" class="form-control">
-                                                            <option value="" selected >All</option>
-                                                            {% for item in product %}
-                                                            <option value="{{item.id}}">{{item}}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generate</button>
-                                                  </div>
-                                                  </form>
-                                            </div>
-                                            </div>
-                                        </div>
-
-
-                                        <!-- Customer wise report  -->
-                                        <div class="modal fade" id="customer_wise_sale" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Customer Wise Report</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="{%url 'sale_report_excel_customer_wise' %}" method="post">
-                                                        {% csrf_token %}
-                                                        <label for="">Start Date</label>
-                                                        <input type="date" class="form-control" name="sdate" required>
-                                                        <label for="">End Date</label>
-                                                        <input type="date" class="form-control" name="edate" required>
-                                                        <label for="">Customer</label>
-                                                        <select name="customer" class="form-control">
-                                                            <option value="" selected disabled>All</option>
-                                                            {% for item in customer %}
-                                                            <option value="{{item.id}}">{{item}}</option>
-                                                            {% endfor %}
-                                                        </select>
-                                                </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generate</button>
-                                                  </div>
-                                                  </form>
-                                            </div>
-                                            </div>
-                                        </div>
-
-
-                                        <!-- Sales Man wise report  -->
-                                        <div class="modal fade" id="customer_wise_sale" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Sale Person Wise Report</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <form action="{%url 'sale_report_excel_customer_wise' %}" method="post">
-                                                        {% csrf_token %}
-                                                        <label for="">Start Date</label>
-                                                        <input type="date" class="form-control" name="sdate" required>
-                                                        <label for="">End Date</label>
-                                                        <input type="date" class="form-control" name="edate" required>
-                                                        <label for="">Sales Man</label>
-                                                        <select name="customer" class="form-control">
-                                                            <option value="" selected disabled>All</option>
-                                                            {% for item in salesman %}
-                                                            <option value="{{item.id}}">{{item}}</option>
-                                                            {% endfor %}
-                    
-                                                        </select>
-                                                </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generate</button>
-                                                  </div>
-                                                  </form>
-                                            </div>
-                                            </div>
-                                        </div>
-        
+                                    <div class="btn-group btn-group-toggle btn-group-edges mt-3"
+                                        style="width: 300px; margin: auto;">
+                                        <a class="button btn button-icon bg-dark" data-toggle="modal"
+                                            data-target="#customer_wise_sale" href="#">Customer Sales Report</a>
+                                        <a class="button btn button-icon bg-danger" data-toggle="modal"
+                                            data-target="#customer_wise_sale_pdf" href="#">Customer Sales Report pdf</a>
                                     </div>
 
                                 </div>
-                                <!-- <div class="col-md-6 mt-3">
+
+
+
+                                <!-- sale report excel and pdf  -->
+
+                                <div class="modal fade" id="sale_exl" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Generate Excel Sale
+                                                    Report</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{%url 'sale_report_excel' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <label for="">Start Date</label>
+                                                    <input type="date" class="form-control" name="sdate" required>
+                                                    <label for="">End Date</label>
+                                                    <input type="date" class="form-control" name="edate" required>
+                                                    <label for="">Category Of Sale</label>
+                                                    <select name="category" class="form-control">
+                                                        <option value="" selected>All</option>
+                                                        <option value="UNPAID">Unpaid</option>
+                                                        <option value="PAID">Paid</option>
+                                                        <option value="PARTIALLY">PARTIALLY Paid</option>
+                                                    </select>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Generate</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="modal fade" id="sale_pdf" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Generate PDF Sale
+                                                    Report</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{%url 'sale_report_pdf' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <label for="">Start Date</label>
+                                                    <input type="date" class="form-control" name="sdate" required>
+                                                    <label for="">End Date</label>
+                                                    <input type="date" class="form-control" name="edate" required>
+                                                    <label for="">Category Of Sale</label>
+                                                    <select name="category" class="form-control">
+                                                        <option value="" selected>All</option>
+                                                        <option value="UNPAID">Unpaid</option>
+                                                        <option value="PAID">Paid</option>
+                                                        <option value="PARTIALLY">PARTIALLY Paid</option>
+                                                    </select>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Generate</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- sales man excel report  -->
+
+                                <div class="modal fade" id="sale_sm" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Generate Excel Sale
+                                                    Report</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{%url 'sale_report_excel_sales_man' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <label for="">Start Date</label>
+                                                    <input type="date" class="form-control" name="sdate" required>
+                                                    <label for="">End Date</label>
+                                                    <input type="date" class="form-control" name="edate" required>
+                                                    <label for="">Sales Man</label>
+                                                    <select name="sales_man" class="form-control">
+                                                        <option value="" selected>All</option>
+                                                        {% for item in salesman %}
+                                                        <option value="{{item.id}}">{{item}}</option>
+                                                        {% endfor %}
+                                                    </select>
+
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Generate</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- sales man PDF report  -->
+                                <div class="modal fade" id="sale_sm_pdf" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Generate PDF Sale
+                                                    Report</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{%url 'sale_report_pdf_salesman_wise' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <label for="">Start Date</label>
+                                                    <input type="date" class="form-control" name="sdate" required>
+                                                    <label for="">End Date</label>
+                                                    <input type="date" class="form-control" name="edate" required>
+                                                    <label for="">Sales Man</label>
+                                                    <select name="sales_man" class="form-control">
+                                                        <option value="" selected>All</option>
+                                                        {% for item in salesman %}
+                                                        <option value="{{item.id}}">{{item}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <label for="">Payment Status</label>
+                                                    <select name="payment_status" class="form-control">
+                                                        <option value="ALL" selected disabled>All</option>
+                                                        <option value="PAID">PAID</option>
+                                                        <option value="UNPAID">UNPAID</option>
+                                                        <option value="PARTIALLY">PARTIALLY PAID</option>
+                                                        <option value="pending">PENDING</option>
+                                                    </select>
+
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Generate</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- product wise report  -->
+                                <div class="modal fade" id="product_wise_sale" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Product Sales Repor
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{%url 'sale_report_product_excel' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <label for="">Start Date</label>
+                                                    <input type="date" class="form-control" name="sdate" required>
+                                                    <label for="">End Date</label>
+                                                    <input type="date" class="form-control" name="edate" required>
+                                                    <label for="">Product</label>
+                                                    <select name="category" class="form-control">
+                                                        <option value="" selected>All</option>
+                                                        {% for item in product %}
+                                                        <option value="{{item.id}}">{{item}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Generate</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- product wise report  -->
+                                <div class="modal fade" id="product_wise_sale" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Product Sales Repor
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{%url 'sale_report_product_excel' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <label for="">Start Date</label>
+                                                    <input type="date" class="form-control" name="sdate" required>
+                                                    <label for="">End Date</label>
+                                                    <input type="date" class="form-control" name="edate" required>
+                                                    <label for="">Product</label>
+                                                    <select name="category" class="form-control">
+                                                        <option value="" selected>All</option>
+                                                        {% for item in product %}
+                                                        <option value="{{item.id}}">{{item}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Generate</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Customer wise report  -->
+                                <div class="modal fade" id="customer_wise_sale" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Customer Wise Report
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{%url 'sale_report_excel_customer_wise' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <label for="">Start Date</label>
+                                                    <input type="date" class="form-control" name="sdate" required>
+                                                    <label for="">End Date</label>
+                                                    <input type="date" class="form-control" name="edate" required>
+                                                    <label for="">Customer</label>
+                                                    <select name="customer" class="form-control">
+                                                        <option value="" selected disabled>All</option>
+                                                        {% for item in customer %}
+                                                        <option value="{{item.id}}">{{item}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <label for="">Payment Status</label>
+                                                    <select name="payment_status" class="form-control">
+                                                        <option value="ALL" selected disabled>All</option>
+                                                        <option value="PAID">PAID</option>
+                                                        <option value="UNPAID">UNPAID</option>
+                                                        <option value="PARTIALLY">PARTIALLY PAID</option>
+                                                        <option value="pending">PENDING</option>
+                                                    </select>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Generate</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Customer wise report PDF  -->
+                                <div class="modal fade" id="customer_wise_sale_pdf" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Customer Wise Report PDF
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{%url 'sale_report_pdf_customer_wise' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <label for="">Start Date</label>
+                                                    <input type="date" class="form-control" name="sdate" required>
+                                                    <label for="">End Date</label>
+                                                    <input type="date" class="form-control" name="edate" required>
+                                                    <label for="">Customer</label>
+                                                    <select name="customer" class="form-control">
+                                                        <option value="" selected disabled>All</option>
+                                                        {% for item in customer %}
+                                                        <option value="{{item.id}}">{{item}}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <label for="">Payment Status</label>
+                                                    <select name="payment_status" class="form-control">
+                                                        <option value="ALL" selected disabled>All</option>
+                                                        <option value="PAID">PAID</option>
+                                                        <option value="UNPAID">UNPAID</option>
+                                                        <option value="PARTIALLY">PARTIALLY PAID</option>
+                                                        <option value="pending">PENDING</option>
+                                                    </select>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Generate</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Sales Man wise report  -->
+                                <div class="modal fade" id="customer_wise_sale" tabindex="-1" role="dialog"
+                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Sale Person Wise
+                                                    Report</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="{%url 'sale_report_excel_customer_wise' %}" method="post">
+                                                    {% csrf_token %}
+                                                    <label for="">Start Date</label>
+                                                    <input type="date" class="form-control" name="sdate" required>
+                                                    <label for="">End Date</label>
+                                                    <input type="date" class="form-control" name="edate" required>
+                                                    <label for="">Sales Man</label>
+                                                    <select name="customer" class="form-control">
+                                                        <option value="" selected disabled>All</option>
+                                                        {% for item in salesman %}
+                                                        <option value="{{item.id}}">{{item}}</option>
+                                                        {% endfor %}
+
+                                                    </select>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Generate</button>
+                                            </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <!-- <div class="col-md-6 mt-3">
                                     <div class="card" style="padding: 20px;">
                                         <h5>Product Report</h5>
         
@@ -407,52 +619,63 @@
                                     </div>
 
                                 </div> -->
-                                <div class="col-md-6 mt-3">
-                                    <div class="card" style="padding: 20px;">
-                                        <h5>Purchase Report</h5>
-        
-                                        <div class="btn-group btn-group-toggle btn-group-edges" style="width: 300px; margin: auto;"> 
-                                            <a class="button btn button-icon bg-info" data-toggle="modal" data-target="#purchase_excel" target="_blank" href="#">Excel</a>
-                                            <a class="button btn button-icon bg-danger" data-toggle="modal" data-target="#purchase_pdf" target="_blank" href="#">PDF</a>
-                                         </div>
+                            <div class="col-md-6 mt-3">
+                                <div class="card" style="padding: 20px;">
+                                    <h5>Purchase Report</h5>
+
+                                    <div class="btn-group btn-group-toggle btn-group-edges"
+                                        style="width: 300px; margin: auto;">
+                                        <a class="button btn button-icon bg-info" data-toggle="modal"
+                                            data-target="#purchase_excel" target="_blank" href="#">Excel</a>
+                                        <a class="button btn button-icon bg-danger" data-toggle="modal"
+                                            data-target="#purchase_pdf" target="_blank" href="#">PDF</a>
+                                    </div>
 
 
-                                         <div class="modal fade" id="purchase_excel" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
+                                    <div class="modal fade" id="purchase_excel" tabindex="-1" role="dialog"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Generate Excel Purchase Report</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
+                                                    <h5 class="modal-title" id="exampleModalLabel">Generate Excel
+                                                        Purchase Report</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <form action="{%url 'export_purchase_report_excel' %}" method="post">
+                                                    <form action="{%url 'export_purchase_report_excel' %}"
+                                                        method="post">
                                                         {% csrf_token %}
                                                         <label for="">Start Date</label>
                                                         <input type="date" class="form-control" name="sdate" required>
                                                         <label for="">End Date</label>
                                                         <input type="date" class="form-control" name="edate" required>
-                                                        
+
                                                 </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generate</button>
-                                                  </div>
-                                                  </form>
-                                            </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                                </div>
+                                                </form>
                                             </div>
                                         </div>
+                                    </div>
 
 
-                                        <div class="modal fade" id="purchase_pdf" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
+                                    <div class="modal fade" id="purchase_pdf" tabindex="-1" role="dialog"
+                                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Generate PDF Purchase Report</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
+                                                    <h5 class="modal-title" id="exampleModalLabel">Generate PDF Purchase
+                                                        Report</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
                                                     </button>
                                                 </div>
                                                 <div class="modal-body">
@@ -462,23 +685,24 @@
                                                         <input type="date" class="form-control" name="sdate" required>
                                                         <label for="">End Date</label>
                                                         <input type="date" class="form-control" name="edate" required>
-                                                       
-                                                        
+
+
                                                 </div>
-                                                  
-                                                  <div class="modal-footer">
-                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                     <button type="submit" class="btn btn-primary">Generate</button>
-                                                  </div>
-                                                  </form>
-                                            </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                                </div>
+                                                </form>
                                             </div>
                                         </div>
-        
                                     </div>
-                                </div>
 
-                                <!-- <div class="col-md-6 mt-3">
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-md-6 mt-3">
                                     <div class="card" style="padding: 20px;">
                                         <h5>Inventory Report</h5>
         
@@ -490,15 +714,15 @@
                                     </div>
 
                                 </div> -->
-                            </div>
-                            
                         </div>
 
-
                     </div>
+
+
                 </div>
             </div>
         </div>
-    
+    </div>
+
 </div>
 {% endblock %}

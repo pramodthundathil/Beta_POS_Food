@@ -19,9 +19,11 @@ from xhtml2pdf import pisa
 # Create your views here.
 
 def generate_serial_number():
-        current_time = datetime.now()
-        serial_number = current_time.strftime("%Y%m%d%H%M%S")
-        return serial_number
+    while True:
+        random_number = random.randint(1000, 9999999)  # 5-digit random number
+        order_number = f"SI-{random_number}"
+        if not Order.objects.filter(invoice_number=order_number).exists():
+            return order_number
 
 
 @login_required(login_url='SignIn')
