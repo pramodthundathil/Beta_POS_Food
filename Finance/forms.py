@@ -4,11 +4,11 @@ from .models import Income, Expence
 class IncomeForm(forms.ModelForm):
     class Meta:
         model = Income
-        fields = ['perticulers', 'amount', 'other']
+        fields = ['perticulers', 'amount', "bill_number", 'other']
         labels = {
             'perticulers': 'Particulars',
             'amount': 'Amount',
-            'other': 'Other Details',
+            'other': 'Partner Details',
         }
         widgets = {
             'perticulers': forms.TextInput(attrs={
@@ -27,16 +27,21 @@ class IncomeForm(forms.ModelForm):
                 'id': 'income-other',
                 'placeholder': 'Other details'
             }),
+            'bill_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'billno',
+                'placeholder': 'Bill Number (Optional)'
+            }),
         }
 
 class ExpenceForm(forms.ModelForm):
     class Meta:
         model = Expence
-        fields = ['perticulers', 'amount', 'other']
+        fields = ['perticulers',"bill_number", 'amount', 'other']
         labels = {
             'perticulers': 'Particulars',
             'amount': 'Amount',
-            'other': 'Other Details',
+            'other': 'Partner Details',
         }
         widgets = {
             'perticulers': forms.TextInput(attrs={
@@ -55,5 +60,10 @@ class ExpenceForm(forms.ModelForm):
                 'id': 'expence-other',
                 'placeholder': 'Other details',
                
+            }),
+            'bill_number': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'billno',
+                'placeholder': 'Bill Number (Optional)'
             }),
         }

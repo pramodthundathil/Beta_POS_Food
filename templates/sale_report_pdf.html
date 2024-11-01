@@ -2,8 +2,13 @@
 <html>
 <head>
     <style>
+        @page {
+            size: A4 landscape;
+            margin: 1cm;
+        }
         body {
             font-family: Arial, sans-serif;
+            font-size: 10px; /* Reduced font size */
         }
         table {
             width: 100%;
@@ -11,11 +16,25 @@
         }
         th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 4px; /* Reduced padding */
             text-align: left;
+            /* word-wrap: break-word; Enable word wrapping */
         }
         th {
             background-color: #f2f2f2;
+        }
+        .totals-row {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+        /*  */
+        .header{
+            text-align: center;
+            margin-bottom: 20px;
+
+        }
+        .header p{
+            font-size: large;
         }
     </style>
 </head>
@@ -26,6 +45,7 @@
             <tr>
                 <th>Date</th>
                 <th>Invoice Number</th>
+                <th>Customers</th>
                 <th>Products</th>
                 <th>Total Amount</th>
                 <th>Paid Amount</th>
@@ -38,22 +58,23 @@
             <tr>
                 <td>{{ order.order_date }}</td>
                 <td>{{ order.invoice_number }}</td>
+                <td>{{order.customer}}</td>
                 <td>
                     {% for item in order.orderitem_set.all %}
                         {{ item.product.name }} (x{{ item.quantity }}){% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </td>
-                <td>{{ order.total_amount }}</td>
-                <td>{{ order.payed_amount }}</td>
-                <td>{{ order.balance_amount }}</td>
+                <td>{{ order.total_amount|floatformat:2 }}</td>
+                <td>{{ order.payed_amount|floatformat:2 }}</td>
+                <td>{{ order.balance_amount|floatformat:2 }}</td>
                 <td>{{ order.payment_status1 }}</td>
             </tr>
             {% endfor %}
             <tr>
-                <td colspan="3"><strong>Total</strong></td>
-                <td><strong>{{ total_amount }}</strong></td>
-                <td><strong>{{ total_paid }}</strong></td>
-                <td><strong>{{ total_balance }}</strong></td>
+                <td colspan="4"><strong>Total</strong></td>
+                <td><strong>QAR {{ total_amount|floatformat:2 }}</strong></td>
+                <td><strong>QAR {{ total_paid|floatformat:2 }}</strong></td>
+                <td><strong>QAR {{ total_balance|floatformat:2 }}</strong></td>
                 <td>-</td>
             </tr>
         </tbody>

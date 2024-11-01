@@ -323,7 +323,8 @@ def save_order(request, order_id):
             expense = Income(
                 perticulers = f"Amount Against order {order.invoice_number}",
                 amount =  amount,
-                bill_number = order.invoice_number
+                bill_number = order.invoice_number,
+                other = order.customer.name if order.customer else 'Cash Customer'
             
             )
         
@@ -333,7 +334,8 @@ def save_order(request, order_id):
             expense = Income(
                     perticulers = f"Amount Against order {order.invoice_number}",
                     amount =  order.payed_amount,
-                    bill_number = order.invoice_number
+                    bill_number = order.invoice_number,
+                    other = order.customer.name if order.customer else 'Cash Customer'
                 
                 )
             
@@ -395,7 +397,8 @@ def invoice(request,pk):
                 expense = Income(
                     perticulers = f"Amount Against order {order.invoice_number}",
                     amount =  amount,
-                    bill_number = order.invoice_number
+                    bill_number = order.invoice_number,
+                    other = order.customer.name if order.customer else 'Cash Customer'
                 
                 )
             
@@ -404,7 +407,8 @@ def invoice(request,pk):
             expense = Income(
                     perticulers = f"Amount Against order {order.invoice_number}",
                     amount =  order.payed_amount,
-                    bill_number = order.invoice_number
+                    bill_number = order.invoice_number,
+                    other = order.customer.name if order.customer else 'Cash Customer'
                 
                 )
             

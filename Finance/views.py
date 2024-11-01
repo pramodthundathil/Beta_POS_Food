@@ -353,6 +353,7 @@ def sale_report_excel(request):
         data = {
             'Date': [order.order_date.replace(tzinfo=None) for order in orders],
             'Invoice Number': [order.invoice_number for order in orders],
+            "Customer":[order.customer for order in orders],
             # Concatenate the product names from OrderItem for each order
             'Products': [', '.join([item.product.name for item in order.orderitem_set.all()]) for order in orders],
             'Amount': [order.total_amount for order in orders],
@@ -925,8 +926,116 @@ def export_purchase_report_pdf(request):
         p.save()
 
         return response
-
     
+
+# day book finance expence report 
+
+from datetime import date
+
+def finance_expense_report_pdf(request):
+    # Get the report date from the request, default to today
+    report_date = request.POST.get('report_date', date.today())
+
+    # Fetch income, expenses, orders (invoices), and purchases for the specific day
+    income_records = Income.objects.filter(date=report_date)
+    expense_records = Expence.objects.filter(date=report_date)
+    orders = Order.objects.filter(order_date__date=report_date)
+    purchases = Purchase.objects.filter(bill_date__date=report_date)
+
+    # Calculate totals for income, expenses, and balances
+    total_income = sum(record.amount for record in income_records)
+    total_expense = sum(record.amount for record in expense_records)
+    net_balance = total_income - total_expense
+
+    # Calculate order totals and outstanding payments
+    total_invoices_amount = sum(order.total_amount for order in orders)
+    total_received_today = sum(order.payed_amount for order in orders)
+    pending_amount_today = total_invoices_amount - total_received_today
+
+    # Calculate purchase totals
+    total_purchase_amount = sum(purchase.amount for purchase in purchases)
+    total_paid_for_purchases = sum(purchase.paid_amount for purchase in purchases)
+    total_pending_purchase = total_purchase_amount - total_paid_for_purchases
+
+    # Context for template
+    context = {
+        'income_records': income_records,
+        'expense_records': expense_records,
+        'orders': orders,
+        'purchases': purchases,
+        'report_date': report_date,
+        'total_income': total_income,
+        'total_expense': total_expense,
+        'net_balance': net_balance,
+        'total_invoices_amount': total_invoices_amount,
+        'total_received_today': total_received_today,
+        'pending_amount_today': pending_amount_today,
+        'total_purchase_amount': total_purchase_amount,
+        'total_paid_for_purchases': total_paid_for_purchases,
+        'total_pending_purchase': total_pending_purchase,
+    }
+
+    # Render to PDF
+    template = get_template('finance_expense_report_pdf.html')
+    html = template.render(context)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="finance_expense_report_{report_date}.pdf"'
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse(f'Error generating PDF: {pisa_status.err}')
+    return response
+
+
+def finance_expense_report_excel(request):
+    # Get date from the request, or default to today
+    report_date = request.POST.get('report_date', date.today())
+
+    # Fetch data
+    income_records = Income.objects.filter(date=report_date)
+    expense_records = Expence.objects.filter(date=report_date)
+
+    # Prepare data for DataFrame
+    income_data = {
+        'Date': [record.date for record in income_records],
+        'Particulars': [record.perticulers for record in income_records],
+        'Amount': [record.amount for record in income_records],
+        'Account': ['Credit'] * len(income_records),
+        'Bill Number': [record.bill_number for record in income_records],
+        'Partner': [record.other for record in income_records],
+    }
+    expense_data = {
+        'Date': [record.date for record in expense_records],
+        'Particulars': [record.perticulers for record in expense_records],
+        'Amount': [record.amount for record in expense_records],
+        'Account': ['Debit'] * len(expense_records),
+        'Bill Number': [record.bill_number for record in expense_records],
+        'Partner': [record.other for record in expense_records],
+    }
+
+    # Combine income and expense data
+    combined_df = pd.concat([pd.DataFrame(income_data), pd.DataFrame(expense_data)], ignore_index=True)
+
+    # Create summary DataFrame for totals
+    summary_data = {
+        'Category': ['Total Income', 'Total Expense', 'Net Balance'],
+        'Amount': [combined_df[combined_df['Account'] == 'Credit']['Amount'].sum(),
+                   combined_df[combined_df['Account'] == 'Debit']['Amount'].sum(),
+                   combined_df[combined_df['Account'] == 'Credit']['Amount'].sum() -
+                   combined_df[combined_df['Account'] == 'Debit']['Amount'].sum()]
+    }
+    summary_df = pd.DataFrame(summary_data)
+
+    # Prepare response
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="finance_expense_report_{report_date}.xlsx"'
+
+    # Write DataFrames to Excel file
+    with pd.ExcelWriter(response, engine='openpyxl') as writer:
+        combined_df.to_excel(writer, sheet_name='Finance Report', index=False)
+        summary_df.to_excel(writer, sheet_name='Summary', index=False)
+
+    return response
 
 
 # db download

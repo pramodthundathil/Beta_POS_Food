@@ -115,6 +115,9 @@ class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
         fields = ['name', 'phone', 'email', 'city', 'state', 'country', 'pincode', 'contact_info']
+        labels = {
+            "pincode":"Location Of Customer"
+        }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_name'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_phone'}),
@@ -122,7 +125,7 @@ class CustomerForm(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_city'}),
             'state': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_state'}),
             'country': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_country'}),
-            'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_pincode'}),
+            'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer G-map Location'}),
             'contact_info': forms.Textarea(attrs={'class': 'form-control', 'id': 'customer_contact_info', 'rows': 3}),
         }
 

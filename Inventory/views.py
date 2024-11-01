@@ -12,7 +12,7 @@ from Finance.models import Income, Expence
 
 # Create your views here.
 
-# units add updating funtions#####################################################
+# units add updating Functions#####################################################
 
 def list_units(request):
     units = Units.objects.all().order_by("-id")
@@ -41,7 +41,7 @@ def update_unit(request, unit_id):
         return redirect('update_unit', unit_id = unit_id)  # Redirect to unit list after update
     return render(request, 'update-units.html', {'unit': unit})
 
-
+# deleting units...
 def delete_unit(request,pk):
     Units.objects.get(id = pk).delete()
     messages.error(request,"unit deleted")
@@ -49,6 +49,7 @@ def delete_unit(request,pk):
 ########################################## vendor management ############################################
 # 
 
+# add a vendor 
 @login_required(login_url='SignIn')
 def add_vendor(request):
     if request.method == "POST":
@@ -80,6 +81,7 @@ def add_vendor(request):
         return redirect('list_vendor')
     return render(request,"add-vendor.html") 
 
+# displaying vendorl list 
 @login_required(login_url='SignIn')
 def list_vendor(request):
     vendor = Vendor.objects.all().order_by("-id")
@@ -89,7 +91,7 @@ def list_vendor(request):
     }
     return render(request,'list-vendors.html',context)
 
-
+#updating vendor
 @login_required(login_url='SignIn')
 def update_vendor(request, pk):
     vendor = get_object_or_404(Vendor, pk=pk)
@@ -102,7 +104,7 @@ def update_vendor(request, pk):
         form = VendorForm(instance=vendor)
     return render(request, 'vendor_update.html', {'form': form})
 
-
+# deleting vendor 
 @login_required(login_url='SignIn')
 def delete_vendor(request,pk):
     vendor = Vendor.objects.get(id = pk)
@@ -113,6 +115,8 @@ def delete_vendor(request,pk):
 
 ############################ Inventory Management #################################
 
+
+#add inventory it can be added new inventory in inventory list
 
 @login_required(login_url='SignIn')
 def add_inventory(request):
@@ -165,6 +169,7 @@ def list_inventory(request):
     }
     return render(request,'inventory/list-inventory.html',context)
 
+
 @login_required(login_url='SignIn')
 def delete_inventory(request,pk):
     inventory = get_object_or_404(InventoryStock,id = pk)
@@ -172,6 +177,9 @@ def delete_inventory(request,pk):
     messages.success(request,"Inventory Deleted successfully....")
     return redirect(list_inventory)
 
+
+######################################### Purchases and Purchase order ######################################
+# Create purchase order for purchase #
 
 @login_required(login_url='SignIn')
 def add_purchase_order(request):
@@ -260,11 +268,14 @@ def edit_purchase(request,pk):
             new_purchase = form.save()
             new_purchase.save()
             now_paid = new_purchase.paid_amount - paid_amount
-            if now_paid != 0:
+            print(now_paid,"-----------------------------")
+            if now_paid > 0:
                 expence = Expence(
-                    perticulers = f"Amount Paid to  {new_purchase.supplier} towerd purchase {new_purchase.purchase_bill_number}",
+                    perticulers = f"Amount Paid to  {new_purchase.supplier} towards purchase {new_purchase.purchase_bill_number}",
                     date = datetime.datetime.now(),
-                    amount = now_paid
+                    bill_number = new_purchase.purchase_bill_number,
+                    amount = now_paid,
+                    other = new_purchase.supplier.name if new_purchase.supplier else 'No Partner'
                 )
                 expence.save()
 
@@ -298,9 +309,11 @@ def add_purchase(request):
             stock = item.purchase_item
             if item.paid_amount > 0:
                 expence = Expence(
-                    perticulers = f"Amount Paid to  {item.supplier} towerd purchase {item.purchase_bill_number}",
+                    perticulers = f"Amount Paid to  {item.supplier} towards purchase {item.purchase_bill_number}",
                     date = datetime.datetime.now(),
-                    amount = item.paid_amount
+                    bill_number = item.purchase_bill_number,
+                    amount = item.paid_amount,
+                    other = item.supplier.name if item.supplier else 'No Partner'
                 )
                 expence.save()
 
