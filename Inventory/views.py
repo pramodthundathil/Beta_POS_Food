@@ -675,6 +675,8 @@ def add_customers(request):
         form = CustomerForm()
     return render(request, 'add-customers.html', {'form': form})
 
+
+
 # Update customer
 @login_required(login_url='SignIn')
 def update_customer(request, pk):

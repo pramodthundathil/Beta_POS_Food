@@ -12,6 +12,7 @@ from Finance.models import Income, Expence
 from django.template.loader import get_template
 from django.http import HttpResponse
 from xhtml2pdf import pisa
+from Inventory.forms import ProductForm
 
 
 
@@ -43,13 +44,15 @@ def POS(request,pk):
     product = Product.objects.all()
     invoice = Order.objects.all().order_by('-id')[:6]
     salesmans = Staff.objects.filter(designation = "Sales Man")
+    product_form = ProductForm()
 
     context = {
         "customer":customer,
         "order":order,
         'product':product,
         "invoice":invoice,
-        "salesmans":salesmans
+        "salesmans":salesmans,
+        'product_form':product_form
     }
     return render(request,'pos.html',context)
 
@@ -69,6 +72,62 @@ def search_product(request):
         } for product in products]
         return JsonResponse({'products': product_list})
     return JsonResponse({'products': []})
+
+
+@login_required(login_url='SignIn')
+def add_product_from_order(request,pk):
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+        ex_date = request.POST.get("ex_date")
+        man_date = request.POST.get("man_date")
+        order = Order.objects.get(id = pk)
+        if form.is_valid():
+            product = form.save()
+            product.save()
+            try:
+                batch = Batch(
+                    product = product,
+                    expiry_date = ex_date,
+                    manufactured_date = man_date,
+                    stock_quantity = product.Number_of_stock
+                )
+                batch.save()
+            except:
+                batch = Batch(
+                    product = product,
+                    stock_quantity = product.Number_of_stock
+                )
+                batch.save()
+            inventory = product.inventory  # Get the linked inventory
+            try:
+            # Fetch the number of units added from the form
+                units_to_add = product.Number_of_stock
+
+                # Calculate the total increase in stock based on product's unit_quantity
+                total_increase = units_to_add * product.unit_quantity
+                print(total_increase,"------------------------------------------------")  # For example, 100g * 10 = 1000g
+                
+                # Convert the total increase to kilograms if inventory is in kg
+                if inventory.unit == 'kg':
+                    total_increase_kg = total_increase / 1000  # Convert grams to kilograms
+                    inventory.reduce_stock(total_increase_kg)  # Reduce inventory stock by this amount
+                else:
+                    # If the inventory unit is in grams, reduce directly
+                    inventory.reduce_stock(total_increase)
+
+                inventory.save()
+        
+            except (ValueError, KeyError):
+                messages.error(request, "Invalid input. Please enter a valid stock number.")
+
+            order_item, created = OrderItem.objects.get_or_create(order=order, product=product)
+            if not created:
+                order_item.quantity += 1
+                order_item.save()
+            # Update order totals
+            order.update_totals()
+
+    return redirect('POS',pk=pk)
 
 
 @login_required(login_url='SignIn')
