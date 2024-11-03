@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User 
 import random
 from django.utils import timezone
+from Home.models import Notification
 
 class Tax(models.Model):
     tax_name = models.CharField(max_length=20)
@@ -86,6 +87,7 @@ class InventoryStock(models.Model):
 
     def trigger_stock_alert(self):
         self.stock_alert = True
+        
 
     def __str__(self):
         return f"{self.product_name}"

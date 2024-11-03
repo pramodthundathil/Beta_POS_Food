@@ -48,3 +48,14 @@ class StaffSalary(models.Model):
             order_number = f"SALARY-{random_number}"
             if not StaffSalary.objects.filter(slip_no=order_number).exists():
                 return order_number
+            
+
+class Notification(models.Model):
+    notification_heading = models.CharField(max_length=255)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    ref_number = models.CharField(max_length=255)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notification for {self.notification_heading}"
