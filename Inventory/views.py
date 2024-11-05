@@ -145,7 +145,23 @@ def edit_inventory(request,pk):
     if request.method == "POST":
         form = InventoryStockForm(request.POST,instance=inventory)
         if form.is_valid():
-            form.save()
+            inventory = form.save()
+            if inventory.product_stock <= inventory.min_stock_level:
+                inventory.stock_alert = True
+                if Notification.objects.filter(ref_number = inventory.product_code).exists():
+                    notification = Notification.objects.filter(ref_number = inventory.product_code).last()
+                    notification.updated_at = timezone.now()
+                    notification.message = f"Low Stock On Inventory {inventory.product_name} stock level {inventory.product_stock} "
+                    notification.save()
+                else:
+                    notification = Notification(
+                        notification_heading = f"Low Stock On {inventory.product_name}",
+                        message = f"Low Stock On Inventory {inventory.product_name} stock below {inventory.min_stock_level} ",
+                        ref_number = inventory.product_code
+                    )
+                    notification.save()
+        
+            
             messages.success(request, 'Inventory Updated successfully')
             return redirect('list_inventory')  # Adjust this based on your URLs
         else:

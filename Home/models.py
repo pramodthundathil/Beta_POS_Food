@@ -55,6 +55,7 @@ class Notification(models.Model):
     notification_heading = models.CharField(max_length=255)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     ref_number = models.CharField(max_length=255)
     is_read = models.BooleanField(default=False)
 

@@ -20,5 +20,8 @@ urlpatterns = [
     path("add_salary",views.add_salary,name="add_salary"),
     path("delete_staff_salary/<int:pk>",views.delete_staff_salary,name="delete_staff_salary"),
 
+    path("notification_read/<int:pk>",views.notification_read,name="notification_read"),
+    path("clear_notification",views.clear_notification,name="clear_notification")
+
     
 ]

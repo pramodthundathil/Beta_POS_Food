@@ -11,7 +11,7 @@ from POS.models import Order
 from Inventory.models import Product, Purchase
 from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
-from .models import Staff, StaffSalary
+from .models import Staff, StaffSalary, Notification
 from .forms import StaffForm, StaffSalaryForm
 import calendar
 from datetime import timedelta
@@ -191,7 +191,7 @@ def get_monthly_revenue_expense(request):
 @login_required(login_url='SignIn')
 def Index(request):
     month = now().strftime("%B")
-
+    
     total_income, total_expense = get_current_month_income_and_expense()
     total_orders = get_current_month_orders()
     top_products = get_top_selling_products()
@@ -223,6 +223,7 @@ def Index(request):
         "products":products,
         "inventory":inventory,
         'total_balance': total_balance,
+        
 
     }
     return render(request,"index.html",context)
@@ -388,3 +389,18 @@ def delete_staff_salary(request,pk):
     salary.delete()
     messages.success(request,"Salary deleted")
     return redirect("list_salary")
+
+def notification_read(request,pk):
+    notification = Notification.objects.get(id = pk)
+    notification.is_read = True
+    notification.save()
+    return redirect("list_inventory")
+
+
+def clear_notification(request):
+    Notification.objects.all().delete()
+    return redirect("Index")
+
+
+
+

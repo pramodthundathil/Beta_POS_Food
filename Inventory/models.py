@@ -86,7 +86,20 @@ class InventoryStock(models.Model):
             self.trigger_stock_alert()
 
     def trigger_stock_alert(self):
+        
         self.stock_alert = True
+        if Notification.objects.filter(ref_number = self.product_code).exists():
+            notification = Notification.objects.filter(ref_number = self.product_code).last()
+            notification.updated_at = timezone.now()
+            notification.message = f"Low Stock On Inventory {self.product_name} stock level {self.product_stock} "
+            notification.save()
+        else:
+            notification = Notification(
+                notification_heading = f"Low Stock On {self.product_name}",
+                message = f"Low Stock On Inventory {self.product_name} stock below {self.min_stock_level} ",
+                ref_number = self.product_code
+            )
+            notification.save()
         
 
     def __str__(self):
