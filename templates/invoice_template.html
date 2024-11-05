@@ -71,16 +71,16 @@
             </div>
         </div>
         <div class="header_" style="height: 15px;"></div>
-        <div class="item-details" style="margin-top:30px;height:500px; padding: 10px;box-sizing: border-box;padding-left: 0;margin-right: 30px; ">
+        <div class="item-details" style="margin-top:30px;height:530px; padding: 10px;box-sizing: border-box;padding-left: 0;margin-right: 30px; ">
             <table style="width: 100%;">
                 {% for item in order.orderitem_set.all %}
                 <tr>
-                    <td style="width: 10% !important;">{{forloop.counter}}</td>
-                    <td style="width: 70% !important; ">{{ item.product.name }}</td>
+                    <td style="width: 7% !important;">{{forloop.counter}}</td>
+                    <td style="width: 53% !important; ">{{ item.product.name }}</td>
                     <td style="width: 10% !important;">{{ item.product.unit_quantity }} {{item.product.unit}}</td>
                     <td style="width: 10% !important;">{{ item.quantity }}</td>
-                    <td style="width: 20% !important;">{{ item.unit_price |floatformat:2}}</td>
-                    <td style="width: 10% !important;">{{ item.total_price|floatformat:2 }}</td>
+                    <td style="width: 10% !important;padding-left: 30px;box-sizing: border-box;">{{ item.unit_price |floatformat:2}}</td>
+                    <td style="width: 10% !important;padding-left: 30px;box-sizing: border-box;">{{ item.total_price|floatformat:2 }}</td>
                 </tr>
                 {% endfor %}
             </table>
