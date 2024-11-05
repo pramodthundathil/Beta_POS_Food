@@ -42,9 +42,9 @@ class Vendor(models.Model):
     )
     gst_number = models.CharField(max_length=15, validators=[MinLengthValidator(15), MaxLengthValidator(15)], null=True, blank=True)
     city = models.CharField(max_length=255)
-    state = models.CharField(null=True,max_length=255)
-    country = models.CharField(max_length=255)
-    pincode = models.CharField(max_length=10)
+    state = models.CharField(max_length=255,blank=True, null=True)
+    country = models.CharField(max_length=255,blank=True, null=True)
+    pincode = models.CharField(max_length=10,blank=True, null=True)
     contact_info = models.TextField(blank=True, null=True)
     supply_product = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -297,6 +297,8 @@ class PurchaseOrder(models.Model):
         stock.last_purchase_date = purchase.bill_date
         stock.last_purchase_amount = purchase.amount
         stock.save()
+
+        self.order_status = "Closed"
 
         return purchase
 

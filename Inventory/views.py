@@ -563,6 +563,57 @@ def incresse_product_stock(request, product_id):
 
 
 @login_required(login_url='SignIn')
+def decrease_product_stock(request, product_id):
+    if request.method == 'POST':
+        # Get the product and inventory
+        product = get_object_or_404(Product, id=product_id)
+        inventory = product.inventory  # Get the linked inventory
+        
+        try:
+            # Fetch the number of units added from the form
+            units_to_decrease = float(request.POST['stock'])
+            try:
+                batch = get_object_or_404(Batch,id = int(request.POST['batch']))
+            except:
+                batch = None
+
+            # Calculate the total increase in stock based on product's unit_quantity
+            total_decrease = units_to_decrease * product.unit_quantity  # For example, 100g * 10 = 1000g
+            
+            # Convert the total increase to kilograms if inventory is in kg
+            try:
+                if inventory.unit == 'kg':
+                    total_increase_kg = total_decrease / 1000  # Convert grams to kilograms
+                    # inventory.reduce_stock(total_increase_kg)
+                    # inventory.save() # Reduce inventory stock by this amount
+                else:
+                    # # If the inventory unit is in grams, reduce directly
+                    # inventory.reduce_stock(total_increase)
+                    # inventory.save()
+                    total_increase_kg = total_decrease   # Convert grams to kilograms
+
+
+            except:
+                messages.info(request,"No Inventory on this Product To Adjust")
+            
+            # Increase the product stock
+            product.Number_of_stock -= int(units_to_decrease)
+            try:
+                batch.stock_quantity -= int(units_to_decrease)
+                batch.save()
+            except:
+                pass
+            
+            product.save()
+            
+            messages.success(request, f"Successfully Decreased stock for {product.name} by {units_to_decrease} units.")
+        except (ValueError, KeyError):
+            messages.error(request, "Invalid input. Please enter a valid stock number.")
+
+    return redirect('product_update', product_id=product.id)
+
+
+@login_required(login_url='SignIn')
 def delete_product(request,pk):
     product = get_object_or_404(Product, id=pk)
     try:

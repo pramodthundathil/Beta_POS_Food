@@ -15,6 +15,7 @@ from .models import Staff, StaffSalary
 from .forms import StaffForm, StaffSalaryForm
 import calendar
 from datetime import timedelta
+from django.core.cache import cache
 
 
 
@@ -196,6 +197,19 @@ def Index(request):
     top_products = get_top_selling_products()
     weekly_income,weekly_expense = monthly_income_view()
     orders, purchases, products, inventory = dashboard_view()
+
+    # calculating totals of balance amount with caching method 
+    # Attempt to retrieve the cached total balance
+    total_balance = cache.get('total_balance')
+
+    if total_balance is None:
+        # If not cached, calculate and cache the total balance
+        total_balance = Order.objects.aggregate(
+            total_balance=Sum('balance_amount')
+        )['total_balance'] or 0  # Default to 0 if no orders
+
+        # Cache the result for 10 minutes (600 seconds)
+        cache.set('total_balance', total_balance, 600)
     context = {
         "total_income":total_income,
         "total_expense":total_expense,
@@ -207,7 +221,8 @@ def Index(request):
         "orders":orders,
         "purchases":purchases,
         "products":products,
-        "inventory":inventory
+        "inventory":inventory,
+        'total_balance': total_balance,
 
     }
     return render(request,"index.html",context)

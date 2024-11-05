@@ -28,7 +28,13 @@
                                 <h4 class="card-title">Update Purchase Order</h4>
                                 <h6>Order Number: {{ purchase_order.purchase_order_number }}  </h6>
                                 <p>Validity date: {{purchase_order.valid_till}}</p>
+                                {% if purchase_order.order_status == "Active" %}
                                 <a href="{%url 'purchase_from_order' purchase_order.id %}" class="btn btn-warning">Make This Order as Purchase</a>
+                                {% elif purchase_order.order_status == "Expired" %}
+                                <h5 class="text-danger">Order Expired</h5>
+                                {% else %}
+                                <h5 class="text-success">Order Purchased</h5>
+                                {% endif %}
 
                             </div>
                         </div>

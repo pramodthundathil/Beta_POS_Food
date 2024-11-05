@@ -67,6 +67,7 @@ urlpatterns = [
     path("disable_product/<int:pk>",views.disable_product,name="disable_product"),
     path("product_update/<int:product_id>",views.product_update,name="product_update"),
     path("incresse_product_stock/<int:product_id>",views.incresse_product_stock,name="incresse_product_stock"),
+    path("decrease_product_stock/<int:product_id>",views.decrease_product_stock,name="decrease_product_stock"),
     path("delete_product/<int:pk>",views.delete_product,name="delete_product"),
     path('AddTax', views.AddTax, name='AddTax'),
     path('ListTax', views.ListTax, name='ListTax'),

@@ -43,12 +43,11 @@
                                 </th>
                                 <th>Customer Name</th>
                                 <th>Code</th>
-                                
-                                <th>GST No:</th>
                                 <th>Phone</th>
                                 <th>Email</th>
                                 <th>City</th>
                                 <th>Country</th>
+                                <th style="width:10%">Location</th>
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -69,8 +68,6 @@
                                 {{m.name}}</td>
                                 <!-- <td>{{m.code}}</td> -->
                                 <td class="m-status-false">#{{m.id}}</td>
-                                
-                                <td class="m-status-false">{{m.gst_number}}</td>
                                 <td class="m-status-false">{{m.phone_number}}</td>
                                 <td class="m-status-false">{{m.email}}</td>
                                 
@@ -80,6 +77,7 @@
                                 <td>
                                     {{m.country}}
                                 </td>
+                                <td style=" overflow: auto;"><a target="_blank"  href="{{m.pincode}}">Location Link</a></td>
                                 <th>
                                     {% if m.status == False %}
                                     <span class="badge bg-danger">Not available</span>

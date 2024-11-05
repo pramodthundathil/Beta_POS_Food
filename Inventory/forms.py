@@ -44,8 +44,9 @@ class PurchaseOrderForm(forms.ModelForm):
             'order_status': forms.Select(attrs={'class': 'form-control', 'id': 'order_status'}),
         }
 
-
+from django.utils import timezone
 class PurchaseForm(forms.ModelForm):
+    
     class Meta:
         model = Purchase
         fields = [
@@ -73,7 +74,7 @@ class PurchaseForm(forms.ModelForm):
             'balance_amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'balance_amount', 'step': '0.01', 'min': 0}),
             'payment_status': forms.Select(attrs={'class': 'form-control', 'id': 'payment_status'}),
             'shipping_cost': forms.NumberInput(attrs={'class': 'form-control', 'id': 'shipping_cost', 'step': '0.01', 'min': 0}),
-            'recived_date': forms.DateInput(attrs={'class': 'form-control', 'id': 'recived_date', 'type': 'date'}),
+            'recived_date': forms.DateInput(attrs={'class': 'form-control', 'id': 'recived_date', 'type': 'date','max': timezone.now().date()}),
         }
 
 
@@ -120,12 +121,12 @@ class CustomerForm(forms.ModelForm):
         }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_name'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_phone'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_phone', "type":"number"}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'customer_email'}),
             'city': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_city'}),
             'state': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_state'}),
             'country': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_country'}),
-            'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer G-map Location'}),
+            'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer G-map Location', "type":"url"}),
             'contact_info': forms.Textarea(attrs={'class': 'form-control', 'id': 'customer_contact_info', 'rows': 3}),
         }
 

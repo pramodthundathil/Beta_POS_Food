@@ -1,5 +1,6 @@
 from django.db import models
 import random
+from django.contrib.auth.models import User
 
 class Staff(models.Model):
     employe_id = models.CharField(unique=True, max_length=20)
@@ -59,3 +60,9 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification for {self.notification_heading}"
+    
+
+class Profile(models.Model):
+    Profile_name = models.CharField(max_length=255)
+    logo = models.FileField(upload_to='Logo')
+    user = models.ManyToManyField(User)

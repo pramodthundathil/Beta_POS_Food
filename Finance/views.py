@@ -11,6 +11,7 @@ from operator import attrgetter
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required 
 from Inventory.models import Purchase
+from Home.models import Profile
 
 @login_required(login_url="SignIn")
 def income(request):
@@ -208,7 +209,7 @@ from django.http import HttpResponse
 from io import BytesIO
 import pandas as pd
 from openpyxl.styles import Border, Side
-
+from django.db.models import Sum
 
 def expence_report_excel(request):
     if request.method == "POST":
@@ -239,20 +240,27 @@ def expence_report_excel(request):
 
 
 def expence_report_pdf(request):
+    profile = Profile.objects.all().last()
     if request.method == "POST":
         # Get the start and end date from the form
         start_date = request.POST['sdate']
         end_date = request.POST['edate']
+        logo_url = request.build_absolute_uri(profile.logo.url) if profile and profile.logo else None
 
         # Filter expenses based on the date range
         expenses = Expence.objects.filter(date__range=[start_date, end_date])
-
+        # Calculate subtotal for amount
+        subtotal = expenses.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+    
         # Render the data to a template
         template_path = 'expence_report_pdf.html'
         context = {
             'expenses': expenses,
             'start_date': start_date,
             'end_date': end_date,
+            "profile":profile,
+            "subtotal":subtotal,
+            "logo_url":logo_url
         }
         html = render_to_string(template_path, context)
 
@@ -280,7 +288,7 @@ def income_report_excel(request):
 
         # Filter expenses based on the date range
         expenses = Income.objects.filter(date__range=[start_date, end_date])
-
+        
         # Convert expenses to a Pandas DataFrame
         data = {
             'Date': [exp.date for exp in expenses],
@@ -301,6 +309,8 @@ def income_report_excel(request):
 
 
 def income_report_pdf(request):
+    profile = Profile.objects.all().last()
+
     if request.method == "POST":
         # Get the start and end date from the form
         start_date = request.POST['sdate']
@@ -308,13 +318,17 @@ def income_report_pdf(request):
 
         # Filter expenses based on the date range
         income = Income.objects.filter(date__range=[start_date, end_date])
+        logo_url = request.build_absolute_uri(profile.logo.url) if profile and profile.logo else None
 
+        subtotal = income.aggregate(total_amount=Sum('amount'))['total_amount'] or 0
         # Render the data to a template
         template_path = 'income_report_pdf.html'
         context = {
             'income': income,
             'start_date': start_date,
             'end_date': end_date,
+            "logo_url":logo_url,
+            "subtotal":subtotal
         }
         html = render_to_string(template_path, context)
 
@@ -392,6 +406,10 @@ def sale_report_excel(request):
 
     
 def sale_report_pdf(request):
+
+    profile = Profile.objects.all().last()
+    logo_url = request.build_absolute_uri(profile.logo.url) if profile and profile.logo else None
+
     if request.method == "POST":
         # Get the start and end date from the form
         start_date = request.POST['sdate']
@@ -417,6 +435,7 @@ def sale_report_pdf(request):
             'total_amount': total_amount,
             'total_paid': total_paid,
             'total_balance': total_balance,
+            "logo_url":logo_url
         }
 
         # Load the HTML template
@@ -584,7 +603,8 @@ def sale_report_excel_customer_wise(request):
 from django.db.models import Q
 def sale_report_pdf_customer_wise(request):
     from datetime import datetime
-
+    profile = Profile.objects.all().last()
+    logo_url = request.build_absolute_uri(profile.logo.url) if profile and profile.logo else None
     if request.method == "POST":
         # Get the start and end date from the form, along with the selected customer
         start_date = request.POST['sdate']
@@ -640,7 +660,8 @@ def sale_report_pdf_customer_wise(request):
                 'grand_total': f"{grand_total:.2f}",
                 'paid_amount': f"{paid_amount:.2f}",
                 'open_amount': f"{open_amount:.2f}",
-                'days_past_due': days_due if days_due > 0 else "N/A"
+                'days_past_due': days_due if days_due > 0 else "N/A",
+                
             }
             data.append(row)
 
@@ -654,7 +675,8 @@ def sale_report_pdf_customer_wise(request):
                 'paid_amount_sum': f"{paid_amount_sum:.2f}",
                 'open_amount_sum': f"{open_amount_sum:.2f}"
             },
-            "customer":customer
+            "customer":customer,
+            "logo_url":logo_url
         }
 
         # Render the HTML template to a string
@@ -679,6 +701,8 @@ from datetime import datetime
 
 
 def sale_report_pdf_salesman_wise(request):
+    profile = Profile.objects.all().last()
+    logo_url = request.build_absolute_uri(profile.logo.url) if profile and profile.logo else None
     if request.method == "POST":
         # Get form inputs
         start_date = request.POST.get('sdate')
@@ -762,7 +786,8 @@ def sale_report_pdf_salesman_wise(request):
                     'balance': f"{open_amount_sum:.2f}"
                 },
                 "salesman": salesman,
-                "customer_totals": customer_totals  # Passing customer subtotals to template
+                "customer_totals": customer_totals ,# Passing customer subtotals to template
+                 "logo_url":logo_url 
             }
 
             # Render HTML template to string
@@ -869,61 +894,43 @@ from django.http import HttpResponse
 
 
 def export_purchase_report_pdf(request):
+    profile = Profile.objects.all().last()
+    logo_url = request.build_absolute_uri(profile.logo.url) if profile and profile.logo else None
     if request.method == 'POST':
         start_date = request.POST.get('sdate')
         end_date = request.POST.get('edate')
 
+        # Get purchases in the specified date range
         purchases = Purchase.objects.filter(bill_date__range=[start_date, end_date])
+        totals = purchases.aggregate(
+            total_amount=Sum('amount'),
+            total_paid_amount=Sum('paid_amount'),
+            total_balance_amount=Sum('balance_amount'),
+            
+        )
 
-        # Create the response object
+        # Prepare the context
+        context = {
+            'purchases': purchases,
+            'start_date': start_date,
+            'end_date': end_date,
+            "logo_url":logo_url,
+            'totals': totals,
+        }
+
+        # Render HTML template to string
+        template_path = 'purchase_report_pdf.html'
+        html = render_to_string(template_path, context)
+
+        # Create a PDF response
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename=purchase_report_{start_date}_to_{end_date}.pdf'
+        response['Content-Disposition'] = f'attachment; filename="purchase_report_{start_date}_to_{end_date}.pdf"'
 
-        # Create PDF canvas
-        p = canvas.Canvas(response, pagesize=A4)
-        width, height = A4
+        # Convert HTML to PDF with pisa
+        pisa_status = pisa.CreatePDF(html, dest=response)
 
-        # Draw header
-        p.setFont("Helvetica-Bold", 12)
-        p.drawString(100, height - 50, f"Purchase Report ({start_date} to {end_date})")
-
-        # Draw table header
-        y = height - 100
-        p.setFont("Helvetica-Bold", 10)
-        p.drawString(50, y, "Bill Number")
-        p.drawString(150, y, "Supplier")
-        p.drawString(250, y, "Product")
-        p.drawString(350, y, "Bill Date")
-        p.drawString(450, y, "Amount")
-        p.drawString(500, y, "Paid")
-        p.drawString(550, y, "Balance")
-
-        # Draw data rows
-        p.setFont("Helvetica", 10)
-        for purchase in purchases:
-            y -= 20
-
-            # Use str() to ensure no None values are passed, provide defaults for None fields
-            bill_number = purchase.purchase_bill_number if purchase.purchase_bill_number else "N/A"
-            supplier_name = purchase.supplier.name if purchase.supplier and purchase.supplier.name else "Unknown"
-            product_name = str(purchase.purchase_item) if purchase.purchase_item else "No Product"
-            bill_date = purchase.bill_date.strftime('%Y-%m-%d') if purchase.bill_date else "N/A"
-            amount = f"{purchase.amount}" if purchase.amount else "0.00"
-            paid_amount = f"{purchase.paid_amount}" if purchase.paid_amount else "0.00"
-            balance_amount = f"{purchase.balance_amount}" if purchase.balance_amount else "0.00"
-
-            # Draw data
-            p.drawString(50, y, bill_number)
-            p.drawString(150, y, supplier_name)
-            p.drawString(250, y, product_name)
-            p.drawString(350, y, bill_date)
-            p.drawString(450, y, amount)
-            p.drawString(500, y, paid_amount)
-            p.drawString(550, y, balance_amount)
-
-        # Finalize the PDF
-        p.showPage()
-        p.save()
+        if pisa_status.err:
+            return HttpResponse("Error generating PDF")
 
         return response
     
@@ -933,6 +940,8 @@ def export_purchase_report_pdf(request):
 from datetime import date
 
 def finance_expense_report_pdf(request):
+    profile = Profile.objects.all().last()
+    logo_url = request.build_absolute_uri(profile.logo.url) if profile and profile.logo else None
     # Get the report date from the request, default to today
     report_date = request.POST.get('report_date', date.today())
 
@@ -973,6 +982,7 @@ def finance_expense_report_pdf(request):
         'total_purchase_amount': total_purchase_amount,
         'total_paid_for_purchases': total_paid_for_purchases,
         'total_pending_purchase': total_pending_purchase,
+        "logo_url":logo_url
     }
 
     # Render to PDF
@@ -1036,6 +1046,133 @@ def finance_expense_report_excel(request):
         summary_df.to_excel(writer, sheet_name='Summary', index=False)
 
     return response
+
+
+
+# summery report PDF 
+def summery_report_pdf(request):
+    if request.method == 'POST':
+        profile = Profile.objects.all().last()
+        logo_url = request.build_absolute_uri(profile.logo.url) if profile and profile.logo else None
+
+        # Get the start and end date from the request
+        start_date = request.POST.get('sdate')
+        end_date = request.POST.get('edate')
+
+        # Convert to date format
+        start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+
+        # Filter records within the date range
+        income_records = Income.objects.filter(date__range=[start_date, end_date])
+        expense_records = Expence.objects.filter(date__range=[start_date, end_date])
+        orders = Order.objects.filter(order_date__date__range=[start_date, end_date])
+        purchases = Purchase.objects.filter(bill_date__date__range=[start_date, end_date])
+
+        # Calculate totals for income, expenses, and balances
+        total_income = sum(record.amount for record in income_records)
+        total_expense = sum(record.amount for record in expense_records)
+        net_balance = total_income - total_expense
+
+        # Calculate order totals and outstanding payments
+        total_invoices_amount = sum(order.total_amount for order in orders)
+        total_received = sum(order.payed_amount for order in orders)
+        pending_amount = total_invoices_amount - total_received
+
+        # Calculate purchase totals
+        total_purchase_amount = sum(purchase.amount for purchase in purchases)
+        total_paid_for_purchases = sum(purchase.paid_amount for purchase in purchases)
+        total_pending_purchase = total_purchase_amount - total_paid_for_purchases
+
+        # Context for template
+        context = {
+            'income_records': income_records,
+            'expense_records': expense_records,
+            'orders': orders,
+            'purchases': purchases,
+            'start_date': start_date,
+            'end_date': end_date,
+            'total_income': total_income,
+            'total_expense': total_expense,
+            'net_balance': net_balance,
+            'total_invoices_amount': total_invoices_amount,
+            'total_received': total_received,
+            'pending_amount': pending_amount,
+            'total_purchase_amount': total_purchase_amount,
+            'total_paid_for_purchases': total_paid_for_purchases,
+            'total_pending_purchase': total_pending_purchase,
+            'logo_url': logo_url,
+        }
+
+        # Render to PDF
+        template = get_template('summery_report_pdf.html')
+        html = template.render(context)
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="summery_report_{start_date}_to_{end_date}.pdf"'
+        pisa_status = pisa.CreatePDF(html, dest=response)
+
+        if pisa_status.err:
+            return HttpResponse(f'Error generating PDF: {pisa_status.err}')
+        return response
+    
+
+
+def summery_report_excel(request):
+    # Get start and end dates from the request
+    if request.method == "POST":
+        start_date = request.POST.get('sdate')
+        end_date = request.POST.get('edate')
+        
+        # Convert date strings to datetime objects
+        start_date = datetime.strptime(start_date, '%Y-%m-%d').date() if start_date else None
+        end_date = datetime.strptime(end_date, '%Y-%m-%d').date() if end_date else None
+        
+        # Fetch income and expense records within the date range
+        income_records = Income.objects.filter(date__range=[start_date, end_date])
+        expense_records = Expence.objects.filter(date__range=[start_date, end_date])
+        
+        # Prepare data for DataFrame
+        income_data = {
+            'Date': [record.date for record in income_records],
+            'Particulars': [record.perticulers for record in income_records],
+            'Amount': [record.amount for record in income_records],
+            'Account': ['Credit'] * len(income_records),
+            'Bill Number': [record.bill_number for record in income_records],
+            'Partner': [record.other for record in income_records],
+        }
+        expense_data = {
+            'Date': [record.date for record in expense_records],
+            'Particulars': [record.perticulers for record in expense_records],
+            'Amount': [record.amount for record in expense_records],
+            'Account': ['Debit'] * len(expense_records),
+            'Bill Number': [record.bill_number for record in expense_records],
+            'Partner': [record.other for record in expense_records],
+        }
+
+        # Combine income and expense data into a single DataFrame
+        combined_df = pd.concat([pd.DataFrame(income_data), pd.DataFrame(expense_data)], ignore_index=True)
+
+        # Create summary DataFrame for totals
+        total_income = combined_df[combined_df['Account'] == 'Credit']['Amount'].sum()
+        total_expense = combined_df[combined_df['Account'] == 'Debit']['Amount'].sum()
+        net_balance = total_income - total_expense
+        summary_data = {
+            'Category': ['Total Income', 'Total Expense', 'Net Balance'],
+            'Amount': [total_income, total_expense, net_balance]
+        }
+        summary_df = pd.DataFrame(summary_data)
+
+        # Prepare the HTTP response for an Excel file
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="finance_expense_report_{start_date}_to_{end_date}.xlsx"'
+
+        # Write data to Excel
+        with pd.ExcelWriter(response, engine='openpyxl') as writer:
+            combined_df.to_excel(writer, sheet_name='Finance Report', index=False)
+            summary_df.to_excel(writer, sheet_name='Summary', index=False)
+
+        return response
+
 
 
 # db download
