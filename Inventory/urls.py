@@ -34,7 +34,7 @@ urlpatterns = [
     path("list_inventory",views.list_inventory,name="list_inventory"),
     path("add_purchase_order",views.add_purchase_order,name="add_purchase_order"),
     path("list_purchase_order",views.list_purchase_order,name="list_purchase_order"),
-    path("purchase_order_invoice",views.purchase_order_invoice,name="purchase_order_invoice"),
+    path("purchase_order_invoice/<int:pk>",views.purchase_order_invoice,name="purchase_order_invoice"),
     path("edit_purchase_order/<int:pk>",views.edit_purchase_order,name="edit_purchase_order"),
     path("delete_category/<int:pk>",views.delete_category,name="delete_category"),
     # ###### purchases....................

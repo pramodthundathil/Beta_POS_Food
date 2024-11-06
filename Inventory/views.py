@@ -249,8 +249,10 @@ def edit_purchase_order(request,pk):
 
 
 @login_required(login_url='SignIn')
-def purchase_order_invoice(request):
-    return render(request,"purchase_order.html")
+def purchase_order_invoice(request,pk):
+    purchase_order = PurchaseOrder.objects.get(id = pk)
+
+    return render(request,"purchase_order.html",{"purchase_order":purchase_order})
 
 
 @login_required(login_url='SignIn')
