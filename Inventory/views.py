@@ -733,7 +733,7 @@ def list_customer(request):
 @login_required(login_url='SignIn')
 def add_customers(request):
     if request.method == 'POST':
-        form = CustomerForm(request.POST)
+        form = CustomerForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             messages.success(request,"Customer Added.....")
@@ -749,7 +749,7 @@ def add_customers(request):
 def update_customer(request, pk):
     customer = get_object_or_404(Customer, pk=pk)
     if request.method == 'POST':
-        form = CustomerForm(request.POST, instance=customer)
+        form = CustomerForm(request.POST,request.FILES,instance=customer)
         if form.is_valid():
             form.save()
             messages.success(request,"Customer Updated.....")
@@ -757,7 +757,7 @@ def update_customer(request, pk):
             return redirect('list_customer')  # Redirect to the customer list or relevant page
     else:
         form = CustomerForm(instance=customer)
-    return render(request, 'update_customer.html', {'form': form})
+    return render(request, 'update_customer.html', {'form': form,'customer': customer})
 
 # Delete customer
 @login_required(login_url='SignIn')

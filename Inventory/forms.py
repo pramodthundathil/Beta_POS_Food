@@ -99,6 +99,9 @@ class VendorForm(forms.ModelForm):
     class Meta:
         model = Vendor
         fields = ['name', 'email', 'phone_number', 'city', 'state', 'country', 'pincode', 'contact_info', 'supply_product']
+        labels = {
+            "pincode":"Location Url"
+        }
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'id': 'vendor_email'}),
@@ -106,7 +109,7 @@ class VendorForm(forms.ModelForm):
             'city': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_city'}),
             'state': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_state'}),
             'country': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_country'}),
-            'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_pincode'}),
+            'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_pincode',"type":"url"}),
             'contact_info': forms.Textarea(attrs={'class': 'form-control', 'id': 'vendor_contact_info', 'rows': 3}),
             'supply_product': forms.TextInput(attrs={'class': 'form-control', 'id': 'vendor_supply_product'}),
         }
@@ -115,7 +118,7 @@ class VendorForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'phone', 'email', 'city', 'state', 'country', 'pincode', 'contact_info']
+        fields = ['name', 'phone', 'email', 'city', 'state', 'country', 'pincode', 'contact_info',"photo"]
         labels = {
             "pincode":"Location Of Customer"
         }
@@ -128,6 +131,7 @@ class CustomerForm(forms.ModelForm):
             'country': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_country'}),
             'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer G-map Location', "type":"url"}),
             'contact_info': forms.Textarea(attrs={'class': 'form-control', 'id': 'customer_contact_info', 'rows': 3}),
+            "photo":forms.TextInput(attrs={'class': 'form-control', 'id': 'Photo', "type":"file"}),
         }
 
 

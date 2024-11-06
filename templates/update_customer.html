@@ -29,7 +29,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <form method="post" data-toggle="validator">
+                            <form method="post" data-toggle="validator" enctype="multipart/form-data">
                                 {% csrf_token %}
                                 <div class="row">
                                 {% for field in form %}
@@ -42,6 +42,16 @@
                                     </div>
                                     {% endfor %}
                                 </div>
+
+                                {% if customer.photo %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Current Photo:</label>
+                                        <img src="{{ customer.photo.url }}" alt="Customer Photo" width="150px" class="img-thumbnail">
+                                        <a href="{{ customer.photo.url }}" download="{{ customer.name }}_photo" class="btn btn-info mt-2">Download Photo</a>
+                                    </div>
+                                </div>
+                                {% endif %}
                                 <button type="submit" class="btn btn-primary mr-2">Update Customers</button>
                                 <button type="reset" class="btn btn-danger">Reset</button>
                             </form>
