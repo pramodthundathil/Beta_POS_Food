@@ -31,5 +31,22 @@ urlpatterns = [
     path("delete_invoice/<int:pk>",views.delete_invoice,name="delete_invoice"),
     path("delete_invoice_partial/<int:pk>",views.delete_invoice_partial,name="delete_invoice_partial"),
     path("delete_invoice_pending/<int:pk>",views.delete_invoice_pending,name="delete_invoice_pending"),
+    path("delete_bulk_return",views.delete_bulk_return,name="delete_bulk_return"),
+
+
+
+# returns 
+
+    path("list_returns",views.list_returns,name="list_returns"),
+    path("add_returns",views.add_returns,name="add_returns"),
+    path("fetch_order_items",views.fetch_order_items,name="fetch_order_items"),
+    path("create_return_on_purchase",views.create_return_on_purchase,name="create_return_on_purchase"),
+    path("create_return_on_purchase/<int:pk>/<int:item_id>",views.create_return_on_purchase, name="create_return_on_purchase"),
+    path("single_returns/<int:pk>",views.single_returns,name="single_returns"),
+    path("ItemPOST/<int:pk>/<int:item_id>",views.ItemPOST, name="ItemPOST"),
+    
+    
+
+
     
 ]

@@ -242,6 +242,17 @@ def delete_invoice_pending(request,pk):
     messages.success(request,"Invoice Deleted.....")
     return redirect("list_sale_pending")
 
+def delete_bulk_return(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('contact_id[]')  # Get the selected IDs from the form
+        print(selected_ids,"----------------------------------")
+        if selected_ids:
+            Returns.objects.filter(id__in=selected_ids).delete()
+            messages.success(request, 'Selected items have been deleted.')
+        else:
+            messages.warning(request, 'No items were selected for deletion.')
+    return redirect("list_returns")
+
 
 
 @login_required(login_url='SignIn')
@@ -522,5 +533,101 @@ def AddDiscount(request):
 
 def Listdiscount(request):
     return render(request,"list-discount.html")
+
+
+
+# returns calculations
+
+
+def list_returns(request):
+    returns = Returns.objects.all()
+
+    context = {
+        "returns":returns
+    }
+    return render(request,"returns/list-returns.html",context)
+
+
+def add_returns(request):
+    return render(request,"returns/add-returns.html")
+
+
+
+def fetch_order_items(request):
+    if request.method == "POST":
+        order_number = request.POST.get("order_number")
+        
+        # Fetch the order by invoice number
+        try:
+            order = Order.objects.get(invoice_number=order_number)
+            order_items = order.orderitem_set.all() 
+            customer = order.customer # Retrieve related order items
+        except Order.DoesNotExist:
+            return JsonResponse({"error": "Order not found"}, status=404)
+
+        # Render the `returnitemtable.html` with the fetched items
+        html = render(request, 'ajaxtemplates/returnitemtable.html', {
+            'order_items': order_items,
+            "customer":customer,
+            "order":order
+        }).content.decode('utf-8')
+
+        # Return HTML to be inserted in #itemtable
+        return JsonResponse({'html': html})
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+def create_return_on_purchase(request, pk, item_id):
+    order = Order.objects.get(id = pk)
+    item = OrderItem.objects.get(id = item_id)
+    print(order, item)
+    if ReturnOrderItem.objects.filter(order_item = item).exists():
+        Ritem = ReturnOrderItem.objects.filter(order_item = item).first()
+        returns = Ritem.return_number
+        return redirect('single_returns',pk =  returns.id)
+    else:
+        returns = Returns(
+            order = order,
+            reason = "Returns"
+        )
+        returns.save()
+        return_item = ReturnOrderItem.objects.create(order_item = item ,return_quantity = 1 , return_number = returns,reason = "Sale Return" )
+        return_item.save()
+        return redirect("single_returns",pk = returns.id)
+
+    
+
+
+def single_returns(request,pk):
+    returns = Returns.objects.get(id = pk)
+    return_item = ReturnOrderItem.objects.get(return_number = returns)
+    return render(request,"returns/return_single.html",{
+        "return_item":return_item,
+        "returns":returns
+    })
+
+def ItemPOST(request, pk, item_id):
+    returns = Returns.objects.get(id = pk)
+    return_item = ReturnOrderItem.objects.get(id = item_id)
+    if request.method == "POST":
+        quantity = int(request.POST.get("quantity"))
+        reason = request.POST.get("reason")
+        if quantity <= return_item.order_item.quantity:
+            return_item.return_quantity = quantity
+            return_item.reason = reason
+            return_item.save()
+            returns.confirmation = True
+            returns.save()
+            messages.info(request,"Return Confirmed......")
+            return redirect("single_returns",pk = returns.id)
+        else:
+            messages.info(request,"No Sufficient items purchased")
+            return redirect("single_returns",pk = returns.id)
+
+
+
+
+
+
 
 

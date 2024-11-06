@@ -133,5 +133,46 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.product.name} - Quantity: {self.quantity}"
 
+from django.core.exceptions import ValidationError
 
-# Create your models here.
+
+class  Returns(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    return_number = models.CharField(max_length=20)
+    date = models.DateField(auto_now_add=True)
+    reason  = models.CharField(max_length=255)
+    updated_at = models.DateTimeField(auto_now=True)
+    confirmation = models.BooleanField(default=False)
+    adjustment = models.BooleanField(default=False)
+    adjustment_comment = models.CharField(max_length=255, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        # Generate purchase order number if it doesn't exist
+        if not self.return_number:
+            self.return_number = self.generate_order_number()
+        super().save(*args, **kwargs)
+
+    def generate_order_number(self):
+        # Loop to ensure uniqueness
+        while True:
+            random_number = random.randint(1000, 9999)  # 5-digit random number
+            order_number = f"RT-{random_number}"
+            if not Returns.objects.filter(return_number=order_number).exists():
+                return order_number
+
+
+class ReturnOrderItem(models.Model):
+    return_number = models.ForeignKey(Returns, on_delete= models.CASCADE, related_name='returns')
+    order_item = models.ForeignKey(OrderItem, on_delete=models.CASCADE, related_name="return_items")
+    return_quantity = models.PositiveIntegerField()
+    return_date = models.DateTimeField(auto_now_add=True)
+    reason = models.CharField(max_length=255, blank=True, null=True)  # Optional reason for return
+
+    def clean(self):
+        # Ensure return quantity does not exceed ordered quantity
+        if self.return_quantity > self.order_item.quantity:
+            raise ValidationError("Return quantity cannot exceed ordered quantity.")
+
+    
+
+
