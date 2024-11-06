@@ -1,19 +1,46 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 10px; }
-        .header { text-align: center; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 4px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .totals-row { font-weight: bold; background-color: #f9f9f9; }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 4px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .totals-row {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
     </style>
 </head>
+
 <body>
     <div class="header">
         <img src="{{logo_url}}" width="40px" alt="">
         <h2>Finance and Expense Report</h2>
+        {{logo_url}}
         <p>For Date: {{ report_date }}</p>
     </div>
 
@@ -126,20 +153,21 @@
     </table>
 
     <!-- Summary Section -->
-<h3 style="background-color: #f2f2f2; padding: 10px; text-align: center; border-radius: 5px;">Summary</h3>
-<div style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #fafafa;">
-    <p><strong>Total Income:</strong> {{ total_income|floatformat:2 }} QAR</p>
-    <p><strong>Total Expense:</strong> {{ total_expense|floatformat:2 }} QAR</p>
-    <p><strong>Net Balance:</strong> {{ net_balance|floatformat:2 }} QAR</p>
-    <hr style="margin: 10px 0;">
-    <p><strong>Total Invoices Amount:</strong> {{ total_invoices_amount|floatformat:2 }} QAR</p>
-    <p><strong>Total Amount Received Today:</strong> {{ total_received_today|floatformat:2 }} QAR</p>
-    <p><strong>Pending Amount Today:</strong> {{ pending_amount_today|floatformat:2 }} QAR</p>
-    <hr style="margin: 10px 0;">
-    <p><strong>Total Purchase Amount:</strong> {{ total_purchase_amount|floatformat:2 }} QAR</p>
-    <p><strong>Total Paid for Purchases:</strong> {{ total_paid_for_purchases|floatformat:2 }} QAR</p>
-    <p><strong>Pending Purchase Amount:</strong> {{ total_pending_purchase|floatformat:2 }} QAR</p>
-</div>
+    <h3 style="background-color: #f2f2f2; padding: 10px; text-align: center; border-radius: 5px;">Summary</h3>
+    <div style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #fafafa;">
+        <p><strong>Total Income:</strong> {{ total_income|floatformat:2 }} QAR</p>
+        <p><strong>Total Expense:</strong> {{ total_expense|floatformat:2 }} QAR</p>
+        <p><strong>Net Balance:</strong> {{ net_balance|floatformat:2 }} QAR</p>
+        <hr style="margin: 10px 0;">
+        <p><strong>Total Invoices Amount:</strong> {{ total_invoices_amount|floatformat:2 }} QAR</p>
+        <p><strong>Total Amount Received Today:</strong> {{ total_received_today|floatformat:2 }} QAR</p>
+        <p><strong>Pending Amount Today:</strong> {{ pending_amount_today|floatformat:2 }} QAR</p>
+        <hr style="margin: 10px 0;">
+        <p><strong>Total Purchase Amount:</strong> {{ total_purchase_amount|floatformat:2 }} QAR</p>
+        <p><strong>Total Paid for Purchases:</strong> {{ total_paid_for_purchases|floatformat:2 }} QAR</p>
+        <p><strong>Pending Purchase Amount:</strong> {{ total_pending_purchase|floatformat:2 }} QAR</p>
+    </div>
 
 </body>
+
 </html>

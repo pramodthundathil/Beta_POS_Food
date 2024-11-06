@@ -13,8 +13,8 @@
     <tr>
         <td>{{ item.product.name }} {{item.product.unit_quantity}}{{item.product.unit}}</td>
         <td><input type="number" value="{{ item.unit_price }}" name="unit_price" is="unit_price" class="form-control"></td>
-        <td><input type="text" value="{{ item.quantity }}" name="quantity" class="form-control"></td>
-        <td><input type="text" value="{{ item.discount }}" name="discount" class="form-control"></td>
+        <td><input type="number" value="{{ item.quantity }}" name="quantity" class="form-control"></td>
+        <td><input type="number" value="{{ item.discount }}" name="discount" class="form-control"></td>
 
         <td>{{ item.total_price }}</td>
         <td>
@@ -28,8 +28,8 @@
     </tr>
     <tr>
         <th colspan="4" class="text-center bg-info-light">Grand Total</th>
-        <th style="font-size: x-large;" id="total" class="bg-info-light">{{ order.total_amount }}</th>
-        <th class="bg-info-light"></th>
+        <th style="font-size: x-large;" id="total1" colspan="2" class="bg-info-light text-left">{{ order.total_amount }}</th>
+        <!-- <th class="bg-info-light"></th> -->
     </tr>
 </table>
 

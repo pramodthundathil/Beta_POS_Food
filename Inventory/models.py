@@ -41,7 +41,7 @@ class Vendor(models.Model):
         # validators=[RegexValidator(r'^\+?1?\d{9,15}$', message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")]
     )
     gst_number = models.CharField(max_length=15, validators=[MinLengthValidator(15), MaxLengthValidator(15)], null=True, blank=True)
-    city = models.CharField(max_length=255)
+    city = models.CharField(max_length=255,blank=True, null=True)
     state = models.CharField(max_length=255,blank=True, null=True)
     country = models.CharField(max_length=255,blank=True, null=True)
     pincode = models.CharField(max_length=10,blank=True, null=True)
