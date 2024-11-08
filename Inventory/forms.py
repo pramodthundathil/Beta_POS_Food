@@ -118,7 +118,7 @@ class VendorForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ['name', 'phone', 'email', 'city', 'state', 'country', 'pincode', 'contact_info',"photo"]
+        fields = ['name', 'phone', 'email', 'city', 'state', 'country', 'pincode', 'contact_info',"customer_photo"]
         labels = {
             "pincode":"Location Of Customer"
         }
@@ -131,7 +131,7 @@ class CustomerForm(forms.ModelForm):
             'country': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer_country'}),
             'pincode': forms.TextInput(attrs={'class': 'form-control', 'id': 'customer G-map Location', "type":"url"}),
             'contact_info': forms.Textarea(attrs={'class': 'form-control', 'id': 'customer_contact_info', 'rows': 3}),
-            "photo":forms.TextInput(attrs={'class': 'form-control', 'id': 'Photo', "type":"file"}),
+            
         }
 
 

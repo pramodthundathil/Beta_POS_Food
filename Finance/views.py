@@ -1105,7 +1105,7 @@ def summery_report_pdf(request):
         }
 
         # Render to PDF
-        template = get_template('summery_report_pdf.html')
+        template = get_template('summery_report_date_pdf.html')
         html = template.render(context)
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="summery_report_{start_date}_to_{end_date}.pdf"'

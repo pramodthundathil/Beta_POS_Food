@@ -292,6 +292,7 @@ def update_order_item(request, order_id):
         if order.save_status == False:
             item_id = request.POST.get('item_id')
             unit_price = float(request.POST.get('unit_price', 0))
+            print(unit_price,"--------------------")
             discount = float(request.POST.get('discount', 0))
             quantity = int(request.POST.get('quantity', 1))
 
@@ -320,6 +321,7 @@ def update_order_item(request, order_id):
         except Product.DoesNotExist:
             return JsonResponse({"success": False, "error": "Product not found"})
     return JsonResponse({"success": False, "error": "Invalid request"})
+
 
 @login_required(login_url='SignIn')
 @csrf_exempt

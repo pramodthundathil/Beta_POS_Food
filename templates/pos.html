@@ -712,7 +712,7 @@
         // Calculate the subtotal for the current row (client-side for immediate feedback)
         var subtotal = (unitPrice * quantity) - discount;
         $row.find('td:nth-child(5)').text(subtotal.toFixed(2));  // Update the Subtotal cell
-
+        console.log(unitPrice,"-------------------------------------")
         // Send AJAX request to update the OrderItem on the backend
         $.ajax({
             url: "{% url 'update_order_item' order.id %}", // Your update view URL

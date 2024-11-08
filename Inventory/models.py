@@ -218,7 +218,7 @@ class Customer(models.Model):
     contact_info = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=True)
-    photo = models.FileField(upload_to="Customer_photo",null=True, blank=True)
+    customer_photo = models.FileField(upload_to="Customer_photo",null=True, blank=True)
 
     def __str__(self):
         return str(self.name)

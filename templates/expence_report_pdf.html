@@ -25,6 +25,11 @@
             background-color: #f2f2f2;
         }
 
+        .image
+        {
+            text-align: center;
+        }
+
         .image img {
             display: block;
             width: 50px;
@@ -40,7 +45,10 @@
 </head>
 
 <body>
-    <div class="image"><img src="{{logo_url}}" style="display: block;margin: auto;" alt=""></div>
+    <div class="image"><img src="{{logo_url}}" style="display: block;margin: auto;" alt="">
+        <h1>Bilberry Foods</h1>
+    </div>
+    <br>
     <h1>Expense Report</h1>
     <p>From {{ start_date }} to {{ end_date }}</p>
     <table border="1">

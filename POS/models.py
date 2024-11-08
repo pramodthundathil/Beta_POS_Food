@@ -125,7 +125,8 @@ class OrderItem(models.Model):
     # Example tax rate of 10%
 
     def save(self, *args, **kwargs):
-        self.unit_price = self.product.unit_price  # Assuming the product has a price field
+        if not self.unit_price:
+            self.unit_price = self.product.unit_price  # Assuming the product has a price field
         self.total_price = self.unit_price * self.quantity - self.discount
         self.total_tax = self.product.tax_amount * self.quantity
         super(OrderItem, self).save(*args, **kwargs)
