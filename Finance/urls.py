@@ -33,6 +33,7 @@ urlpatterns = [
     path('finance_expense_report_pdf/', views.finance_expense_report_pdf, name='finance_expense_report_pdf'),
     path('summery_report_pdf/', views.summery_report_pdf, name='summery_report_pdf'),
     path('summery_report_excel/', views.summery_report_excel, name='summery_report_excel'),
+    path('sale_report_product_pdf/', views.sale_report_product_pdf, name='sale_report_product_pdf'),
     
 
     #DB download.......................

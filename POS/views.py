@@ -295,9 +295,14 @@ def update_order_item(request, order_id):
             print(unit_price,"--------------------")
             discount = float(request.POST.get('discount', 0))
             quantity = int(request.POST.get('quantity', 1))
+             
 
             # Find the OrderItem to update
             order_item = get_object_or_404(OrderItem, id=item_id, order=order)
+
+            if quantity > order_item.product.Number_of_stock:
+                return JsonResponse({"success": False, "error": "Product Stock exceeded"})
+
 
             # Update the OrderItem fields
             order_item.unit_price = unit_price

@@ -851,6 +851,52 @@ def sale_report_product_excel(request):
         return response
     
 
+import io
+
+def sale_report_product_pdf(request):
+    if request.method == "POST":
+        # Get the start and end date from the form
+        start_date = request.POST['sdate']
+        end_date = request.POST['edate']
+        product_id = request.POST.get("product")
+        profile = Profile.objects.all().last()
+        logo_url = request.build_absolute_uri(profile.logo.url) if profile and profile.logo else None
+        # Filter OrderItems based on the date range and optionally by product
+        orders = Order.objects.filter(order_date__range=[start_date, end_date])
+        if product_id:
+            orders = orders.filter(orderitem__product_id=product_id)
+
+        # Calculate totals
+        total_amount = sum(order.total_amount for order in orders)
+        total_paid = sum(order.payed_amount for order in orders)
+        total_balance = sum(order.balance_amount for order in orders)
+
+        # Render HTML content
+        html_content = render_to_string("sales_report_template.html", {
+            "orders": orders,
+            "total_amount": total_amount,
+            "total_paid": total_paid,
+            "total_balance": total_balance,
+            "start_date": start_date,
+            "end_date": end_date,
+            "logo_url": logo_url  # Replace with the actual path to the logo image
+        })
+
+        # Create a PDF
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="sale_report_{start_date}_to_{end_date}.pdf"'
+
+        # Use xhtml2pdf to generate the PDF
+        pisa_status = pisa.CreatePDF(io.StringIO(html_content), dest=response)
+
+        # Check if there was an error
+        if pisa_status.err:
+            return HttpResponse("Error generating PDF", status=500)
+        
+        return response
+
+    
+
 # purchase reports 
 
 def export_purchase_report_excel(request):
