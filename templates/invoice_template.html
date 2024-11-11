@@ -77,7 +77,7 @@
         </div>
         <div class="header_" style="height: 15px;"></div>
         <div class="item-details" style="margin-top:40px;height:488px; padding: 10px;box-sizing: border-box;padding-left: 0;margin-right: 30px; ">
-            <table style="width: 100%;">
+            <table style="width: 100%;table-layout: fixed;">
                 {% for item in order.orderitem_set.all %}
                 <tr>
                     <td style="width: 10% !important;padding-left:10px;">{{forloop.counter}}</td>

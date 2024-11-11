@@ -13,6 +13,7 @@ from django.template.loader import get_template
 from django.http import HttpResponse
 from xhtml2pdf import pisa
 from Inventory.forms import ProductForm
+from django.db import transaction
 
 
 
@@ -20,11 +21,19 @@ from Inventory.forms import ProductForm
 # Create your views here.
 
 def generate_serial_number():
-    while True:
-        random_number = random.randint(1000, 9999999)  # 5-digit random number
-        order_number = f"SI-{random_number}"
-        if not Order.objects.filter(invoice_number=order_number).exists():
-            return order_number
+    with transaction.atomic():
+        # Get the latest order based on ID to find the last invoice number
+        last_order = Order.objects.order_by('-id').first()
+        
+        if last_order and last_order.invoice_number.startswith("SI-"):
+            # Extract the numeric part, increment it, and format it with leading zeros
+            last_number = int(last_order.invoice_number.split("-")[1])
+            new_number = str(last_number + 1).zfill(5)  # Ensures it's 5 digits
+        else:
+            # Start from "SI-00001" if no previous order exists
+            new_number = "00001"
+        
+        return f"SI-{new_number}"
 
 
 @login_required(login_url='SignIn')
