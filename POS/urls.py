@@ -24,6 +24,8 @@ urlpatterns = [
     path('update_order_item/<int:order_id>/', views.update_order_item, name='update_order_item'),
     path("save_order/<int:order_id>",views.save_order,name="save_order"),
     path("add_product_from_order/<int:pk>",views.add_product_from_order,name="add_product_from_order"),
+    path("change_invoice_date/<int:pk>",views.change_invoice_date,name="change_invoice_date"),
+    
 
     
 # delete invoice

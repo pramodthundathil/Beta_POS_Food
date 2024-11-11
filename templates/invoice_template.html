@@ -6,7 +6,7 @@
     <title>Invoice</title>
     <style>
           @page {
-            size: A4;
+            
             margin: 0mm;
         }
         .body{
@@ -32,8 +32,13 @@
         }
         .footer{
             display: flex;
+            position: fixed;
+            width: 100%;
 
         }
+	th, td{
+		text-align:center ;
+	}
     </style>
 </head>
 <body onload="printInvoice()">
@@ -41,14 +46,14 @@
         <div class="top-margin">
 
         </div>
-        <div class="invoice-deatils" style="margin-top: 50px;">
+        <div class="invoice-deatils" style="margin-top: 30px;">
             <div class="items-container" style="margin-top: -10px;">
                 <h5>Customer/اسم العميل</h5>
                 <p>{{ order.customer.name }}</p>
                 <p>{{ order.customer.city }}</p>
 
             </div>
-            <div class="items-comtainer head-table margin-top:50px;" >
+            <div class="items-comtainer head-table margin-top:20px;" >
                 <table style="width:100%;position: relative;left: 0px;" >
                     <tr>
                         <td>Date</td>
@@ -71,33 +76,33 @@
             </div>
         </div>
         <div class="header_" style="height: 15px;"></div>
-        <div class="item-details" style="margin-top:30px;height:515px; padding: 10px;box-sizing: border-box;padding-left: 0;margin-right: 30px; ">
+        <div class="item-details" style="margin-top:40px;height:488px; padding: 10px;box-sizing: border-box;padding-left: 0;margin-right: 30px; ">
             <table style="width: 100%;">
                 {% for item in order.orderitem_set.all %}
                 <tr>
-                    <td style="width: 7% !important;">{{forloop.counter}}</td>
-                    <td style="width: 53% !important; ">{{ item.product.name }}</td>
-                    <td style="width: 10% !important;">{{ item.product.unit_quantity }} {{item.product.unit}}</td>
-                    <td style="width: 10% !important;">{{ item.quantity }}</td>
-                    <td style="width: 10% !important;padding-left: 30px;box-sizing: border-box;">{{ item.unit_price |floatformat:2}}</td>
-                    <td style="width: 10% !important;padding-left: 35px;box-sizing: border-box;position: relative;left: 8px;">{{ item.total_price|floatformat:2 }}</td>
+                    <td style="width: 10% !important;padding-left:10px;">{{forloop.counter}}</td>
+                    <td style="width: 50% !important;padding-left:10px ">{{ item.product.name }}</td>
+                    <td style="width: 10% !important;padding-left:7px">{{ item.product.unit_quantity }} {{item.product.unit}}</td>
+                    <td style="width: 10% !important;padding-left:10px;"> {{ item.quantity }}</td>
+                    <td style="width: 9% !important;padding-left: 30px;box-sizing: border-box;">{{ item.unit_price |floatformat:2}}</td>
+                    <td style="width: 10% !important;padding-left:30px;box-sizing: content-box;position: relative;left: 13px;text-align:center">{{ item.total_price|floatformat:2 }}</td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
         <div class="footer">
-            <div class="foot-items" style="flex-grow: 8;text-align: center;">
-                    <h6 class="text-center mt-2"> {{total_in_words}}  Qatari Riyal Only</h6>
+            <div class="foot-items" style="flex-grow: 8;text-align: center;width: 80%;">
+                    <h6 class="text-center mt-2"> {{total_in_words}}</h6>
             </div>
-            <div class="foot-items" style="flex-grow: 4;text-align: right;padding-right: 20px;">
-                <p>{{order.total_amount_before_discount|floatformat:2}}</p>
-                <p>{{order.discount|floatformat:2}}</p>
-                <p>{{order.total_amount|floatformat:2}}</p>
+            <div class="foot-items" style="flex-grow: 4;text-align: right;padding-right: 30px;magin-top:6px">
+                <p style='margin-top:'>{{order.total_amount_before_discount|floatformat:2}}</p>
+                <p style='margin-top:-2px;'>{{order.discount|floatformat:2}}</p>
+                <p style='margin-top:-2px;'>{{order.total_amount|floatformat:2}}</p>
 
             </div>
         </div>
 
-    </div>
+    </div> 
     <script>
         function printInvoice() {
             var printContents = document.getElementById('invoice-content').innerHTML;

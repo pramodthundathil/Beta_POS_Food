@@ -399,7 +399,7 @@ def save_order(request, order_id):
         if amount > 0:
             expense = Income(
                 perticulers = f"Amount Against order {order.invoice_number}",
-                amount =  amount,
+                amount =  round(amount, 2),
                 bill_number = order.invoice_number,
                 other = order.customer.name if order.customer else 'Cash Customer'
             
@@ -445,7 +445,28 @@ def render_to_pdf(template_src, context_dict):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
 
+def change_invoice_date(request,pk):
+    order = get_object_or_404(Order, id= pk)
+    if request.method =="POST":
+        date = request.POST.get("date")
+        order.order_date = date
+        order.save()
+        messages.success(request, 'Order Date Changed')
+        return redirect("POS",pk = pk)
+
 from num2words import num2words
+
+def amount_in_words(amount):
+    # Split amount into whole and decimal parts
+    whole_part = int(amount)
+    decimal_part = int(round((amount - whole_part) * 100))
+    
+    # Convert each part to words
+    whole_part_words = num2words(whole_part, lang='en')
+    decimal_part_words = num2words(decimal_part, lang='en')
+    
+    # Combine with custom currency terms
+    return f"{whole_part_words.capitalize()} Qathery Riyals and {decimal_part_words.capitalize()} Dirhams Only"
 
 @login_required(login_url='SignIn')
 def invoice(request,pk):
@@ -499,10 +520,12 @@ def invoice(request,pk):
         # if pdf:
         #     return HttpResponse(pdf, content_type='application/pdf')
         # return HttpResponse("Error generating PDF")
+
+        
         context = {
         "order": order,
         "order_items": order_items,
-        "total_in_words": num2words(order.total_amount).title()
+        "total_in_words": amount_in_words(round(order.total_amount,2))
         }
         return render(request,'invoice_template.html',context)
 

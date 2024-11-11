@@ -184,6 +184,7 @@
                     <div class="card">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
+                            
                                 <h4 class="card-title">Invoice <span
                                         style="text-align: right;">#{{order.invoice_number}}</span></h4>
                                         <h6 class="text-danger">
@@ -191,6 +192,15 @@
                                             This Invoice is Already Saved Cannot be edited
                                             {% endif%}
                                         </h6>
+
+                            </div>
+                            <div class="date header-title">
+                                Date: {{order.order_date}}
+                                <form action="{%url 'change_invoice_date' order.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="datetime-local" name="date" value="{{order.order_date}}" required>
+                                    <button class="btn btn-outline-dark btn-sm" type="submit">Change</button>
+                                </form>
                             </div>
                         </div>
                         <div class="card-body">
