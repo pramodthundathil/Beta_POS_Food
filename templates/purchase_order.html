@@ -1,59 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice</title>
+    <title>Purchase Order</title>
     <style>
-          @page {
+        @page {
             size: A4;
             margin: 0mm;
         }
-        .body{
+
+        body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
-        .top-margin {
-            height: 150px;
-        }
-        .invoice-deatils{
-            display: flex !important;
-            justify-content: space-between;
-        }
-        .invoice-deatils td{
-            padding: 2px;
-        }
-        .head-table{
-            padding-left: 50px;
-            box-sizing: border-box;
-        }
-        .items-container tr:first-child{
-            width: 70%;
-        }
-        .footer{
-            display: flex;
 
+        .invoice-container {
+            padding: 20px;
+            margin: 0;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .invoice-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .supplier-info,
+        .order-info {
+            width: 48%;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+
+        .supplier-info h5,
+        .order-info h5 {
+            margin-bottom: 5px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .details-table th,
+        .details-table td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #333;
+            font-size: 14px;
+        }
+
+        .details-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .items-container {
+            margin-top: 30px;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+        }
+
+        .total-words {
+            width: 60%;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        .totals {
+            width: 35%;
+            font-size: 14px;
+            padding-right: 20px;
+        }
+
+        .totals p {
+            margin: 5px 0;
         }
     </style>
 </head>
+
 <body onload="printInvoice()">
-    <div class="invoice" id="invoice-content">
-        <div class="top-margin">
-
+    <div class="invoice-container" id="invoice-content">
+        <!-- Header -->
+        <div class="header">
+            <h2>Purchase Order</h2>
+            <p>Order Date: {{ purchase_order.bill_date }}</p>
         </div>
-        <div class="invoice-deatils" style="margin-top: 50px;">
-            <div class="items-container" style="margin-top: -10px;">
-                <h5>Supplier/اسم العميل</h5>
-                <p>{{ purchase_order.supplier.name }}</p>
-                <p></p>
 
+        <!-- Supplier and Order Information -->
+        <div class="invoice-details">
+            <div class="supplier-info">
+                <h5>Supplier / اسم المورد</h5>
+                <p>{{ purchase_order.supplier.name }}</p>
+                <p>{{ purchase_order.supplier.city }}</p>
             </div>
-            <div class="items-comtainer head-table margin-top:50px;" >
-                <table style="width:100%;position: relative;left: 0px;" >
-                    <tr>
-                        <td>Date</td>
-                        <td>{{ purchase_order.bill_date }}</td>
-                    </tr>
+
+            <div class="order-info">
+                <table class="details-table">
                     <tr>
                         <td>Order Number</td>
                         <td>{{ purchase_order.purchase_order_number }}</td>
@@ -63,42 +131,50 @@
                         <td>{{ purchase_order.valid_till }}</td>
                     </tr>
                     <tr>
-                        <td>Payment</td>
+                        <td>Payment Type</td>
                         <td>{{ purchase_order.purchase_type }}</td>
                     </tr>
                 </table>
-
             </div>
         </div>
-        <div class="header_" style="height: 15px;"></div>
-        <div class="item-details" style="margin-top:30px;height:515px; padding: 10px;box-sizing: border-box;padding-left: 0;margin-right: 30px; ">
-            <h5 class="text-center">Purchase Order</h5>
-            <table style="width: 100%;">
-                
+
+        <!-- Item Details -->
+        <div class="items-container">
+            <h5 class="text-center">Items</h5>
+            <table class="details-table">
                 <tr>
-                    <td style="width: 7% !important;">1</td>
-                    <td style="width: 53% !important; ">{{ purchase_order.purchase_item.product_name }}</td>
-                    <td style="width: 10% !important;">{{ purchase_order.quantity }} {{item.product.unit}}</td>
-                    <td style="width: 10% !important;">{{ purchase_order.quantity }}-</td>
-                    <td style="width: 10% !important;padding-left: 30px;box-sizing: border-box;">{{ purchase_order.purchase_price |floatformat:2}}</td>
-                    <td style="width: 10% !important;padding-left: 35px;box-sizing: border-box;position: relative;left: 8px;">{{ purchase_order.amount|floatformat:2 }}</td>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 50%;">Product</th>
+                    <th style="width: 15%;">Quantity</th>
+                    <th style="width: 15%;">Unit Price</th>
+                    <th style="width: 15%;">Total</th>
                 </tr>
-                
+                {% for item in purchase_order.items.all %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.product_name }}</td>
+                    <td>{{ item.quantity }} {{ item.unit }}</td>
+                    <td>{{ item.purchase_price|floatformat:2 }}</td>
+                    <td>{{ item.amount|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
             </table>
         </div>
-        <div class="footer">
-            <div class="foot-items" style="flex-grow: 8;text-align: center;">
-                    <h6 class="text-center mt-2"> {{total_in_words}}  Qatari Riyal Only</h6>
-            </div>
-            <div class="foot-items" style="flex-grow: 4;text-align: right;padding-right: 20px;">
-                <p>{{purchase_order.purchase_price|floatformat:2}}</p>
-                <p>{{purchase_order.discount|floatformat:2}}</p>
-                <p>{{purchase_order.amount|floatformat:2}}</p>
 
+        <!-- Footer with Totals -->
+        <div class="footer">
+            <div class="total-words">
+                <strong>Total in Words:</strong> {{ total_in_words }} Qatari Riyal Only
+            </div>
+            <div class="totals">
+                <p><strong>Subtotal:</strong> {{ purchase_order.subtotal|floatformat:2 }}</p>
+                <p><strong>Discount:</strong> {{ purchase_order.discount|floatformat:2 }}</p>
+                <p><strong>Tax:</strong> {{ purchase_order.tax|floatformat:2 }}</p>
+                <p><strong>Total Amount:</strong> {{ purchase_order.total_amount|floatformat:2 }}</p>
             </div>
         </div>
-
     </div>
+
     <script>
         function printInvoice() {
             var printContents = document.getElementById('invoice-content').innerHTML;
