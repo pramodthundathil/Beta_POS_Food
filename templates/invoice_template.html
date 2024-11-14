@@ -7,82 +7,124 @@
     <title>Invoice</title>
     <style>
         @page {
-
-            margin: 0mm;
+            margin: 10mm;
         }
 
-        .body {
+        body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
         }
 
         .top-margin {
-            height: 150px;
             padding: 20px;
-            box-sizing: border-box;
             text-align: center;
+            border-bottom: 1px solid #333;
+        }
 
+        .top-margin h2 {
+            margin: 0;
         }
 
         .top-margin p {
-            line-height: 1px;
+            margin: 2px 0;
         }
 
-        .invoice-deatils {
-            display: flex !important;
+        .invoice-details {
+            display: flex;
             justify-content: space-between;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            margin-top: 20px;
         }
 
-        .invoice-deatils td {
-            padding: 2px;
-            padding-bottom: 5px;
-
+        .invoice-details .customer-details,
+        .invoice-details .order-info {
+            width: 48%;
+            border: 1px solid #333;
+            padding: 15px;
+            border-radius: 8px;
         }
 
-        .head-table {
-            padding-left: 50px;
+        .order-info table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-info td {
+            padding: 5px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .order-info td:last-child {
+            text-align: right;
+        }
+
+        .item-details {
+            margin: 20px auto;
+            width: 100%;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            padding: 15px;
             box-sizing: border-box;
         }
 
-        .items-container tr:first-child {
-            width: 70%;
+        .item-details table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        .item-details th,
+        .item-details td {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+        }
+
+        .item-details th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+        }
+
+        .item-details tr:last-child td {
+            border-bottom: none;
         }
 
         .footer {
             display: flex;
-            position: fixed;
-            width: 94%;
-            margin: auto;
-
+            justify-content: space-between;
+            width: 95%;
+            margin: 20px auto;
+            padding: 15px;
+            border: 1px  solid #333;
+            border-radius: 8px;
         }
 
-        th,
-        td {
+        .footer .total-in-words {
+            width: 60%;
             text-align: center;
-            padding: 5px;
+            border-right: 1px solid #333;
+            padding-right: 15px;
         }
 
-        th {
-            margin-bottom: 10px;
+        .footer .amount-details {
+            width: 40%;
+            padding-left: 15px;
+            line-height: 1.5;
         }
 
-        .items-container {
-            border: 1px solid black;
-            border-radius: 20px;
-            padding: 20px;
-            box-sizing: border-box;
-            width: 80%;
-
-            margin: 20px;
-            text-align: left;
-            height: 150px;
-
-
-
-
+        .footer .amount-details p {
+            margin: 4px 0;
         }
 
-        .item-details table {}
+        /* Print adjustments */
+        @media print {
+            .footer {
+                page-break-inside: avoid;
+            }
+        }
     </style>
 </head>
 
@@ -90,21 +132,20 @@
     <div class="invoice" id="invoice-content">
         <div class="top-margin">
             <h2>BETA POS</h2>
-            <p>Door no. 144, 2st floor</p>
+            <p>Door no. 144, 2nd floor</p>
             <p>DD Milestone, Kadavanthra</p>
-            <p>Kochi, Inda</p>
-            <p><Strong>GST</Strong>0000000000</p>
-
+            <p>Kochi, India</p>
+            <p><strong>GST:</strong> 0000000000</p>
         </div>
-        <div class="invoice-deatils" style="margin-top: 30px;">
-            <div class="items-container">
-                <h5>Customer/اسم العميل</h5>
+        
+        <div class="invoice-details">
+            <div class="customer-details">
+                <h5>Customer / اسم العميل</h5>
                 <p>{{ order.customer.name }}</p>
                 <p>{{ order.customer.city }}</p>
-
             </div>
-            <div class="items-container head-table margin-top:20px;">
-                <table style="width:100%;position: relative;left: 0px;">
+            <div class="order-info">
+                <table>
                     <tr>
                         <td>Date</td>
                         <td>{{ order.order_date }}</td>
@@ -122,61 +163,47 @@
                         <td>{{ order.payment_status1 }}</td>
                     </tr>
                 </table>
-
             </div>
         </div>
-        <!-- <div class="header_" style="height: 15px;"></div> -->
-        <div class="item-details"
-            style="margin: auto;margin-top:20px;height:488px; padding: 10px;box-sizing: border-box;padding-left: 0;margin-right: 30px;border: 1px solid black; ">
-            <table style="width: 100%;table-layout: fixed;">
+        
+        <div class="item-details">
+            <table>
                 <tr>
-                    <th style="width: 10% !important;padding-left:10px;border-bottom: 1px solid black;">slno</th>
-                    <th style="width: 50% !important;padding-left:10px;border-bottom: 1px solid black; ">Product</th>
-                    <th style="width: 10% !important;padding-left:7px;border-bottom: 1px solid black;">Item Weight</th>
-                    <th style="width: 10% !important;padding-left:10px;border-bottom: 1px solid black;">Quantity </th>
-                    <th
-                        style="width: 15% !important;padding-left: 30px;box-sizing: border-box;border-bottom: 1px solid black;">
-                        Unit Price</th>
-                        <th
-                        style="width: 15% !important;padding-left: 30px;box-sizing: border-box;border-bottom: 1px solid black;">
-                        Tax</th>
-                    <th
-                        style="width: 10% !important;padding-left:30px;box-sizing: content-box;position: relative;left: 13px;text-align:center;border-bottom: 1px solid black;">
-                        Total price</th>
-
+                    <th>Sl No</th>
+                    <th>Product</th>
+                    <th>Item Weight</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Tax</th>
+                    <th>Total Price</th>
                 </tr>
-
                 {% for item in order.orderitem_set.all %}
                 <tr>
-                    <td style="width: 10% !important;padding-left:10px;">{{forloop.counter}}</td>
-                    <td style="width: 30% !important;padding-left:10px; ">{{ item.product.name }}</td>
-                    <td style="width: 10% !important;padding-left:7px;">{{ item.product.unit_quantity }}
-                        {{item.product.unit}}</td>
-                    <td style="width: 10% !important;padding-left:10px;"> {{ item.quantity }}</td>
-                    <td style="width: 15% !important;padding-left: 30px;box-sizing: border-box;">{{ item.unit_price |floatformat:2}}</td>
-                    <th>{{item.total_tax}}</th>
-                    <td
-                        style="width: 10% !important;padding-left:30px;box-sizing: content-box;position: relative;left: 13px;text-align:center;">
-                        {{ item.total_price|floatformat:2 }}</td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.product.unit_quantity }} {{ item.product.unit }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit_price|floatformat:2 }}</td>
+                    <td>{{ item.total_tax }}</td>
+                    <td>{{ item.total_price|floatformat:2 }}</td>
                 </tr>
                 {% endfor %}
             </table>
         </div>
-        <div class="footer" style="border: 1px solid black;">
-            <div class="foot-items" style="flex-grow: 7;text-align: center;width: 70%; border-left: 1px solid black;">
-                <h6 class="text-center mt-2"> {{total_in_words}}</h6>
+        
+        <div class="footer">
+            <div class="total-in-words">
+                <h6>{{ total_in_words }}</h6>
             </div>
-            <div class="foot-items" style="flex-grow: 5;text-align:left;padding-right: 10px;magin-top:6px">
-                <p style='margin-top:'><strong>Total Amount:</strong>
-                    {{order.total_amount_before_discount|floatformat:2}}</p>
-                <p style='margin-top:-2px;'><strong>Discount:</strong> {{order.discount|floatformat:2}}</p>
-                <p style='margin-top:-2px;'><strong>Tax:</strong> {{order.total_tax|floatformat:2}}</p>
-                <p style='margin-top:-2px;'><strong>net Amount:</strong> {{order.total_amount|floatformat:2}}</p>
-
+            <div class="amount-details">
+                <p><strong>Total Amount:</strong> {{ order.total_amount_before_discount|floatformat:2 }}</p>
+                <p><strong>Discount:</strong> {{ order.discount|floatformat:2 }}</p>
+                <p><strong>Tax:</strong> {{ order.total_tax|floatformat:2 }}</p>
+                <p><strong>Net Amount:</strong> {{ order.total_amount|floatformat:2 }}</p>
             </div>
         </div>
-
     </div>
+
     <script>
         function printInvoice() {
             var printContents = document.getElementById('invoice-content').innerHTML;
