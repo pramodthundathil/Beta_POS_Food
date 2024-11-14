@@ -16,7 +16,7 @@
         <td><input type="number" value="{{ item.quantity }}"  name="quantity" class="form-control"></td>
         <td><input type="number" value="{{ item.discount }}" name="discount" class="form-control"></td>
 
-        <td>{{ item.total_price }}</td>
+        <td>{{ item.total_price|floatformat:2 }}</td>
         <td>
             <button class="btn btn-sm btn-primary increase-quantity" data-item-id="{{ item.id }}">Delete</button>
             <!-- <button class="btn btn-sm btn-secondary decrease-quantity" data-item-id="{{ item.id }}">-</button> -->
@@ -28,7 +28,7 @@
     </tr>
     <tr>
         <th colspan="4" class="text-center bg-info-light">Grand Total</th>
-        <th style="font-size: x-large;" id="total1" colspan="2" class="bg-info-light text-left">{{ order.total_amount }}</th>
+        <th style="font-size: x-large;" id="total1" colspan="2" class="bg-info-light text-left">{{ order.total_amount|floatformat:2 }}</th>
         <!-- <th class="bg-info-light"></th> -->
     </tr>
 </table>
@@ -40,23 +40,23 @@
                 <div class="row">
                     <div class="col-md-3">
                         <label>Total Amount:</label>
-                        <input type="number" class="form-control" readonly value="{{order.total_amount}}" name="total_amount">
+                        <input type="number" class="form-control" readonly value="{{order.total_amount|floatformat:2}}" name="total_amount">
                     </div>
                     <div class="col-md-3">
                         <label >Amount Paid:</label>
                             <br>
-                        <input type="number" class="form-control" id="amount-paid" value="{{order.payed_amount}}" name="amount_paid">
+                        <input type="number" class="form-control" id="amount-paid" value="{{order.payed_amount|floatformat:2}}" name="amount_paid">
                     </div>
                     <div class="col-md-3">
                         <label >Discount On total Bill:</label>
                 <br>
-                            <input type="number" class="form-control" id="discount-amount" value="{{order.discount}}" name="discount_amount">
+                            <input type="number" class="form-control" id="discount-amount" value="{{order.discount|floatformat:2}}" name="discount_amount">
                         
                     </div>
                     <div class="col-md-3">
                         <label >Balance amount:</label>
                 <br>
-                            <input type="number" readonly class="form-control" id="balance-amount" value="{{order.balance_amount}}" name="balance_amount">
+                            <input type="number" readonly class="form-control" id="balance-amount" value="{{order.balance_amount|floatformat:2}}" name="balance_amount">
                         
                     </div>
                     <div class="col-md-12">
@@ -157,6 +157,7 @@
     }
 
     $('#amount-paid, #discount-amount').on('input', calculateBalance);
+
 });
 
 </script>

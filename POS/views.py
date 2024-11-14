@@ -328,7 +328,8 @@ def update_order_item(request, order_id):
                 'success': True,
                 'total_amount': order.total_amount,
                 'balance_amount': order.balance_amount,
-                'payment_status': order.payment_status1
+                'payment_status': order.payment_status1,
+                'discount':order.discount
             })
         except Order.DoesNotExist:
             return JsonResponse({"success": False, "error": "Order not found"})
@@ -369,6 +370,7 @@ def update_order_payment(request, order_id):
             order = Order.objects.get(id=order_id)    
             order.payed_amount = payed_amount
             order.discount = discount
+
             order.balance_amount = order.total_amount - payed_amount
 
             
@@ -393,6 +395,7 @@ def save_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     previous_paid_amount = order.payed_amount
     # Save the order and calculate totals
+    print(previous_paid_amount,"----------------------------------------")
     order.update_totals()
     order.calculate_balance()
     new_payedamount =  order.payed_amount - previous_paid_amount

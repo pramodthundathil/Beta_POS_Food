@@ -741,11 +741,13 @@
                     $('#balance-amount').val(response.balance_amount);
                     $('#total').val(response.total_amount);
                     $('#payment-status').text(response.payment_status);
+                    $('#discount-amount').val(response.discount)
 
                     // Log for debugging
                     console.log('Total Amount:', response.total_amount);
                     console.log('Balance Amount:', response.balance_amount);
                     console.log('Payment Status:', response.payment_status);
+                    console.log("discount",response.discount)
                     updateGrandTotal(response.total_amount);
                 } else {
                     alert(response.error);
