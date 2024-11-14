@@ -1,5 +1,5 @@
 {% extends 'index.html' %}
-{% block  content %}
+{% block content %}
 <style>
     /* .m-status-false{
         opacity: .3;
@@ -15,8 +15,8 @@ delete_bulk_invoice
                     <div>
                         <h4 class="mb-3">Invoice List</h4>
                         {% for message in messages %}
-                       <div class="alert {{message.tags}} " role="alert">
-                           <div class="iq-alert-text"><b>Alert</b> {{message}}</div>
+                        <div class="alert {{message.tags}} " role="alert">
+                            <div class="iq-alert-text"><b>Alert</b> {{message}}</div>
                         </div>
                         {% endfor %}
                         <p class="mb-0"></p>
@@ -29,76 +29,80 @@ delete_bulk_invoice
                 <form method="post" action="{% url 'delete_bulk_invoice' %}">
                     {% csrf_token %}
                     <div class="text-right mt-2 mb-2">
-                        <button onclick="return confirm('Are You Sure Do You Want To Delete Selected Items?')" type="submit" class="btn btn-danger">Delete</button>
+                        <button onclick="return confirm('Are You Sure Do You Want To Delete Selected Items?')"
+                            type="submit" class="btn btn-danger">Delete</button>
                     </div>
-                <div class="table-responsive rounded mb-3">
-                    <table class="data-tables table mb-0 tbl-server-info">
-                        <thead class="bg-white text-uppercase">
-                            <tr class="ligth ligth-data">
-                                <th>
-                                    <div class="checkbox d-inline-block">
-                                        <input  type="checkbox" id="select-all" aria-checked="false" class="checkbox-input">
-                                        <label for="checkbox1" class="mb-0"></label>
-                                    </div>
-                                </th>
-                                <th>Order Number</th>
-                                <th>date</th>
-                                <th>Bill Amount</th>
-                                <th>Payment Status</th>
-                                <th>Customer</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="ligth-body">
+                    <div class="table-responsive rounded mb-3">
+                        <table class="data-tables table mb-0 tbl-server-info">
+                            <thead class="bg-white text-uppercase">
+                                <tr class="ligth ligth-data">
+                                    <th>
+                                        <div class="checkbox d-inline-block">
+                                            <input type="checkbox" id="select-all" aria-checked="false"
+                                                class="checkbox-input">
+                                            <label for="checkbox1" class="mb-0"></label>
+                                        </div>
+                                    </th>
+                                    <th>Order Number</th>
+                                    <th>date</th>
+                                    <th>Bill Amount</th>
+                                    <th>Payment Status</th>
+                                    <th>Customer</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="ligth-body">
 
-                            {% for m in order %}
-                            
-                            <tr >
-                                <td class="m-status-false">
-                                    <div class="checkbox d-inline-block">
-                                        <input type="checkbox" value="{{m.id}}" name="contact_id[]" class="checkbox-input contact-checkbox">
-                                        <label for="checkbox2" class="mb-0"></label>
-                                    </div>
-                                </td>
-                                
-                                <td class="m-status-false">
-                                {{m.invoice_number}}</td>
-                                <!-- <td>{{m.code}}</td> -->
-                                <td class="m-status-false">{{m.order_date}}</td>
-                                <th>QAR {{m.total_amount}}</th>
-                                
-                                <th>
-                                    {% if m.payment_status1 == 'UNPAID' %}
-                                    <span class="badge bg-danger">{{m.payment_status1}}</span>
-                                    {% elif m.payment_status1 == 'PAID' %}
-                                    <span class="badge bg-success">{{m.payment_status1}}</span>
-                                    {% elif m.payment_status1 == 'PARTIALLY' %}
-                                    <span class="badge bg-warning">{{m.payment_status1}}</span>
-                                    {% else %}
-                                    <span class="badge bg-dark">UNKNOWN</span>
-                                    {% endif %}
-                                    
-                                </th>
-                                <td>
-                                    {{m.customer}}
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center list-action">
-                                        <a href="{%url 'invoice' m.id %}" target="_blank" class="btn btn-sm btn-outline-primary"> Invoice</a>
-                                        &nbsp;&nbsp;
-                                        <a class="badge bg-success mr-2" data-toggle="tooltip"
-                                            data-placement="top" title="" data-original-title="Edit" href="{%url 'POS' m.id %}"><i
-                                                class="ri-pencil-line mr-0"></i></a>
+                                {% for m in order %}
 
-                                                <a class="badge bg-danger mr-2" data-toggle="modal"
-                                                data-target="#deletemodel{{m.id}}" data-original-title="Delete" href="#"><i
-                                                    class="ri-delete-bin-line mr-0"></i></a>
+                                <tr>
+                                    <td class="m-status-false">
+                                        <div class="checkbox d-inline-block">
+                                            <input type="checkbox" value="{{m.id}}" name="contact_id[]"
+                                                class="checkbox-input contact-checkbox">
+                                            <label for="checkbox2" class="mb-0"></label>
+                                        </div>
+                                    </td>
+
+                                    <td class="m-status-false">
+                                        {{m.invoice_number}}</td>
+                                    <!-- <td>{{m.code}}</td> -->
+                                    <td class="m-status-false">{{m.order_date}}</td>
+                                    <th>QAR {{m.total_amount|floatformat:2}}</th>
+
+                                    <th>
+                                        {% if m.payment_status1 == 'UNPAID' %}
+                                        <span class="badge bg-danger">{{m.payment_status1}}</span>
+                                        {% elif m.payment_status1 == 'PAID' %}
+                                        <span class="badge bg-success">{{m.payment_status1}}</span>
+                                        {% elif m.payment_status1 == 'PARTIALLY' %}
+                                        <span class="badge bg-warning">{{m.payment_status1}}</span>
+                                        {% else %}
+                                        <span class="badge bg-dark">UNKNOWN</span>
+                                        {% endif %}
+
+                                    </th>
+                                    <td>
+                                        {{m.customer}}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center list-action">
+                                            <a href="{%url 'invoice' m.id %}" target="_blank"
+                                                class="btn btn-sm btn-outline-primary"> Invoice</a>
+                                            &nbsp;&nbsp;
+                                            <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top"
+                                                title="" data-original-title="Edit" href="{%url 'POS' m.id %}"><i
+                                                    class="ri-pencil-line mr-0"></i></a>
+
+                                            <a class="badge bg-danger mr-2" data-toggle="modal"
+                                                data-target="#deletemodel{{m.id}}" data-original-title="Delete"
+                                                href="#"><i class="ri-delete-bin-line mr-0"></i></a>
                                             <!-- Delete Modal -->
                                             <div class="modal fade" id="deletemodel{{m.id}}" tabindex="-1" role="dialog"
                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
-    
+
                                                         <div class="modal-body">
                                                             Do you want to Delete Invoice ?
                                                         </div>
@@ -111,17 +115,17 @@ delete_bulk_invoice
                                                     </div>
                                                 </div>
                                             </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            
+                                        </div>
+                                    </td>
+                                </tr>
 
-                            
-                            {% endfor %}
-                            
-                        </tbody>
-                    </table>
-                </div>
+
+
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
                 </form>
             </div>
         </div>
@@ -154,20 +158,20 @@ delete_bulk_invoice
          </div> -->
         <!-- Page end  -->
     </div>
-    
+
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const selectAllCheckbox = document.getElementById('select-all');
         const contactCheckboxes = document.querySelectorAll('.contact-checkbox');
-  
+
         selectAllCheckbox.addEventListener('change', function () {
             const isChecked = this.checked;
             contactCheckboxes.forEach(function (checkbox) {
                 checkbox.checked = isChecked;
             });
         });
-  
+
         contactCheckboxes.forEach(function (checkbox) {
             checkbox.addEventListener('change', function () {
                 const allChecked = [...contactCheckboxes].every(function (checkbox) {
@@ -177,6 +181,6 @@ delete_bulk_invoice
             });
         });
     });
-    
-  </script>
+
+</script>
 {% endblock %}

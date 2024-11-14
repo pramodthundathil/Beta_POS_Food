@@ -81,7 +81,7 @@ class PurchaseForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['category', 'name', 'inventory', 'unit_price', 'unit_quantity', 'unit', 'Number_of_stock',"barcode_number", 'description']
+        fields = ['category', 'name', 'inventory', 'unit_price', 'unit_quantity', 'unit', 'Number_of_stock',"tax","tax_value","barcode_number", 'description']
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control', 'id': 'category'}),
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'name'}),
@@ -92,6 +92,8 @@ class ProductForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'id': 'description', 'rows': 3}),
             'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
             'barcode_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'barcode_number'}),
+            "tax":forms.Select(attrs={'class': 'form-control', 'id': 'tax'}),
+            "tax_value":forms.Select(attrs={'class': 'form-control', 'id': 'tax-value'})
         }
 
 

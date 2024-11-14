@@ -486,40 +486,40 @@ def invoice(request,pk):
     order.calculate_balance()
     order_items = order.orderitem_set.all()
     # Adjust stock
-    try:
-        if order.save_status == False:
-            order.adjust_stock()  # Deduct the stock
-            order.save_status = True
-            order.save()
+    # try:
+    #     if order.save_status == False:
+    #         order.adjust_stock()  # Deduct the stock
+    #         order.save_status = True
+    #         order.save()
 
-        if Income.objects.filter(bill_number = order.invoice_number).exists():
-            expense = Income.objects.filter(bill_number = order.invoice_number)
-            total = 0
+    #     if Income.objects.filter(bill_number = order.invoice_number).exists():
+    #         expense = Income.objects.filter(bill_number = order.invoice_number)
+    #         total = 0
             
-            for ex in expense:
-                total = total + ex.amount
+    #         for ex in expense:
+    #             total = total + ex.amount
             
-            amount = order.payed_amount - total
-            if amount > 0:
-                expense = Income(
-                    perticulers = f"Amount Against order {order.invoice_number}",
-                    amount =  amount,
-                    bill_number = order.invoice_number,
-                    other = order.customer.name if order.customer else 'Cash Customer'
+    #         amount = order.payed_amount - total
+    #         if amount > 0:
+    #             expense = Income(
+    #                 perticulers = f"Amount Against order {order.invoice_number}",
+    #                 amount =  amount,
+    #                 bill_number = order.invoice_number,
+    #                 other = order.customer.name if order.customer else 'Cash Customer'
                 
-                )
+    #             )
             
-                expense.save() 
-        else:
-            expense = Income(
-                    perticulers = f"Amount Against order {order.invoice_number}",
-                    amount =  order.payed_amount,
-                    bill_number = order.invoice_number,
-                    other = order.customer.name if order.customer else 'Cash Customer'
+    #             expense.save() 
+    #     else:
+    #         expense = Income(
+    #                 perticulers = f"Amount Against order {order.invoice_number}",
+    #                 amount =  order.payed_amount,
+    #                 bill_number = order.invoice_number,
+    #                 other = order.customer.name if order.customer else 'Cash Customer'
                 
-                )
+    #             )
             
-            expense.save()
+    #         expense.save()
 
         # order = Order.objects.get(pk=pk)
         # context = {
@@ -531,17 +531,17 @@ def invoice(request,pk):
         # return HttpResponse("Error generating PDF")
 
         
-        context = {
-        "order": order,
-        "order_items": order_items,
-        "total_in_words": amount_in_words(round(order.total_amount,2))
-        }
-        return render(request,'invoice_template.html',context)
+    context = {
+    "order": order,
+    "order_items": order_items,
+    "total_in_words": amount_in_words(round(order.total_amount,2))
+    }
+    return render(request,'invoice_template.html',context)
 
       # Get all OrderItems for the specific order
-    except ValueError as e:
-        messages.info(request,"Not Enough stock...")
-        return redirect("POS",pk = pk)
+    # except ValueError as e:
+    #     messages.info(request,"Not Enough stock...")
+    #     return redirect("POS",pk = pk)
 
     
 
