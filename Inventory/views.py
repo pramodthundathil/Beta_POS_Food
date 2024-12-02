@@ -2,11 +2,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from django.contrib import messages
-from .forms import ProductForm, InventoryStockForm, PurchaseOrderForm, PurchaseForm, VendorForm, CustomerForm, BatchForm
+from .forms import ProductForm, InventoryStockForm, PurchaseForm, VendorForm, CustomerForm, BatchForm
 from django.http import HttpResponse
 from POS.models import *
 from django.contrib.auth.decorators import login_required
 from Finance.models import Income, Expence
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 
 
 
@@ -81,7 +84,7 @@ def add_vendor(request):
         return redirect('list_vendor')
     return render(request,"add-vendor.html") 
 
-# displaying vendorl list 
+# displaying vendor list 
 @login_required(login_url='SignIn')
 def list_vendor(request):
     vendor = Vendor.objects.all().order_by("-id")
@@ -199,20 +202,40 @@ def delete_inventory(request,pk):
 
 @login_required(login_url='SignIn')
 def add_purchase_order(request):
-    form = PurchaseOrderForm()
-    if request.method == "POST":
-        form = PurchaseOrderForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, 'Purchase Order added successfully')
-            return redirect('list_purchase_order')  # Adjust this based on your URLs
-        else:
-            messages.error(request, 'Failed to add Purchase Order. Please check the details.')
-    
-    context = {
-        'form': form
-    }
-    return render(request, 'inventory/add-purchase-order.html', context)
+    purchase_order = PurchaseOrder.objects.create()
+    purchase_order.save()
+    return redirect(edit_purchase_order, pk = purchase_order.id)
+
+   
+@login_required(login_url='SignIn')
+def add_purchase_order_item(request,pk):
+    purchase_order = get_object_or_404(PurchaseOrder, id = pk)
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        print(product_id,")))))))))))))))))))))))))))))))))))))))))))")
+        try:
+            order = PurchaseOrder.objects.get(id=pk)
+            if order.save_status == True:
+                return JsonResponse({"success": False, "error": "Cannot Be added New Item to This order"})
+            product = InventoryStock.objects.get(id=product_id)
+            order_item, created = PurchaseOrderItem.objects.get_or_create(purchase_order=order, inventory=product)
+            if not created:
+                order_item.unit_price = 0
+                order_item.quantity += 1
+                order_item.save()
+
+            
+            # Update order totals
+            order.update_totals()
+            
+            # Render the order items table
+            order_items_html = render_to_string('ajaxtemplates/purchase_order_table.html', {'order': order})
+            return JsonResponse({"success": True, "html": order_items_html})
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+        except Product.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Product not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
 
 
 
@@ -228,24 +251,89 @@ def list_purchase_order(request):
 @login_required(login_url='SignIn')
 def edit_purchase_order(request,pk):
     purchase_order  = get_object_or_404(PurchaseOrder,id = pk)
-
-    form = PurchaseOrderForm(instance=purchase_order)
-    if request.method == "POST":
-        form = PurchaseOrderForm(request.POST,instance=purchase_order)
-        if form.is_valid():
-            form.save()
-
-
-            messages.success(request, 'Purchase Order Updated successfully')
-            return redirect('list_purchase_order')  # Adjust this based on your URLs
-        else:
-            messages.error(request, 'Failed to add Purchase Order. Please check the details.')
-    
+    supplier = Vendor.objects.all()
+    product = InventoryStock.objects.all()
     context = {
-        'form': form,
-        "purchase_order":purchase_order
+        "supplier":supplier,
+        "product":product,
+        "order":purchase_order
     }
-    return render(request, 'inventory/update-purchase-order.html', context)
+    return render(request, 'inventory/add-purchase-order.html', context)
+
+
+@login_required(login_url='SignIn')
+@csrf_exempt
+def update_purchase_order_item(request, order_id):
+    if request.method == "POST":
+        order = get_object_or_404(PurchaseOrder, id=order_id)
+        if order.save_status == False:
+            item_id = request.POST.get('item_id')
+            unit_price = float(request.POST.get('unit_price', 0))
+            discount = 0
+            print(unit_price,"--------------------")
+            quantity = int(request.POST.get('quantity', 1))
+             
+
+            # Find the OrderItem to update
+            order_item = get_object_or_404(PurchaseOrderItem, id=item_id, purchase_order=order)
+
+            # Update the OrderItem fields
+            order_item.unit_price = unit_price
+            order_item.discount = discount
+            order_item.quantity = quantity
+            order_item.save()  # This will also update the total_price based on save() logic
+        else:
+            return JsonResponse({"success": False, "error": "Cannot be change order is closed"})
+
+        try:
+        # Update order totals
+            order.update_totals()
+            
+            print(order.amount)
+        # Prepare the updated data to return as a JSON response
+            return JsonResponse({
+                'success': True,
+                'total_amount': order.amount,
+                
+            })
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+        except Product.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Product not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+
+@login_required(login_url='SignIn')
+@csrf_exempt
+def update_supplier_to_purchase_order(request):
+    if request.method == 'POST':
+        customer_id = request.POST.get('customer_id')
+        order_id = request.POST.get('order_id')
+        try:
+            order = PurchaseOrder.objects.get(id=order_id)
+            customer = Vendor.objects.get(id=customer_id)
+            order.supplier = customer
+            order.save()
+            customer_details_html = render_to_string('ajaxtemplates/suppierinfo.html', {'customers': customer,"order" : order})
+            print(customer_details_html)
+            return JsonResponse({"success": True, "html": customer_details_html})
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+        except Customer.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Customer not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+@login_required(login_url='SignIn')
+def change_purchase_order_date(request,pk):
+    order = get_object_or_404(PurchaseOrder, id= pk)
+    if request.method =="POST":
+        date = request.POST.get("date")
+        order.bill_date = date
+        order.save()
+        messages.success(request, 'Order Date Changed')
+        return redirect("edit_purchase_order",pk = pk)
 
 
 @login_required(login_url='SignIn')
@@ -262,9 +350,42 @@ def purchase_from_order(request, order_id):
     purchase_order.order_status = "Closed"
     purchase_order.save()
     messages.info(request,"Purchase Created....")
-
-
     return redirect("purchase")
+
+@login_required(login_url='SignIn')
+def delete_purchase_order(request, pk):
+    purchase_order = get_object_or_404(PurchaseOrder, id = pk)
+    purchase_order.delete()
+    messages.success(request,"Purchase order deleted success....")
+    return redirect("list_purchase_order")
+
+@login_required(login_url='SignIn')
+@csrf_exempt
+def  delete_purchase_order_item(request,pk):
+    if request.method == 'POST':
+        itemid = request.POST.get('item_id')
+        try:
+            order = PurchaseOrder.objects.get(id=pk)
+            if order.save_status == True:
+                return JsonResponse({"success": False, "error": "Cannot delete item from this order . Closed order"})
+            else:
+                item = get_object_or_404(PurchaseOrderItem, id = int(itemid))
+                item.delete()
+            # Update order totals
+                order.update_totals()
+             
+            # Render the order items table
+            order_items_html = render_to_string('ajaxtemplates/purchase_order_table.html', {'order': order})
+            return JsonResponse({"success": True, "html": order_items_html})
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+        except Product.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Product not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+
+#################### Purchase order section ends #######################################################
 
 @login_required(login_url='SignIn')
 def purchase(request):
@@ -278,35 +399,274 @@ import datetime
 @login_required(login_url='SignIn')
 def edit_purchase(request,pk):
     purchase  = get_object_or_404(Purchase,id = pk)
-    paid_amount = purchase.paid_amount
-    form = PurchaseForm(instance=purchase)
-    if request.method == "POST":
-        form = PurchaseForm(request.POST,instance=purchase)
-        if form.is_valid():
-            new_purchase = form.save()
-            new_purchase.save()
-            now_paid = new_purchase.paid_amount - paid_amount
-            print(now_paid,"-----------------------------")
-            if now_paid > 0:
-                expence = Expence(
-                    perticulers = f"Amount Paid to  {new_purchase.supplier} towards purchase {new_purchase.purchase_bill_number}",
-                    date = datetime.datetime.now(),
-                    bill_number = new_purchase.purchase_bill_number,
-                    amount = now_paid,
-                    other = new_purchase.supplier.name if new_purchase.supplier else 'No Partner'
-                )
-                expence.save()
+    supplier = Vendor.objects.all()
+    product = InventoryStock.objects.all()
+    # paid_amount = purchase.paid_amount
+    # form = PurchaseForm(instance=purchase)
+    # if request.method == "POST":
+    #     form = PurchaseForm(request.POST,instance=purchase)
+    #     if form.is_valid():
+    #         new_purchase = form.save()
+    #         new_purchase.save()
+    #         now_paid = new_purchase.paid_amount - paid_amount
+    #         print(now_paid,"-----------------------------")
+    #         if now_paid > 0:
+    #             expence = Expence(
+    #                 perticulers = f"Amount Paid to  {new_purchase.supplier} towards purchase {new_purchase.purchase_bill_number}",
+    #                 date = datetime.datetime.now(),
+    #                 bill_number = new_purchase.purchase_bill_number,
+    #                 amount = now_paid,
+    #                 other = new_purchase.supplier.name if new_purchase.supplier else 'No Partner'
+    #             )
+    #             expence.save()
 
-            messages.success(request, 'Purchase Updated successfully')
-            return redirect('purchase')  # Adjust this based on your URLs
-        else:
-            messages.error(request, 'Failed to add Purchase Order. Please check the details.')
+    #         messages.success(request, 'Purchase Updated successfully')
+    #         return redirect('purchase')  # Adjust this based on your URLs
+    #     else:
+    #         messages.error(request, 'Failed to add Purchase Order. Please check the details.')
     
     context = {
-        'form': form,
-        "purchase":purchase
+        # 'form': form,
+        "order":purchase,
+        "supplier":supplier,
+        "product":product
     }
     return render(request, 'inventory/update-purchase.html', context)
+
+
+@csrf_exempt
+def payment_given_in_expense_purchase(request):
+    if request.method == "POST":
+        order = Purchase.objects.get(id = int(request.POST.get("order_id")))
+        if order.purchase_confirmation == False:
+            for i in order.purchase_bill.all():
+                i.inventory.product_stock += i.quantity
+                i.inventory.last_purchase_date = order.bill_date
+                i.inventory.last_purchase_amount += i.unit_price
+                i.inventory.save()
+            order.purchase_confirmation = True
+            order.save()
+        try:
+            if Expence.objects.filter(bill_number = order.purchase_bill_number).exists():
+                expense = Expence.objects.filter(bill_number = order.purchase_bill_number)
+                total = 0
+                
+                for ex in expense:
+                    total = total + ex.amount
+                
+                amount = order.paid_amount - total
+                if amount > 0:
+                    expense = Expence(
+                        perticulers = f"Amount paid Against purchase {order.purchase_bill_number}",
+                        amount =  round(amount, 2),
+                        bill_number = order.purchase_bill_number,
+                        other = order.supplier.name if order.supplier else 'No Partner'
+                    
+                    )
+                
+                    expense.save() 
+                    return JsonResponse({"success": True, "mssg": "Order Payment Updated"})
+                else:
+                    return JsonResponse({"success": True, "mssg": "Order Payment Updated"})
+
+            else:
+                if order.paid_amount > 0:
+                    expense = Expence(
+                            perticulers = f"Amount paid Against Purchase {order.purchase_bill_number}",
+                            amount =  order.paid_amount,
+                            bill_number = order.purchase_bill_number,
+                            other = order.supplier.name if order.supplier else 'No Partner'
+                        
+                        )
+                    
+                    expense.save()
+                    return JsonResponse({"success": True, "mssg": "Order Payment Updated"})
+                
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+     
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+          
+    
+
+@login_required(login_url='SignIn')
+def add_purchase_item(request,pk):
+    purchase_order = get_object_or_404(Purchase, id = pk)
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        print(product_id,")))))))))))))))))))))))))))))))))))))))))))")
+        try:
+            order = Purchase.objects.get(id=pk)
+            if order.purchase_confirmation == True:
+                return JsonResponse({"success": False, "error": "Cannot Be added New Item to This order"})
+            product = InventoryStock.objects.get(id=product_id)
+            order_item, created = PurchaseItems.objects.get_or_create(purchase=order, inventory=product)
+            if not created:
+                order_item.unit_price = 0
+                order_item.quantity += 1
+                order_item.save()
+
+            
+            # Update order totals
+            order.update_totals()
+            
+            # Render the order items table
+            order_items_html = render_to_string('ajaxtemplates/purchase_table.html', {'order': order,'total_amount': order.amount})
+            return JsonResponse({"success": True, "html": order_items_html})
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+        except Product.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Product not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+@login_required(login_url='SignIn')
+@csrf_exempt
+def update_purchase_item(request, order_id):
+    if request.method == "POST":
+        order = get_object_or_404(Purchase, id=order_id)
+        if order.purchase_confirmation == False:
+            item_id = request.POST.get('item_id')
+            unit_price = float(request.POST.get('unit_price', 0))
+            # discount = 0
+            print(unit_price,"--------------------")
+            quantity = int(request.POST.get('quantity', 1))
+             
+
+            # Find the OrderItem to update
+            order_item = get_object_or_404(PurchaseItems, id=item_id, purchase=order)
+
+            # Update the OrderItem fields
+            order_item.unit_price = unit_price
+            # order_item.discount = discount
+            order_item.quantity = quantity
+            order_item.save()
+        else:
+            return JsonResponse({"success": False, "error": "This Purchase is already done cannot be Edited "})
+
+              # This will also update the total_price based on save() logic
+        try:
+        # Update order totals
+            order.update_totals()
+            
+            print(order.amount)
+            # order_items_html = render_to_string('ajaxtemplates/purchase_table.html', {'order': order,'total_amount': order.amount})
+            # return JsonResponse({"success": True, "html": order_items_html})
+        # Prepare the updated data to return as a JSON response
+            return JsonResponse({
+                'success': True,
+                'total_amount': order.amount,
+                "balance_amount":order.balance_amount,
+                "payment-status":order.payment_status
+                
+            })
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+        except Product.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Product not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+@csrf_exempt
+def update_purchase_payment(request, order_id):
+    if request.method == 'POST':
+        payed_amount = float(request.POST.get('payed_amount'))
+        # discount = float(request.POST.get('discount'))
+        
+        try:
+            order = Purchase.objects.get(id=order_id)    
+            order.paid_amount = payed_amount
+            # order.discount = discount
+            # order.balance_amount = (order.amount - payed_amount) - discount
+
+            
+                        
+            if payed_amount == 0:
+                order.payment_status = 'UNPAID'
+            elif payed_amount >= order.amount:
+                order.payment_status = 'PAID'
+            else:
+                order.payment_status = 'PARTIALLY'
+                
+            order.save()
+            order_items_html = render_to_string('ajaxtemplates/purchase_table.html', {'order': order})
+            return JsonResponse({"success": True, "html": order_items_html})
+            # return JsonResponse({'success': True})
+        except Order.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Order not found'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+@login_required(login_url='SignIn')
+@csrf_exempt
+def  delete_purchase_item(request,pk):
+    if request.method == 'POST':
+        itemid = request.POST.get('item_id')
+        try:
+            order = Purchase.objects.get(id=pk)
+            if order.purchase_confirmation == True:
+                return JsonResponse({"success": False, "error": "Cannot Be Deleted  Item from This Purchase"})
+            else:
+                item = get_object_or_404(PurchaseItems, id = int(itemid))
+                item.delete()
+            # Update order totals
+                order.update_totals()
+             
+            # Render the order items table
+            order_items_html = render_to_string('ajaxtemplates/purchase_table.html', {'order': order})
+            return JsonResponse({"success": True, "html": order_items_html})
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+        except Product.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Product not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
+
+
+@login_required(login_url='SignIn')
+@csrf_exempt
+def add_bill_discount_to_purchase(request,pk):
+    order = Purchase.objects.get(id = pk)
+    if request.method == "POST":
+        discount = request.POST["bill_discount"]
+        order.discount = discount
+        order.save()
+        order.update_totals()
+        # order.calculate_balance()
+        messages.success(request,"Discount Added.....")
+        return redirect("edit_purchase",pk = pk)
+
+@login_required(login_url='SignIn')
+def change_purchase_date(request,pk):
+    order = get_object_or_404(Purchase, id= pk)
+    if request.method =="POST":
+        date = request.POST.get("date")
+        order.bill_date = date
+        order.save()
+        messages.success(request, 'Order Date Changed')
+        return redirect("edit_purchase",pk = pk)
+    
+
+
+@login_required(login_url='SignIn')
+@csrf_exempt
+def update_supplier_to_purchase(request):
+    if request.method == 'POST':
+        customer_id = request.POST.get('customer_id')
+        order_id = request.POST.get('order_id')
+        try:
+            order = Purchase.objects.get(id=order_id)
+            customer = Vendor.objects.get(id=customer_id)
+            order.supplier = customer
+            order.save()
+            customer_details_html = render_to_string('ajaxtemplates/suppierinfo.html', {'customers': customer,"order" : order})
+            print(customer_details_html)
+            return JsonResponse({"success": True, "html": customer_details_html})
+        except Order.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Order not found"})
+        except Customer.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Customer not found"})
+    return JsonResponse({"success": False, "error": "Invalid request"})
 
 
 @login_required(login_url='SignIn')
@@ -317,47 +677,59 @@ def deletepurchase(request,pk):
     return redirect("purchase")
 
 
+# @login_required(login_url='SignIn')
+# def add_purchase(request):
+#     if request.method == 'POST':
+#         form = PurchaseForm(request.POST)
+#         if form.is_valid():
+#             item = form.save()
+#             item.save()
+#             stock = item.purchase_item
+#             if item.paid_amount > 0:
+#                 expence = Expence(
+#                     perticulers = f"Amount Paid to  {item.supplier} towards purchase {item.purchase_bill_number}",
+#                     date = datetime.datetime.now(),
+#                     bill_number = item.purchase_bill_number,
+#                     amount = item.paid_amount,
+#                     other = item.supplier.name if item.supplier else 'No Partner'
+#                 )
+#                 expence.save()
+
+#             if not stock:
+#                 raise ValueError("No inventory item selected for purchase.")
+
+#             # Adjust quantity based on the units in PurchaseOrder and InventoryStock
+#             purchase_quantity = item.quantity
+
+#             # If stock is in grams but purchase is in kilograms, convert purchase to grams
+#             if stock.unit == 'g' and item.unit == 'kg':
+#                 purchase_quantity *= 1000  # Convert kilograms to grams
+
+#             # If stock is in kilograms but purchase is in grams, convert purchase to kilograms
+#             elif stock.unit == 'kg' and item.unit == 'g':
+#                 purchase_quantity /= 1000  # Convert grams to kilograms
+
+#             stock.product_stock += purchase_quantity
+#             stock.last_purchase_date = item.bill_date
+#             stock.last_purchase_amount = item.amount
+#             stock.save()
+
+#             return redirect('purchase')  
+#     else:
+#         form = PurchaseForm()
+#     return render(request,'inventory/add-purchase.html',{"form":form})
+
 @login_required(login_url='SignIn')
 def add_purchase(request):
-    if request.method == 'POST':
-        form = PurchaseForm(request.POST)
-        if form.is_valid():
-            item = form.save()
-            item.save()
-            stock = item.purchase_item
-            if item.paid_amount > 0:
-                expence = Expence(
-                    perticulers = f"Amount Paid to  {item.supplier} towards purchase {item.purchase_bill_number}",
-                    date = datetime.datetime.now(),
-                    bill_number = item.purchase_bill_number,
-                    amount = item.paid_amount,
-                    other = item.supplier.name if item.supplier else 'No Partner'
-                )
-                expence.save()
-
-            if not stock:
-                raise ValueError("No inventory item selected for purchase.")
-
-            # Adjust quantity based on the units in PurchaseOrder and InventoryStock
-            purchase_quantity = item.quantity
-
-            # If stock is in grams but purchase is in kilograms, convert purchase to grams
-            if stock.unit == 'g' and item.unit == 'kg':
-                purchase_quantity *= 1000  # Convert kilograms to grams
-
-            # If stock is in kilograms but purchase is in grams, convert purchase to kilograms
-            elif stock.unit == 'kg' and item.unit == 'g':
-                purchase_quantity /= 1000  # Convert grams to kilograms
-
-            stock.product_stock += purchase_quantity
-            stock.last_purchase_date = item.bill_date
-            stock.last_purchase_amount = item.amount
-            stock.save()
-
-            return redirect('purchase')  
+    if request.method == "POST":
+        purchase_type = request.POST.get("purchase_type")
+        purchase = Purchase.objects.create(purchase_type = purchase_type)
+        purchase.save()
+        return redirect(edit_purchase, pk = purchase.id)
     else:
-        form = PurchaseForm()
-    return render(request,'inventory/add-purchase.html',{"form":form})
+        messages.info(request,"Purchase not created")
+        return redirect("purchase")
+
 
 
 ############################ Product Management #################################

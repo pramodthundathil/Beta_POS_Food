@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, transaction
 from django.contrib.auth.models import User 
 import random
 from django.utils import timezone
@@ -228,7 +228,6 @@ class PurchaseOrder(models.Model):
     PURCHASE_TYPES = [
         ('Credit', 'Credit'),
         ('Cash', 'Cash'),
-       
     ]
     
     ORDER_STATUS_CHOICES = [
@@ -240,84 +239,134 @@ class PurchaseOrder(models.Model):
     purchase_order_number = models.CharField(max_length=20, unique=True)
     purchase_type = models.CharField(max_length=20, choices=PURCHASE_TYPES, default="Cash")
     bill_date = models.DateTimeField(auto_now_add=True)
-    valid_till = models.DateField()
+    valid_till = models.DateField(null=True)
     supplier = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
-    place_of_supply = models.CharField(max_length=100)
-    purchase_item = models.ForeignKey(InventoryStock, on_delete=models.SET_NULL, null=True, blank=True)
-    quantity = models.FloatField()
-    purchase_price = models.FloatField()
-    discount = models.FloatField(help_text='in %', null=True, blank=True)
-    tax = models.FloatField(default=0)
-    cess = models.FloatField(default=0)
-    unit = models.CharField(max_length=255, choices=(("g", "gram"), ("kg", "kilograms")), default="kg")
-    amount = models.FloatField()
+    place_of_supply = models.CharField(max_length=100, null=True)
+    total_amount_before_discount = models.FloatField(default=0)
+    amount = models.FloatField(default=0.0)  # Total amount of all items
+    total_discount = models.FloatField(default=0.0)  # Total discount on the order
     status = models.BooleanField(default=True)
-    order_status = models.CharField(max_length=30, choices=ORDER_STATUS_CHOICES)
+    order_status = models.CharField(max_length=30, choices=ORDER_STATUS_CHOICES, default="Active")
+    # tax = models.ForeignKey(Tax, on_delete=models.SET_NULL, null=True, blank=True)
+    cess = models.FloatField(null=True, blank=True)
+    save_status = models.BooleanField(default=False)
+    
 
     def save(self, *args, **kwargs):
-        # Generate purchase order number if it doesn't exist
         if not self.purchase_order_number:
             self.purchase_order_number = self.generate_order_number()
         super().save(*args, **kwargs)
 
     def generate_order_number(self):
-        # Loop to ensure uniqueness
         while True:
-            random_number = random.randint(10000, 999999)  # 5-digit random number
+            random_number = random.randint(10000, 999999)
             order_number = f"PRO-{random_number}"
             if not PurchaseOrder.objects.filter(purchase_order_number=order_number).exists():
                 return order_number
 
-    def create_purchase(self):
-        # Check the unit in InventoryStock and adjust accordingly
-        stock = self.purchase_item
-
-        if not stock:
-            raise ValueError("No inventory item selected for purchase.")
-
-        # Adjust quantity based on the units in PurchaseOrder and InventoryStock
-        purchase_quantity = self.quantity
-
-        # If stock is in grams but purchase is in kilograms, convert purchase to grams
-        if stock.unit == 'g' and self.unit == 'kg':
-            purchase_quantity *= 1000  # Convert kilograms to grams
-
-        # If stock is in kilograms but purchase is in grams, convert purchase to kilograms
-        elif stock.unit == 'kg' and self.unit == 'g':
-            purchase_quantity /= 1000  # Convert grams to kilograms
-
-        # Create a Purchase instance based on this PurchaseOrder
-        purchase = Purchase.objects.create(
-            purchase_type=self.purchase_type,
-            supplier=self.supplier,
-            place_of_supply=self.place_of_supply,
-            purchase_order_number=self.purchase_order_number,
-            purchase_order_date=self.bill_date,
-            purchase_item=self.purchase_item,
-            quantity=purchase_quantity,  # Adjusted quantity
-            purchase_price=self.purchase_price,
-            discount=self.discount,
-            tax=self.tax,
-            unit=stock.unit,  # Use the InventoryStock unit
-            amount=self.amount,
-            paid_amount=0,  # Default value, can be updated later
-            balance_amount=self.amount,  # Initially, balance equals the total amount
-            payment_status="UNPAID",  # Default status, can be updated later
-            shipping_cost=0,  # Default value, update as needed
+    def calculate_total_discount(self):
+        """
+        Calculate the total discount across all purchase order items.
+        """
+        total_discount = sum(
+            item.discount for item in self.purchase_order_items.all()
         )
+        self.total_discount = total_discount
 
-        # Update the inventory stock based on the adjusted quantity
-        stock.product_stock += purchase_quantity
-        stock.last_purchase_date = purchase.bill_date
-        stock.last_purchase_amount = purchase.amount
-        stock.save()
+    def update_totals(self):
+        total_amount_before_discount = 0
+        total_amount = 0
+        total_tax = 0
+        total_discount = 0
 
+        for item in self.purchase_order_items.all():
+            # Calculate the total amount before discount
+            item_total_before_discount = item.unit_price * item.quantity
+            total_amount_before_discount += item_total_before_discount
+            # Sum up the discount for each item
+            total_discount += item.discount
+            # Calculate the total price (after discount) and total tax for each item
+            total_amount += item.total_price  # `total_price` already includes the discount
+            
+
+        self.total_amount_before_discount = total_amount_before_discount
+        self.amount = total_amount  # Already discounted total amount
+        self.discount = total_discount  # Set the order discount as the sum of item discounts
+        self.save()
+
+    def create_purchase(self):
+        # Ensure all PurchaseOrderItems are processed
+        purchase_items = self.purchase_order_items.all()  # Related name to access items
+        if not purchase_items.exists():
+            raise ValueError("No items available in the PurchaseOrder to create purchase.")
+
+        total_amount = 0
+        purchase = Purchase.objects.create(
+                purchase_type=self.purchase_type,
+                supplier=self.supplier,
+                place_of_supply=self.place_of_supply,
+                purchase_order_number=self.purchase_order_number,
+                purchase_order_date=self.bill_date,
+                purchase_price=self.amount,
+                discount=self.total_discount,
+                tax=0,  # Update if needed
+                amount=self.amount,
+                paid_amount=0,
+                balance_amount=0,
+                payment_status="UNPAID",
+                shipping_cost=0,
+                purchase_confirmation = True
+            )
+        purchase.save()
+
+        for item in purchase_items:
+            inventory = item.inventory
+
+            # Adjust quantity based on units
+            purchase_quantity = item.quantity
+            if inventory.unit == 'g' and item.unit_price == 'kg':
+                purchase_quantity *= 1000  # Convert kilograms to grams
+            elif inventory.unit == 'kg' and item.unit_price == 'g':
+                purchase_quantity /= 1000  # Convert grams to kilograms
+
+            # Create a Purchase instance for this item
+            purchase_item = PurchaseItems.objects.create(purchase = purchase, inventory = inventory,quantity = item.quantity, unit_price = item.unit_price)
+            purchase_item.save()
+            # Update inventory stock
+            inventory.product_stock += purchase_quantity
+            inventory.last_purchase_date = purchase.bill_date
+            inventory.last_purchase_amount = item.unit_price
+            inventory.save()
+
+            total_amount += item.total_price
+
+        self.amount = total_amount
         self.order_status = "Closed"
-
-        return purchase
+        self.save_status = True
+        self.save()
 
     def __str__(self):
         return f"PurchaseOrder {self.purchase_order_number} - {self.supplier}"
+
+
+class PurchaseOrderItem(models.Model):
+    purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name='purchase_order_items')
+    inventory = models.ForeignKey(InventoryStock, on_delete=models.CASCADE, related_name="inventory_items")
+    quantity = models.FloatField(default=0)
+    unit_price = models.FloatField(default=0)
+    discount = models.FloatField(default=0)  # Per item discount
+    total_price = models.FloatField(editable=False)
+    
+
+    def save(self, *args, **kwargs):
+        # Calculate total price with discount
+        # self.unit_price = 0
+        self.total_price = (self.unit_price * self.quantity) - self.discount
+        super(PurchaseOrderItem, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.inventory.product_name} - Quantity: {self.quantity}"
+
 
 
 class Purchase(models.Model):
@@ -337,22 +386,23 @@ class Purchase(models.Model):
     supplier = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
     payment_terms = models.CharField(help_text='Number of days, Credit Period',max_length=255, null=True, blank=True)
     due_date = models.DateField(null=True, blank=True)
-    place_of_supply = models.CharField(max_length=100)
+    place_of_supply = models.CharField(max_length=100,null=True, blank=True)
     purchase_bill_number = models.CharField(max_length=255, null=True, blank=True)
     purchase_order_number = models.CharField(max_length=20, null=True, blank=True)
     purchase_order_date = models.DateField(null=True, blank=True)
-    purchase_item = models.ForeignKey(InventoryStock, on_delete=models.SET_NULL, null=True, blank=True)
-    quantity = models.FloatField()
-    purchase_price = models.FloatField()
-    discount = models.FloatField(help_text='in %', null=True, blank=True)
+    purchase_item = models.ManyToManyField(InventoryStock)
+    quantity = models.FloatField(null=True, blank=True, default=1)
+    purchase_price = models.FloatField(null=True, blank=True)
+    discount = models.FloatField(help_text='in %', null=True, blank=True, default=0)
     unit = models.CharField(max_length=255, choices=(("g","gram"),("kg","kilograms")), default="kg")
     tax = models.FloatField(null=True, blank=True)
-    amount = models.FloatField()
-    paid_amount = models.FloatField()
-    balance_amount = models.FloatField()
+    amount = models.FloatField(default=0)
+    paid_amount = models.FloatField(default=0)
+    balance_amount = models.FloatField(default=0)
     payment_status = models.CharField(max_length=20,choices=PAYMENT_STATUS)
     shipping_cost = models.FloatField(null=True, blank=True)
     recived_date = models.DateField(auto_now_add=False, null=True, blank=True)
+    purchase_confirmation = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # Generate purchase order number if it doesn't exist
@@ -360,8 +410,11 @@ class Purchase(models.Model):
             self.purchase_bill_number = self.generate_order_number()
 
         # Apply discount if available
-        discount_factor = 1 - (self.discount / 100) if self.discount else 1
-        total_amount = self.amount * discount_factor
+        discount_factor = 1
+        try:
+            total_amount = self.amount - float(self.discount)
+        except:
+            total_amount = self.amount
         
         # Calculate balance amount
         self.balance_amount = total_amount - self.paid_amount
@@ -373,22 +426,73 @@ class Purchase(models.Model):
         elif 0 < self.paid_amount < total_amount:
             self.payment_status = "PARTIALLY"
         else:
-            self.payment_status = "UNPAID"
-            
+            self.payment_status = "UNPAID"    
         super().save(*args, **kwargs)
-
 
     def generate_order_number(self):
         # Loop to ensure uniqueness
-        while True:
-            random_number = random.randint(10000, 999999)  # 5-digit random number
-            order_number = f"PR-{random_number}"
-            if not Purchase.objects.filter(purchase_bill_number=order_number).exists():
-                return order_number
+        with transaction.atomic():
+        # Get the latest order based on ID to find the last invoice number
+            last_order = Purchase.objects.order_by('-id').first()
+            
+            if last_order and last_order.purchase_bill_number.startswith("PR-"):
+                # Extract the numeric part, increment it, and format it with leading zeros
+                last_number = int(last_order.purchase_bill_number.split("-")[1])
+                new_number = str(last_number + 1).zfill(5)  # Ensures it's 5 digits
+            else:
+                # Start from "SI-00001" if no previous order exists
+                new_number = "00001"
+        
+        return f"PR-{new_number}"
+    def update_totals(self):
+        total_amount_before_discount = 0
+        total_amount = 0
+        total_tax = 0
+        total_discount = 0
+
+        for item in self.purchase_bill.all():
+            # Calculate the total amount before discount
+            item_total_before_discount = item.unit_price * item.quantity
+            total_amount_before_discount += item_total_before_discount
+            # Sum up the discount for each item
+            total_discount += item.discount
+            # Calculate the total price (after discount) and total tax for each item
+            total_amount += item.total_price  # `total_price` already includes the discount
+            
+
+        # self.total_amount_before_discount = total_amount_before_discount
+        self.amount = total_amount  # Already discounted total amount
+        # self.discount = float(self.discount)  +  float(total_discount)  # Set the order discount as the sum of item discounts
+        self.save()
+
+    # def calculate_balance(self):
+    #     # Calculate balance amount based on total, discount, and amount paid
+    #     discounted_total = self.amount - self.discount
+    #     self.balance_amount = discounted_total - self.paid_amount
+    #     self.save()
 
 
     def __str__(self):
         return f"Purchase {self.id} - {self.supplier}"
+    
+
+class PurchaseItems(models.Model):
+    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, related_name='purchase_bill')
+    inventory = models.ForeignKey(InventoryStock, on_delete=models.CASCADE, related_name="inventorys")
+    quantity = models.FloatField(default=0)
+    unit_price = models.FloatField(default=0)
+    discount = models.FloatField(default=0)  # Per item discount
+    total_price = models.FloatField(editable=False)
+    
+    def save(self, *args, **kwargs):
+        # Calculate total price with discount
+        # self.unit_price = 0
+        self.total_price = (self.unit_price * self.quantity) - self.discount
+        super(PurchaseItems, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.inventory.product_name} - Quantity: {self.quantity}"
+
 
 
 

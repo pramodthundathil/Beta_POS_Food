@@ -32,11 +32,22 @@ urlpatterns = [
     path("edit_inventory/<int:pk>",views.edit_inventory,name="edit_inventory"),
     path("delete_inventory/<int:pk>",views.delete_inventory,name="delete_inventory"),
     path("list_inventory",views.list_inventory,name="list_inventory"),
+    path("delete_category/<int:pk>",views.delete_category,name="delete_category"),
+
+
+
+    # purchase order handing ..............................
     path("add_purchase_order",views.add_purchase_order,name="add_purchase_order"),
     path("list_purchase_order",views.list_purchase_order,name="list_purchase_order"),
     path("purchase_order_invoice/<int:pk>",views.purchase_order_invoice,name="purchase_order_invoice"),
     path("edit_purchase_order/<int:pk>",views.edit_purchase_order,name="edit_purchase_order"),
-    path("delete_category/<int:pk>",views.delete_category,name="delete_category"),
+    path("add_purchase_order_item/<int:pk>",views.add_purchase_order_item,name="add_purchase_order_item"),
+    path("update_purchase_order_item/<int:order_id>",views.update_purchase_order_item,name="update_purchase_order_item"),
+    path("update_supplier_to_purchase_order",views.update_supplier_to_purchase_order,name="update_supplier_to_purchase_order"),
+    path("change_purchase_order_date/<int:pk>",views.change_purchase_order_date,name="change_purchase_order_date"),
+    path("delete_purchase_order/<int:pk>",views.delete_purchase_order,name="delete_purchase_order"),
+    path("delete_purchase_order_item/<int:pk>",views.delete_purchase_order_item,name="delete_purchase_order_item"),
+
     # ###### purchases....................
 
     path("purchase",views.purchase,name="purchase"),
@@ -44,8 +55,17 @@ urlpatterns = [
     path("purchase_from_order/<int:order_id>",views.purchase_from_order,name="purchase_from_order"),
     path("edit_purchase/<int:pk>",views.edit_purchase,name="edit_purchase"),
     path("deletepurchase/<int:pk>",views.deletepurchase,name="deletepurchase"),
+    path("change_purchase_date/<int:pk>",views.change_purchase_date,name="change_purchase_date"),
+    path("add_purchase_item/<int:pk>",views.add_purchase_item,name="add_purchase_item"),
+    path("update_supplier_to_purchase",views.update_supplier_to_purchase,name="update_supplier_to_purchase"),
+    path("update_purchase_item/<int:order_id>",views.update_purchase_item,name="update_purchase_item"),
+    path("update_purchase_payment/<int:order_id>",views.update_purchase_payment,name="update_purchase_payment"),
+    path("payment_given_in_expense_purchase",views.payment_given_in_expense_purchase,name="payment_given_in_expense_purchase"),
+    path("add_bill_discount_to_purchase/<int:pk>",views.add_bill_discount_to_purchase,name="add_bill_discount_to_purchase"),
+    path("delete_purchase_item/<int:pk>",views.delete_purchase_item,name="delete_purchase_item"),
 
-    #data import
+
+    #data import 
 
     path("import_data_from_excel_inventory",views.import_data_from_excel_inventory,name="import_data_from_excel_inventory"),
     

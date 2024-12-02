@@ -99,6 +99,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # "Home.middleware.LicenseCheckMiddleware"
 ]
 
 ROOT_URLCONF = 'Beta_POS.urls'

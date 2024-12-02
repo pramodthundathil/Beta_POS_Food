@@ -141,7 +141,7 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="{%url 'add_purchase' %}">
+                                    <a href="#" data-toggle="modal" data-target="#purchase_add">
                                         <i class="las la-minus"></i><span>Add purchase</span>
                                     </a>
                                 </li>
@@ -487,6 +487,43 @@
                 <div class="p-3"></div>
             </div>
         </div>
+
+        <div class="modal fade" id="purchase_add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+
+                        <h5 class="modal-title">Create New Purchase</h5>
+                        <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</button> -->
+                    </div>
+
+
+                    <div class="modal-body">
+                        <form action="{%url 'add_purchase' %}" method="post" data-toggle="validator">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="">Select Purchase Type:</label>
+                                <select name="purchase_type" class="form-control" id="purchase_type">
+                                    <option value="" selected disabled>--------------------------------</option>
+                                    <option value="Credit">Credit</option>
+                                    <option value="Cash">Cash</option>
+                                </select>
+                                <div class="help-block with-errors"></div>
+                            </div>
+                            <br>
+                            <button class="btn btn-primary">Create New Purchase</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% block pos %}
         <div class="iq-top-navbar">
             <div class="iq-navbar-custom">
                 <nav class="navbar navbar-expand-lg navbar-light p-0">
@@ -516,6 +553,12 @@
                                     <a href="{%url 'CreateOrder' %}" class=" dropdown-toggle btn border add-btn">
                                         <i class="las la-plus mr-2"></i>New
                                         Invoice
+                                    </a>
+
+                                </li>
+                                <li class="nav-item nav-icon dropdown">
+                                    <a href="{%url 'POS_REST' %}" class=" dropdown-toggle btn border add-btn">
+                                        <i class="las la-plus mr-2"></i>POS
                                     </a>
 
                                 </li>
@@ -1086,6 +1129,7 @@
             </div>
         </div>
     </div>
+    {% endblock %}
     {% endblock %}
     <!-- Wrapper End-->
     <footer class="iq-footer">

@@ -1,0 +1,365 @@
+<!doctype html>
+{% load static %}
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>BETA-POS</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{%static 'assets/images/favicon.ico' %}" />
+    <link rel="stylesheet" href="{%static 'assets/css/backend-plugin.min.css' %}">
+    <link rel="stylesheet" href="{%static 'assets/css/backend.css?v=1.0.0' %}">
+    <link rel="stylesheet" href="{%static 'assets/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{%static 'assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
+    <link rel="stylesheet" href="{%static 'assets/vendor/remixicon/fonts/remixicon.css' %}">
+    <link rel="stylesheet" href="{%static 'assets/css/bootstrap_icons.min.css' %}">
+
+    <style>
+        /* Ensure div containers have a fixed height */
+        #orderPurchaseChartContainer,
+        #revenueExpenseContainer {
+            width: 80%;
+            margin: 50px auto;
+        }
+
+        #orderPurchaseChartContainer {
+            height: 400px;
+            /* Set desired height for bar chart */
+        }
+
+        .pie-chart-container {
+            height: 400px;
+            /* Set desired height for pie charts */
+            margin-bottom: 50px;
+        }
+    </style>
+
+</head>
+
+<body class="  ">
+    <!-- loader Start -->
+    <div id="loading">
+        <div id="loading-center">
+        </div>
+    </div>
+    <div class="text-center mt-5 mb-5">
+
+        <div class="iq-sidebar-logo d-flex align-items-center justify-content-between text-center">
+            <a href="{%url 'Index' %}" class="header-logo">
+                <img src="{%static 'assets/images/logo.png' %}" class="img-fluid rounded-normal light-logo"
+                    alt="logo">
+                <h5 class="logo-title light-logo ml-3">BETA-POS</h5>
+            </a>
+           
+        </div>
+        <img src="{%static 'assets\images\loader.gif' %}" width="200px" style="display: block;margin: auto;">
+    <h1>No license Key </h1>
+    <p>Please Contact Application Administrator For License Key </p>
+
+    <div class="content mt-5" style="width: 70%;margin: auto;">
+        <form action="" data-toggle="validator">
+            <div class="form-group">
+                <label>License Key *</label>
+                <input type="text" class="form-control" placeholder="License Key" required name="name">
+                <div class="help-block with-errors"></div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+
+
+        </form>
+    </div>
+
+
+    </div>
+  <!-- Wrapper End--> 
+  <footer class="iq-footer" style="position: fixed;bottom: 0;">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+                            <li class="list-inline-item"><a href="#">Terms of Use</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-6 text-right">
+                        <span class="mr-1">
+                            <script>document.write(new Date().getFullYear())</script>©
+                        </span> <a href="#" class="">BETA-POS</a>.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Backend Bundle JavaScript -->
+<script src="{%static 'assets/js/backend-bundle.min.js' %}"></script>
+
+<!-- Table Treeview JavaScript -->
+<script src="{%static 'assets/js/table-treeview.js' %}"></script>
+
+<!-- Chart Custom JavaScript -->
+<script src="{%static 'assets/js/customizer.js' %}"></script>
+
+<!-- Chart Custom JavaScript -->
+<script async src="{%static 'assets/js/chart-custom.js' %}"></script>
+
+<!-- app JavaScript -->
+<script src="{%static 'assets/js/app.js' %}"></script>
+<script src="{%static 'assets\js\chart.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Fetch monthly data for Orders and Purchases
+        fetch('/get_monthly_data/')
+            .then(response => response.json())
+            .then(data => {
+                const chartDiv = document.getElementById('orderPurchaseChartContainer');
+                const ctx = document.getElementById('orderPurchaseChart').getContext('2d');
+
+                // Set canvas size to match the container size
+                ctx.canvas.width = chartDiv.offsetWidth;
+                ctx.canvas.height = chartDiv.offsetHeight;
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.months,  // X-axis (Months)
+                        datasets: [
+                            {
+                                label: 'Orders',
+                                data: data.orders,  // Order data for each month
+                                backgroundColor: 'rgba(75, 192, 192, 0.6)',  // Bar color for orders
+                                borderColor: 'rgba(75, 192, 192, 1)',  // Border color for orders
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Purchases',
+                                data: data.purchases,  // Purchase data for each month
+                                backgroundColor: 'rgba(255, 99, 132, 0.6)',  // Bar color for purchases
+                                borderColor: 'rgba(255, 99, 132, 1)',  // Border color for purchases
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        maintainAspectRatio: false,  // Disable maintaining aspect ratio
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Monthly Orders and Purchases Comparison'
+                            }
+                        }
+                    }
+                });
+            });
+
+        // Fetch monthly revenue and expense data for pie charts
+        fetch('/get_monthly_revenue_expense/')
+            .then(response => response.json())
+            .then(data => {
+                // Create a canvas for each month and render pie charts
+                const container = document.getElementById('revenueExpenseContainer');
+
+                data.months.forEach((month, index) => {
+                    // Create a div and canvas element for each pie chart
+                    const pieChartDiv = document.createElement('div');
+                    pieChartDiv.classList.add('pie-chart-container');
+
+                    const canvas = document.createElement('canvas');
+                    canvas.id = `revenueExpenseChart${index}`;  // Unique ID for each chart
+                    pieChartDiv.appendChild(canvas);  // Append canvas to the div
+                    container.appendChild(pieChartDiv);  // Append div to the container
+
+                    const ctx = canvas.getContext('2d');
+
+                    // Set canvas size to match the container size
+                    ctx.canvas.width = pieChartDiv.offsetWidth;
+                    ctx.canvas.height = pieChartDiv.offsetHeight;
+
+                    new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Income', 'Expense'],
+                            datasets: [{
+                                label: `Revenue vs Expense - ${month}`,
+                                data: [data.incomes[index], data.expenses[index]], // Revenue and Expense data
+                                backgroundColor: [
+                                    'rgba(75, 192, 192, 0.6)',  // Color for Income
+                                    'rgba(255, 99, 132, 0.6)'   // Color for Expense
+                                ],
+                                borderColor: [
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(255, 99, 132, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            maintainAspectRatio: false,  // Disable maintaining aspect ratio
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top'
+                                },
+                                title: {
+                                    display: true,
+                                    text: `Income vs Expense for ${month}`
+                                }
+                            }
+                        }
+                    });
+                });
+            });
+    });
+
+    // income line chart 
+
+   
+var ctx = document.getElementById('incomeChart').getContext('2d');
+var incomeChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'], // Adjust automatically based on the month
+        datasets: [{
+            label: 'Income',
+            data: {{ weekly_income|safe }},  // Pass the weekly income data from the view
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 159, 64, 0.2)',
+            borderWidth: 2,
+            tension: 0.4,  // To get the smooth curve effect
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+
+// Expense Chart
+var ctx2 = document.getElementById('expenseChart').getContext('2d');
+var expenseChart = new Chart(ctx2, {
+    type: 'line',
+    data: {
+        labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],  // Adjust automatically based on the month
+        datasets: [{
+            label: 'Expense',
+            data: {{ weekly_expense|safe }},  // Pass the weekly expense data from the view
+            borderColor: 'rgba(54, 162, 235, 1)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: true
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+console.log('DOM fully loaded and parsed');
+var ctx = document.getElementById('layout1-chart-100').getContext('2d');
+
+// Data from Django (replace with your data)
+   var dataFromDjango = {
+    orders: {{ orders|safe }},
+    purchases: {{ purchases|safe }},
+    products: {{ products|safe }},
+    inventory: {{ inventory|safe }}
+};
+
+console.log(dataFromDjango)
+//     var dataFromDjango = {
+//     orders: [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65],
+//     purchases: [8, 12, 18, 22, 28, 32, 38, 42, 48, 52, 58, 63],
+//     products: [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60],
+//     inventory: [3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36]
+// };
+
+// Months Labels (1 to 12)
+var months = ['January', 'February', 'March', 'April', 'May', 'June', 
+              'July', 'August', 'September', 'October', 'November', 'December'];
+
+// Data for Chart.js
+var data = {
+    labels: months,
+    datasets: [
+        {
+            label: 'Orders',
+            data: dataFromDjango.orders,
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            fill: false,
+            tension: 0.1
+        },
+        {
+            label: 'Purchases',
+            data: dataFromDjango.purchases,
+            borderColor: 'rgba(54, 162, 235, 1)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: false,
+            tension: 0.1
+        },
+        {
+            label: 'Products',
+            data: dataFromDjango.products,
+            borderColor: 'rgba(255, 206, 86, 1)',
+            backgroundColor: 'rgba(255, 206, 86, 0.2)',
+            fill: false,
+            tension: 0.1
+        },
+        {
+            label: 'Inventory Stocks',
+            data: dataFromDjango.inventory,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            fill: false,
+            tension: 0.1
+        }
+    ]
+};
+
+// Create the chart
+var myChart = new Chart(ctx, {
+    type: 'line', // For a line chart
+    data: data,
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+});
+
+</script>
+</body>
+
+</html>

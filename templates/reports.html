@@ -650,7 +650,7 @@
 
                             </div>
 
-
+<!-- new update start .............................................. -->
 
                             <div class="col-md-6 mt-3">
                                 <div class="card" style="padding: 20px;">
@@ -685,6 +685,22 @@
                                                         <input type="date" class="form-control" name="sdate" required>
                                                         <label for="">End Date</label>
                                                         <input type="date" class="form-control" name="edate" required>
+                                                        <label for="">Supplier</label>
+
+                                                        <select name="supplier" class="form-control">
+                                                            <option value="All" selected>All</option>
+                                                            {% for item in supplier %}
+                                                            <option value="{{item.id}}">{{item}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <label for="">Payment Status</label>
+                                                        <select name="payment_status" class="form-control">
+                                                            <option value="All" selected>All</option>
+                                                            <option value="PAID" >PAID</option>
+                                                            <option value="UNPAID" >UNPAID</option>
+                                                            <option value="PARTIALLY" >PARTIALLY</option>
+                                                            
+                                                        </select>
 
                                                 </div>
 
@@ -718,7 +734,21 @@
                                                         <input type="date" class="form-control" name="sdate" required>
                                                         <label for="">End Date</label>
                                                         <input type="date" class="form-control" name="edate" required>
-
+                                                        <label for="">Supplier</label>
+                                                        <select name="supplier" class="form-control">
+                                                            <option value="All" selected>All</option>
+                                                            {% for item in supplier %}
+                                                            <option value="{{item.id}}">{{item}}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                        <label for="">Payment Status</label>
+                                                        <select name="payment_status" class="form-control">
+                                                            <option value="All" selected>All</option>
+                                                            <option value="PAID" >PAID</option>
+                                                            <option value="UNPAID" >UNPAID</option>
+                                                            <option value="PARTIALLY" >PARTIALLY</option>
+                                                            
+                                                        </select>
 
                                                 </div>
 
@@ -734,6 +764,10 @@
 
                                 </div>
                             </div>
+
+
+<!-- new update end .............................................. -->
+            
 
                             <div class="col-md-6 mt-3">
                                 <div class="card" style="padding: 20px;">

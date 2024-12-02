@@ -1,6 +1,21 @@
 from django.db import models
 import random
 from django.contrib.auth.models import User
+from django.utils import timezone
+import uuid
+
+class LicenseKey(models.Model):
+    key = models.CharField(max_length=50, unique=True, default=uuid.uuid4)
+    expiration_date = models.DateTimeField()
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.key
+
+    def has_expired(self):
+        return timezone.now() > self.expiration_date
+
+
 
 class Staff(models.Model):
     employe_id = models.CharField(unique=True, max_length=20)

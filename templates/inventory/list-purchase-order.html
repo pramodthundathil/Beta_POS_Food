@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
-{% block  content %}
+{% block content %}
 <style>
-    .m-status-false{
+    .m-status-false {
         opacity: .3;
     }
 </style>
@@ -15,8 +15,8 @@
                     <div>
                         <h4 class="mb-3">Purchase Orders</h4>
                         {% for message in messages %}
-                       <div class="alert {{message.tags}} " role="alert">
-                           <div class="iq-alert-text"><b></b> {{message}}</div>
+                        <div class="alert {{message.tags}} " role="alert">
+                            <div class="iq-alert-text"><b></b> {{message}}</div>
                         </div>
                         {% endfor %}
                         <p class="mb-0"></p>
@@ -29,97 +29,101 @@
                 <form method="post" action="{% url 'delete_bulk_purchase_order' %}">
                     {% csrf_token %}
                     <div class="text-right mt-2 mb-2">
-                        <button onclick="return confirm('Are You Sure Do You Want To Delete Selected Items?')" type="submit" class="btn btn-danger">Delete</button>
+                        <button onclick="return confirm('Are You Sure Do You Want To Delete Selected Items?')"
+                            type="submit" class="btn btn-danger">Delete</button>
                     </div>
-                <div class="table-responsive rounded mb-3">
-                    <table class="data-tables table mb-0 tbl-server-info">
-                        <thead class="bg-white text-uppercase">
-                            <tr class="ligth ligth-data">
-                                <th>
-                                    <div class="checkbox d-inline-block">
-                                        <input  type="checkbox" id="select-all" aria-checked="false" class="checkbox-input">
-                                        <label for="checkbox1" class="mb-0"></label>
-                                    </div>
-                                </th>
-                                <!-- <th></th> -->
-                                <th>Product Name</th>
-                                <th>Vendor Name</th>
-                                <th>Order Number</th>
-                                <th>Date of Order</th>
-                                <th>Purchase Amount</th>
-                                <th>Purchase Quantity</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="ligth-body">
+                    <div class="table-responsive rounded mb-3">
+                        <table class="data-tables table mb-0 tbl-server-info">
+                            <thead class="bg-white text-uppercase">
+                                <tr class="ligth ligth-data">
+                                    <th>
+                                        <div class="checkbox d-inline-block">
+                                            <input type="checkbox" id="select-all" aria-checked="false"
+                                                class="checkbox-input">
+                                            <label for="checkbox1" class="mb-0"></label>
+                                        </div>
+                                    </th>
+                                    <!-- <th></th> -->
+                                   
+                                    <th>Vendor Name</th>
+                                    <th>Order Number</th>
+                                    <th>Date of Order</th>
+                                    <th>Purchase Order Amount</th>
+                                    <!-- <th>Purchase Quantity</th> -->
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="ligth-body">
 
-                            {% for m in order %}
-                           
-                           
-                            <tr>
-                                <td>
-                                    <div class="checkbox d-inline-block">
-                                        <input type="checkbox" value="{{m.id}}" name="contact_id[]" class="checkbox-input contact-checkbox">
-                                        <label for="checkbox2" class="mb-0"></label>
-                                    </div>
-                                </td>
-  
-                                <td>
-                                {{m.purchase_item}}</td>
-                                <td>{{m.supplier}}</td>
-                                <td>{{m.purchase_order_number}}</td>
-                                <td>{{m.bill_date}}</td>
-                                <td> {{m.amount}}</td>
-                                
-                                <td>{{m.quantity}} {{m.unit}}</td>
-                                <th>
-                                    {% if m.stock_alert == True %}
-                                    <span class="badge bg-danger">Stock Low</span>
-                                    {% else %}
-                                    <span class="badge bg-success">Available</span>
+                                {% for m in order %}
 
-                                    {% endif %}
-                                </th>
-                                <td>
-                                    <div class="d-flex align-items-center list-action">
-                                        <a href="{%url 'purchase_order_invoice' m.id %}" target="_blank">Print order</a>
-                                      
-                                        <a class="badge bg-success mr-2" data-toggle="tooltip"
-                                            data-placement="top" title="" data-original-title="Edit" href="{%url 'edit_purchase_order' m.id%}"><i
-                                                class="ri-pencil-line mr-0"></i></a>
-                                                <a class="badge bg-warning mr-2" data-toggle="modal"
-                                                data-target="#deletemodel{{m.id}}" data-original-title="Delete" href="#"><i
-                                                    class="ri-delete-bin-line mr-0"></i></a>
+
+                                <tr>
+                                    <td>
+                                        <div class="checkbox d-inline-block">
+                                            <input type="checkbox" value="{{m.id}}" name="contact_id[]"
+                                                class="checkbox-input contact-checkbox">
+                                            <label for="checkbox2" class="mb-0"></label>
+                                        </div>
+                                    </td>
+
+                                   
+                                    <td>{{m.supplier}}</td>
+                                    <td>{{m.purchase_order_number}}</td>
+                                    <td>{{m.bill_date}}</td>
+                                    <td> {{m.amount|floatformat:2}}</td>
+
+                                    <!-- <td>{{m.quantity}} {{m.unit}}</td> -->
+                                    <th>
+                                        {% if m.order_status == "Closed" %}
+                                        <span class="badge bg-secondary">{{m.order_status}}</span>
+                                        {% else %}
+                                        <span class="badge bg-success">{{m.order_status}}</span>
+{% endif %}
+
+                                    
+                                    </th>
+                                    <td>
+                                        <div class="d-flex align-items-center list-action">
+                                            <!-- <a href="{%url 'purchase_order_invoice' m.id %}" class="btn btn-sm btn-outline-primary" target="_blank">Print
+                                             order</a> -->
+
+                                            <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top"
+                                                title="" data-original-title="Edit"
+                                                href="{%url 'edit_purchase_order' m.id%}"><i
+                                                    class="ri-pencil-line mr-0"></i></a>
+                                            <a class="badge bg-danger mr-2" data-toggle="modal"
+                                                data-target="#deletemodel{{m.id}}" data-original-title="Delete"
+                                                href=""><i class="ri-delete-bin-line mr-0"></i></a>
                                             <!-- Delete Modal -->
                                             <div class="modal fade" id="deletemodel{{m.id}}" tabindex="-1" role="dialog"
                                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
-    
+
                                                         <div class="modal-body">
-                                                            Are You Sure Do you Want to Disable ?
+                                                            Are You Sure Do you Want to Delete ?
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary"
                                                                 data-dismiss="modal">No</button>
-                                                            <a href=""
-                                                                class="btn btn-danger">Yes</a>
+                                                            <a href="{%url 'delete_purchase_order' m.id %}" class="btn btn-danger">Yes</a>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        
-                            
-                            {% endfor %}
-                            
-                        </tbody>
-                    </table>
-                </div>
-            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+
+
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
 
             </div>
         </div>
@@ -194,14 +198,14 @@
     document.addEventListener('DOMContentLoaded', function () {
         const selectAllCheckbox = document.getElementById('select-all');
         const contactCheckboxes = document.querySelectorAll('.contact-checkbox');
-  
+
         selectAllCheckbox.addEventListener('change', function () {
             const isChecked = this.checked;
             contactCheckboxes.forEach(function (checkbox) {
                 checkbox.checked = isChecked;
             });
         });
-  
+
         contactCheckboxes.forEach(function (checkbox) {
             checkbox.addEventListener('change', function () {
                 const allChecked = [...contactCheckboxes].every(function (checkbox) {
@@ -211,6 +215,6 @@
             });
         });
     });
-    
-  </script>
+
+</script>
 {% endblock %}

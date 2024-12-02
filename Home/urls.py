@@ -5,6 +5,8 @@ from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
 
+    path("license_expired",views.license_expired,name="license_expired"),
+    path("no_license",views.no_license,name="no_license"),
     path("Index",views.Index,name="Index"),
     path('',views.SignIn,name="SignIn"),
     path('SignOut', views.SignOut, name='SignOut'),

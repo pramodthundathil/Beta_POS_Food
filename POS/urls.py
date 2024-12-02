@@ -1,5 +1,6 @@
 from django.urls import path 
-from .import views  
+from .import views
+from . import restaurant_view
 
 
 
@@ -46,6 +47,11 @@ urlpatterns = [
     path("create_return_on_purchase/<int:pk>/<int:item_id>",views.create_return_on_purchase, name="create_return_on_purchase"),
     path("single_returns/<int:pk>",views.single_returns,name="single_returns"),
     path("ItemPOST/<int:pk>/<int:item_id>",views.ItemPOST, name="ItemPOST"),
+
+
+# restaurant pos section
+
+    path("POS_REST",restaurant_view.POS_REST, name="POS_REST"),
     
     
 

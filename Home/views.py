@@ -18,6 +18,15 @@ from datetime import timedelta
 from django.core.cache import cache
 
 
+from django.shortcuts import render
+
+def license_expired(request):
+    return render(request, 'license_expired.html')
+
+def no_license(request):
+    return render(request, 'no_license.html')
+
+
 
 def monthly_income_view():
     today = datetime.datetime.today()

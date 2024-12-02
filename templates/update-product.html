@@ -12,7 +12,8 @@
             width: 100% !important;
         }
     }
-    th{
+
+    th {
         text-align: left;
     }
 </style>
@@ -58,11 +59,12 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Category *</label>
-                                            <select name="category" class="selectpicker form-control"  data-style="py-0"
+                                            <select name="category" class="selectpicker form-control" data-style="py-0"
                                                 required>
                                                 <option selected disabled>Select Category</option>
                                                 {% for i in food_category %}
-                                                <option value="{{ i.id }}" {% if i.id == product.category.id %}selected{% endif %}>
+                                                <option value="{{ i.id }}" {% if i.id==product.category.id %}selected{%
+                                                    endif %}>
                                                     {{ i }}
                                                 </option>
                                                 {% endfor %}
@@ -92,35 +94,39 @@
                                         <div class="form-group">
                                             <label>Barcode *</label>
                                             <input type="number" name="barcode" class="form-control"
-                                                value="{{ product.barcode_number }}" placeholder="Barcode" 
-                                                required>
+                                                value="{{ product.barcode_number }}" placeholder="Barcode" required>
                                             <div class="help-block with-errors"></div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12" style="display: none;">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Tax Method *</label>
                                             <select name="tax" class="selectpicker form-control" data-style="py-0">
-                                                <option value="Exclusive" {% if product.tax == "Exclusive" %} selected {% endif %}>Exclusive</option>
-                                                <option value="Inclusive" {% if product.tax == "Inclusive" %} selected {% endif %}>Inclusive</option>
+                                                <option value="Exclusive" {% if product.tax=="Exclusive" %} selected {%
+                                                    endif %}>Exclusive</option>
+                                                <option value="Inclusive" {% if product.tax=="Inclusive" %} selected {%
+                                                    endif %}>Inclusive</option>
                                             </select>
                                         </div>
                                     </div>
-                                    
-                                    <div class="col-md-12" style="display: none;">
+
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label>Tax Value <small>(in Percentage %)</small> *</label>
-                                            <select name="tax_value" class="selectpicker form-control"  data-style="py-0">
-                                                <option selected disabled>--------------------------------------</option>
+                                            <select name="tax_value" class="selectpicker form-control"
+                                                data-style="py-0">
+                                                <option selected disabled>--------------------------------------
+                                                </option>
                                                 {% for t in tax %}
-                                                <option value="{{ t.id }}" {% if product.tax_value and product.tax_value.id == t.id %} selected {% endif %}>
+                                                <option value="{{ t.id }}" {% if product.tax_value and
+                                                    product.tax_value.id==t.id %} selected {% endif %}>
                                                     {{ t }}
                                                 </option>
                                                 {% endfor %}
                                             </select>
                                         </div>
                                     </div>
-                                    
+
                                     <!-- Image Upload -->
                                     <!-- Uncomment if required
                                     <div class="col-md-12">
@@ -148,169 +154,170 @@
                                 <button type="submit" class="btn btn-primary mt-3">Update Product</button>
                                 <a data-toggle="modal" href="" data-target="#deletemodel" data-original-title="Delete"
                                     class="btn btn-dark mt-3">Change Availability</a>
-                                </form>
+                            </form>
 
-                                <!-- Disable Model -->
-                                <div class="modal fade" id="deletemodel" tabindex="-1" role="dialog"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-body">
-                                                Are You Sure You Want to Change Status of Product ?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">No</button>
-                                                <a href="{%url 'disable_product' product.id %}"
-                                                    class="btn btn-danger">Yes</a>
-                                            </div>
+                            <!-- Disable Model -->
+                            <div class="modal fade" id="deletemodel" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            Are You Sure You Want to Change Status of Product ?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">No</button>
+                                            <a href="{%url 'disable_product' product.id %}"
+                                                class="btn btn-danger">Yes</a>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <a data-toggle="modal" data-target="#deletemodel1" href="" data-original-title="Delete"
-                                    class="btn btn-outline-danger mt-3">Permanently Delete</a>
+                            <a data-toggle="modal" data-target="#deletemodel1" href="" data-original-title="Delete"
+                                class="btn btn-outline-danger mt-3">Permanently Delete</a>
 
-                                <!-- Delete Model -->
-                                <div class="modal fade" id="deletemodel1" tabindex="-1" role="dialog"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-body">
-                                                Are You Sure You Want to Delete?
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">No</button>
-                                                <a href="{%url 'delete_product' product.id %}"
-                                                    class="btn btn-danger">Yes</a>
-                                            </div>
+                            <!-- Delete Model -->
+                            <div class="modal fade" id="deletemodel1" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            Are You Sure You Want to Delete?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">No</button>
+                                            <a href="{%url 'delete_product' product.id %}"
+                                                class="btn btn-danger">Yes</a>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">Cancel</a>
-                                <a href="" data-toggle="modal" data-target="#updatestock"
-                                    class="btn btn-outline-secondary mt-3">Add stock </a>
-                                    <a data-target="#stockdecreese" data-toggle="modal" class="btn btn-outline-dark mt-3">Decrease Stock</a>
-                                    <a href="" data-toggle="modal" data-target="#createbatch"
-                                    class="btn btn-light mt-3">Create Batch</a>
+                            <a href="{% url 'product_list' %}" class="btn btn-secondary mt-3">Cancel</a>
+                            <a href="" data-toggle="modal" data-target="#updatestock"
+                                class="btn btn-outline-secondary mt-3">Add stock </a>
+                            <a data-target="#stockdecreese" data-toggle="modal"
+                                class="btn btn-outline-dark mt-3">Decrease Stock</a>
+                            <a href="" data-toggle="modal" data-target="#createbatch" class="btn btn-light mt-3">Create
+                                Batch</a>
 
-                                <!-- Update Stock Model -->
-                                <div class="modal fade" id="updatestock" tabindex="-1" role="dialog"
-                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">Product Stock Adjustments</h5>
-                                            </div>
-                                            <div class="modal-body">
-                                                <form action="{%url 'incresse_product_stock' product.id %}" method="post">
-                                                    {% csrf_token %}
-                                                    <label for="">Item {{product.name}} is Calculated in
-                                                        {{product.unit_quantity}} {{product.unit}}. Enter number of units
-                                                        to add stock to the Product.
-                                                        <br>
-                                                        <span class="text-danger">Note <sup>*</sup> Total Quantity is
-                                                            decreased from Total Inventory of {{product.name}}</span>
-                                                    </label>
-                                                    <label for="">Select Batch</label>
-                                                    <select required name="batch" id="batch" class="form-control">
-                                                        <option value="" disabled selected>Select batch</option>
-                                                        {% for b in batch %}
-                                                        <option value="{{b.id}}">{{b}}</option>
-                                                        {% endfor%}
-                                                    </select>
+                            <!-- Update Stock Model -->
+                            <div class="modal fade" id="updatestock" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Product Stock Adjustments</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{%url 'incresse_product_stock' product.id %}" method="post">
+                                                {% csrf_token %}
+                                                <label for="">Item {{product.name}} is Calculated in
+                                                    {{product.unit_quantity}} {{product.unit}}. Enter number of units
+                                                    to add stock to the Product.
                                                     <br>
-                                                    <label for="">Enter Stock to increase</label>
+                                                    <span class="text-danger">Note <sup>*</sup> Total Quantity is
+                                                        decreased from Total Inventory of {{product.name}}</span>
+                                                </label>
+                                                <label for="">Select Batch</label>
+                                                <select required name="batch" id="batch" class="form-control">
+                                                    <option value="" disabled selected>Select batch</option>
+                                                    {% for b in batch %}
+                                                    <option value="{{b.id}}">{{b}}</option>
+                                                    {% endfor%}
+                                                </select>
+                                                <br>
+                                                <label for="">Enter Stock to increase</label>
 
-                                                    <input type="number" placeholder="Enter Stock to increase"
-                                                        name="stock" class="form-control" required>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <a href="{%url 'product_update' product.id %}" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Close</a>
-                                                <button type="submit" class="btn btn-primary">Save changes</button>
-                                                </form>
-                                            </div>
+                                                <input type="number" placeholder="Enter Stock to increase" name="stock"
+                                                    class="form-control" required>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="{%url 'product_update' product.id %}" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</a>
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
 
-                                 <!-- Update Stock Model -->
-                                 <div class="modal fade" id="stockdecreese" tabindex="-1" role="dialog"
-                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                 <div class="modal-dialog" role="document">
-                                     <div class="modal-content">
-                                         <div class="modal-header">
-                                             <h5 class="modal-title">Product Stock Adjustments (Decrease Stock)</h5>
-                                         </div>
-                                         <div class="modal-body">
-                                             <form action="{%url 'decrease_product_stock' product.id %}" method="post">
-                                                 {% csrf_token %}
-                                                 <label for="">Item {{product.name}} is Calculated in
-                                                     {{product.unit_quantity}} {{product.unit}}. Enter number of units
-                                                     to Decreased stock to the Product.
-                                                   
-                                                     
-                                                 </label>
-                                                 <label for="">Select Batch</label>
-                                                 <select required name="batch" id="batch" class="form-control">
-                                                     <option value="" disabled selected>Select batch</option>
-                                                     {% for b in batch %}
-                                                     <option value="{{b.id}}">{{b}}</option>
-                                                     {% endfor%}
-                                                 </select>
-                                                 <br>
-                                                 <label for="">Enter Stock to Decrease</label>
-
-                                                 <input type="number" placeholder="Enter Stock to increase"
-                                                     name="stock" class="form-control" required>
-                                         </div>
-                                         <div class="modal-footer">
-                                             <a href="{%url 'product_update' product.id %}" class="btn btn-secondary"
-                                                 data-bs-dismiss="modal">Close</a>
-                                             <button type="submit" class="btn btn-primary">Save changes</button>
-                                             </form>
-                                         </div>
-                                     </div>
-                                 </div>
-                             </div>
+                            <!-- Update Stock Model -->
+                            <div class="modal fade" id="stockdecreese" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Product Stock Adjustments (Decrease Stock)</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{%url 'decrease_product_stock' product.id %}" method="post">
+                                                {% csrf_token %}
+                                                <label for="">Item {{product.name}} is Calculated in
+                                                    {{product.unit_quantity}} {{product.unit}}. Enter number of units
+                                                    to Decreased stock to the Product.
 
 
-                                 <!-- Update Batch Model -->
-                                 <div class="modal fade" id="createbatch" tabindex="-1" role="dialog"
-                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                 <div class="modal-dialog modal-lg" role="document">
-                                     <div class="modal-content">
-                                         <div class="modal-header">
-                                             <h5 class="modal-title">Create Batch</h5>
-                                         </div>
-                                         <div class="modal-body">
-                                             <form action="{%url 'create_batch' product.id %}" method="post">
-                                                 {% csrf_token %}
-                                                 <div class="row">
-                                                {% for field in batch_form %}
-                                                 <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>{{field.label_tag}}</label>
-                                                        {{field}}
-                                                        
-                                                        <div class="help-block with-errors"></div>
+                                                </label>
+                                                <label for="">Select Batch</label>
+                                                <select required name="batch" id="batch" class="form-control">
+                                                    <option value="" disabled selected>Select batch</option>
+                                                    {% for b in batch %}
+                                                    <option value="{{b.id}}">{{b}}</option>
+                                                    {% endfor%}
+                                                </select>
+                                                <br>
+                                                <label for="">Enter Stock to Decrease</label>
+
+                                                <input type="number" placeholder="Enter Stock to increase" name="stock"
+                                                    class="form-control" required>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="{%url 'product_update' product.id %}" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</a>
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- Update Batch Model -->
+                            <div class="modal fade" id="createbatch" tabindex="-1" role="dialog"
+                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Create Batch</h5>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{%url 'create_batch' product.id %}" method="post">
+                                                {% csrf_token %}
+                                                <div class="row">
+                                                    {% for field in batch_form %}
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>{{field.label_tag}}</label>
+                                                            {{field}}
+
+                                                            <div class="help-block with-errors"></div>
+                                                        </div>
                                                     </div>
+                                                    {% endfor %}
                                                 </div>
-                                                 {% endfor %}
-                                                </div>
-                                         </div>
-                                         <div class="modal-footer">
-                                             <a href="{%url 'product_update' product.id %}" class="btn btn-secondary"
-                                                 data-bs-dismiss="modal">Close</a>
-                                             <button type="submit" class="btn btn-primary">Save changes</button>
-                                             </form>
-                                         </div>
-                                     </div>
-                                 </div>
-                             </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="{%url 'product_update' product.id %}" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</a>
+                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -319,13 +326,14 @@
         <div class="container-fluid add-form-list">
             <div class="row">
                 <div class="col-sm-12">
-                    <div class="card"style="box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;">
+                    <div class="card"
+                        style="box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;">
                         <div class="card-header d-flex justify-content-between">
                             <div class="header-title">
                                 <h4 class="card-title">Product Batches</h4>
-                                
-                                
-                                
+
+
+
 
                             </div>
                         </div>
@@ -333,50 +341,51 @@
                             <table class="data-tables table mb-0 tbl-server-info">
                                 <thead class="bg-white text-uppercase">
                                     <tr class="ligth ligth-data">
-                                        
+
                                         <th>Batch Number</th>
                                         <!-- <th>Product</th> -->
                                         <th>Stock Quantity</th>
                                         <th>Manufacturing Date</th>
                                         <th>Expiry Date </th>
-                                        
+
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody class="ligth-body">
-        
+
                                     {% for m in batch %}
-        
+
                                     <tr>
-                                        
+
                                         <th>{{m.batch_code}}</th>
                                         <td>{{m.stock_quantity}}</td>
                                         <td>{{m.manufactured_date}}</td>
                                         <td>{{m.expiry_date}}</td>
-                                        
+
                                         <td>
                                             <div class="d-flex align-items-center list-action">
-        
-                                                <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top"
-                                                    title="" data-original-title="Edit" href="{%url 'update_batch' m.id %}"><i
+
+                                                <a class="badge bg-success mr-2" data-toggle="tooltip"
+                                                    data-placement="top" title="" data-original-title="Edit"
+                                                    href="{%url 'update_batch' m.id %}"><i
                                                         class="ri-pencil-line mr-0"></i></a>
                                                 <button class="badge bg-warning mr-2" data-toggle="modal"
-                                                    data-target="#deletemodel{{m.id}}" data-original-title="Delete" href="#"><i
-                                                        class="ri-delete-bin-line mr-0"></i></button>
+                                                    data-target="#deletemodel{{m.id}}" data-original-title="Delete"
+                                                    href="#"><i class="ri-delete-bin-line mr-0"></i></button>
                                                 <!-- Delete Modal -->
-                                                <div class="modal fade" id="deletemodel{{m.id}}" tabindex="-1" role="dialog"
-                                                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal fade" id="deletemodel{{m.id}}" tabindex="-1"
+                                                    role="dialog" aria-labelledby="exampleModalLabel"
+                                                    aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
-        
+
                                                             <div class="modal-body">
                                                                 Are You Sure Do you Want to Delete ?
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn btn-secondary"
                                                                     data-dismiss="modal">No</button>
-                                                                <a href=""
-                                                                    class="btn btn-danger">Yes</a>
+                                                                <a href="" class="btn btn-danger">Yes</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -384,11 +393,11 @@
                                             </div>
                                         </td>
                                     </tr>
-        
-        
-        
+
+
+
                                     {% endfor %}
-        
+
                                 </tbody>
                             </table>
                         </div>

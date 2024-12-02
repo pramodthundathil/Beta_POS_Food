@@ -22,105 +22,143 @@
                         {% endfor %}
                         <p class="mb-0"></p>
                     </div>
-                    <a href="{%url 'add_purchase' %}" class="btn btn-primary add-list"><i
-                            class="las la-plus mr-3"></i>Add Purchase</a>
+                    <button data-toggle="modal" data-target="#purchase_add" data-original-title="Delete"
+                        class="btn btn-primary add-list"><i class="las la-plus mr-3"></i>Add Purchase</button>
+                    <div class="modal fade" id="purchase_add" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                           
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    
+                                    <h5 class="modal-title">Create New Purchase</h5>
+                                    <!-- <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">x</button> -->
+                                  </div>
+                               
+
+                                <div class="modal-body">
+                                    <form action="{%url 'add_purchase' %}" method="post" data-toggle="validator">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="">Select Purchase Type:</label>
+                                            <select name="purchase_type" class="form-control" id="purchase_type">
+                                                <option value="" selected disabled>--------------------------------</option>
+                                                <option value="Credit">Credit</option>
+                                                <option value="Cash">Cash</option>
+                                            </select>
+                                            <div class="help-block with-errors"></div>
+                                        </div>
+                                        <br>
+                                        <button class="btn btn-primary">Create New Purchase</button>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-                
+
             <div class="col-lg-12">
                 <form method="post" action="{% url 'delete_bulk_purchase' %}">
                     {% csrf_token %}
                     <div class="text-right mt-2 mb-2">
-                        <button onclick="return confirm('Are You Sure Do You Want To Delete Selected Items?')" type="submit" class="btn btn-danger">Delete</button>
+                        <button onclick="return confirm('Are You Sure Do You Want To Delete Selected Items?')"
+                            type="submit" class="btn btn-danger">Delete</button>
                     </div>
-                <div class="table-responsive rounded mb-3">
-                    <table class="data-tables table mb-0 tbl-server-info">
-                        <thead class="bg-white text-uppercase">
-                            <tr class="ligth ligth-data">
-                                <th>
-                                    <div class="checkbox d-inline-block">
-                                        <input input type="checkbox" id="select-all" aria-checked="false" class="checkbox-input">
-                                        <label for="checkbox1" class="mb-0"></label>
-                                    </div>
-                                </th>
-                                <th>Bill No</th>
-                                <th>Product</th>
-                                <th>Price</th>
-                                <th>Total amount</th>
-                                <th>Vendor</th>
-                                <th>Quantity</th>
-                                <th>Bill Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody class="ligth-body">
-
-                            {% for m in purchase %}
-
-                            <tr>
-                                <td>
-                                    <div class="checkbox d-inline-block">
+                    <div class="table-responsive rounded mb-3">
+                        <table class="data-tables table mb-0 tbl-server-info">
+                            <thead class="bg-white text-uppercase">
+                                <tr class="ligth ligth-data">
+                                    <th>
                                         <div class="checkbox d-inline-block">
-                                            <input type="checkbox" value="{{m.id}}" name="contact_id[]" class="checkbox-input contact-checkbox">
-                                            <label for="checkbox2" class="mb-0"></label>
+                                            <input input type="checkbox" id="select-all" aria-checked="false"
+                                                class="checkbox-input">
+                                            <label for="checkbox1" class="mb-0"></label>
                                         </div>
-                                    </div>
-                                </td>
-                                <th>{{m.purchase_bill_number}}</th>
-                                <td>
-                                    {{m.purchase_item}}</td>
-                                <!-- <td>{{m.code}}</td> -->
-                                <td>QAR {{m.purchase_price}}</td>
-                                <td>QAR {{m.amount}} </td>
-                                <td>{{m.supplier}}</td>
+                                    </th>
+                                    <th>Bill No</th>
+                                    <!-- <th>Product</th> -->
+                                    <!-- <th>Price</th> -->
+                                    <th>Total amount</th>
+                                    <th>Vendor</th>
+                                    <!-- <th>Quantity</th> -->
+                                    <th>Bill Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="ligth-body">
 
-                                <td>{{m.quantity}} {{m.unit}}</td>
-                                <td>{{m.bill_date}}</td>
-                                <th>
-                                    <span class="bg-secondary"
-                                        style="padding: 3px; border-radius: 8px;">{{m.payment_status}}</span>
-                                </th>
-                                <td>
-                                    <div class="d-flex align-items-center list-action">
+                                {% for m in purchase %}
 
-                                        <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top"
-                                            title="" data-original-title="Edit" href="{%url 'edit_purchase' m.id %}"><i
-                                                class="ri-pencil-line mr-0"></i></a>
-                                        <a class="badge bg-warning mr-2" data-toggle="modal"
-                                            data-target="#deletemodel{{m.id}}" data-original-title="Delete" href="#"><i
-                                                class="ri-delete-bin-line mr-0"></i></a>
-                                        <!-- Delete Modal -->
-                                        <div class="modal fade" id="deletemodel{{m.id}}" tabindex="-1" role="dialog"
-                                            aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
+                                <tr>
+                                    <td>
+                                        <div class="checkbox d-inline-block">
+                                            <div class="checkbox d-inline-block">
+                                                <input type="checkbox" value="{{m.id}}" name="contact_id[]"
+                                                    class="checkbox-input contact-checkbox">
+                                                <label for="checkbox2" class="mb-0"></label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <th>{{m.purchase_bill_number}}</th>
+                                    <!-- <td>{{m.purchase_item}}</td> -->
+                                    <!-- <td>{{m.code}}</td> -->
+                                    <!-- <td>QAR {{m.purchase_price}}</td> -->
+                                    <td>QAR {{m.amount|floatformat:2}} </td>
+                                    <td>{{m.supplier}}</td>
 
-                                                    <div class="modal-body">
-                                                        Are You Sure Do you Want to Delete ?
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-dismiss="modal">No</button>
-                                                        <a href="{%url 'deletepurchase' m.id %}"
-                                                            class="btn btn-danger">Yes</a>
+                                    <!-- <td>{{m.quantity}} {{m.unit}}</td> -->
+                                    <td>{{m.bill_date}}</td>
+                                    <th>
+                                        <span class="bg-secondary"
+                                            style="padding: 3px; border-radius: 8px;">{{m.payment_status}}</span>
+                                    </th>
+                                    <td>
+                                        <div class="d-flex align-items-center list-action">
+
+                                            <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top"
+                                                title="" data-original-title="Edit"
+                                                href="{%url 'edit_purchase' m.id %}"><i
+                                                    class="ri-pencil-line mr-0"></i></a>
+                                            <a class="badge bg-warning mr-2" data-toggle="modal"
+                                                data-target="#deletemodel{{m.id}}" data-original-title="Delete"
+                                                href="#"><i class="ri-delete-bin-line mr-0"></i></a>
+                                            <!-- Delete Modal -->
+                                            <div class="modal fade" id="deletemodel{{m.id}}" tabindex="-1" role="dialog"
+                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+
+                                                        <div class="modal-body">
+                                                            Are You Sure Do you Want to Delete ?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-dismiss="modal">No</button>
+                                                            <a href="{%url 'deletepurchase' m.id %}"
+                                                                class="btn btn-danger">Yes</a>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
 
 
 
-                            {% endfor %}
+                                {% endfor %}
 
-                        </tbody>
-                    </table>
-                </div>
-            </form>
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
             </div>
         </div>
         <!-- <div class="row justify-content-between mt-3">
@@ -193,14 +231,14 @@
     document.addEventListener('DOMContentLoaded', function () {
         const selectAllCheckbox = document.getElementById('select-all');
         const contactCheckboxes = document.querySelectorAll('.contact-checkbox');
-  
+
         selectAllCheckbox.addEventListener('change', function () {
             const isChecked = this.checked;
             contactCheckboxes.forEach(function (checkbox) {
                 checkbox.checked = isChecked;
             });
         });
-  
+
         contactCheckboxes.forEach(function (checkbox) {
             checkbox.addEventListener('change', function () {
                 const allChecked = [...contactCheckboxes].every(function (checkbox) {
@@ -210,6 +248,6 @@
             });
         });
     });
-    
-  </script>
+
+</script>
 {% endblock %}

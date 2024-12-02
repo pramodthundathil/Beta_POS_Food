@@ -15,34 +15,34 @@ class InventoryStockForm(forms.ModelForm):
         widgets = {
             'product_name': forms.TextInput(attrs={'class': 'form-control', 'id': 'product_name', 'placeholder': 'Enter product name'}),
             'product_stock': forms.NumberInput(attrs={'class': 'form-control', 'id': 'product_stock', 'placeholder': 'Enter product stock', 'min': 0}),
-            'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
+            'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit', 'required': True}),
             'min_stock_level': forms.NumberInput(attrs={'class': 'form-control', 'id': 'min_stock_level', 'placeholder': 'Enter minimum stock level', 'min': 0}),
             'last_purchase_date': forms.DateInput(attrs={'class': 'form-control', 'id': 'last_purchase_date', 'type': 'date'}),
             'last_purchase_amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'last_purchase_amount', 'placeholder': 'Enter last purchase amount', 'step': '0.01', 'min': 0}),
         }
 
 
-class PurchaseOrderForm(forms.ModelForm):
-    class Meta:
-        model = PurchaseOrder
-        fields = [
-            'purchase_type', 'valid_till', 'supplier', 'place_of_supply', 
-            'purchase_item', 'unit', 'quantity', 'purchase_price', 'discount', 'amount', 'order_status'
-        ]
+# class PurchaseOrderForm(forms.ModelForm):
+#     class Meta:
+#         model = PurchaseOrder
+#         fields = [
+#             'purchase_type', 'valid_till', 'supplier', 'place_of_supply', 
+#             'purchase_item', 'unit', 'quantity', 'purchase_price', 'discount', 'amount', 'order_status'
+#         ]
         
-        widgets = {
-            'purchase_type': forms.Select(attrs={'class': 'form-control', 'id': 'purchase_type'}),
-            'valid_till': forms.DateTimeInput(attrs={'class': 'form-control', 'id': 'valid_till', 'type': 'date'}),
-            'supplier': forms.Select(attrs={'class': 'form-control', 'id': 'supplier'}),
-            'place_of_supply': forms.TextInput(attrs={'class': 'form-control', 'id': 'place_of_supply', 'placeholder': 'Enter place of supply'}),
-            'purchase_item': forms.Select(attrs={'class': 'form-control', 'id': 'purchase_item'}),
-            'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'quantity', 'placeholder': 'Enter quantity', 'min': 0}),
-            'purchase_price': forms.NumberInput(attrs={'class': 'form-control', 'id': 'purchase_price', 'placeholder': 'Enter purchase price', 'step': '0.01', 'min': 0}),
-            'discount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'discount', 'placeholder': 'Enter discount (%)', 'step': '0.01', 'min': 0}),
-            'amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'amount', 'placeholder': 'Enter total amount', 'step': '0.01', 'min': 0}),
-            'order_status': forms.Select(attrs={'class': 'form-control', 'id': 'order_status'}),
-        }
+#         widgets = {
+#             'purchase_type': forms.Select(attrs={'class': 'form-control', 'id': 'purchase_type'}),
+#             'valid_till': forms.DateTimeInput(attrs={'class': 'form-control', 'id': 'valid_till', 'type': 'date'}),
+#             'supplier': forms.Select(attrs={'class': 'form-control', 'id': 'supplier'}),
+#             'place_of_supply': forms.TextInput(attrs={'class': 'form-control', 'id': 'place_of_supply', 'placeholder': 'Enter place of supply'}),
+#             'purchase_item': forms.Select(attrs={'class': 'form-control', 'id': 'purchase_item'}),
+#             'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
+#             'quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'quantity', 'placeholder': 'Enter quantity', 'min': 0}),
+#             'purchase_price': forms.NumberInput(attrs={'class': 'form-control', 'id': 'purchase_price', 'placeholder': 'Enter purchase price', 'step': '0.01', 'min': 0}),
+#             'discount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'discount', 'placeholder': 'Enter discount (%)', 'step': '0.01', 'min': 0}),
+#             'amount': forms.NumberInput(attrs={'class': 'form-control', 'id': 'amount', 'placeholder': 'Enter total amount', 'step': '0.01', 'min': 0}),
+#             'order_status': forms.Select(attrs={'class': 'form-control', 'id': 'order_status'}),
+#         }
 
 from django.utils import timezone
 class PurchaseForm(forms.ModelForm):
@@ -81,7 +81,7 @@ class PurchaseForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['category', 'name', 'inventory', 'unit_price', 'unit_quantity', 'unit', 'Number_of_stock',"tax","tax_value","barcode_number", 'description']
+        fields = ['category', 'name', 'inventory', 'unit_price', 'unit_quantity', 'unit', 'Number_of_stock',"barcode_number", 'description']
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control', 'id': 'category'}),
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'name'}),
@@ -92,8 +92,6 @@ class ProductForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'id': 'description', 'rows': 3}),
             'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
             'barcode_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'barcode_number'}),
-            "tax":forms.Select(attrs={'class': 'form-control', 'id': 'tax'}),
-            "tax_value":forms.Select(attrs={'class': 'form-control', 'id': 'tax-value'})
         }
 
 
