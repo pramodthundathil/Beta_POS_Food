@@ -61,10 +61,8 @@
                                             <label>Category *</label>
                                             <select name="category" class="selectpicker form-control" data-style="py-0"
                                                 required>
-                                                <option selected disabled>Select Category</option>
+                                                <option selected disabled>{{product.category}}</option>
                                                 {% for i in food_category %}
-                                                <option value="{{ i.id }}" {% if i.id==product.category.id %}selected{%
-                                                    endif %}>
                                                     {{ i }}
                                                 </option>
                                                 {% endfor %}
@@ -102,10 +100,8 @@
                                         <div class="form-group">
                                             <label>Tax Method *</label>
                                             <select name="tax" class="selectpicker form-control" data-style="py-0">
-                                                <option value="Exclusive" {% if product.tax=="Exclusive" %} selected {%
-                                                    endif %}>Exclusive</option>
-                                                <option value="Inclusive" {% if product.tax=="Inclusive" %} selected {%
-                                                    endif %}>Inclusive</option>
+                                                <option value="Exclusive">Exclusive</option>
+                                                <option value="Inclusive" >Inclusive</option>
                                             </select>
                                         </div>
                                     </div>
@@ -115,13 +111,11 @@
                                             <label>Tax Value <small>(in Percentage %)</small> *</label>
                                             <select name="tax_value" class="selectpicker form-control"
                                                 data-style="py-0">
-                                                <option selected disabled>--------------------------------------
+                                                <option selected disabled>{{product.tax_value}}
                                                 </option>
                                                 {% for t in tax %}
-                                                <option value="{{ t.id }}" {% if product.tax_value and
-                                                    product.tax_value.id==t.id %} selected {% endif %}>
-                                                    {{ t }}
-                                                </option>
+                                                <option value="{{ t.id }}" ></option>
+                                               
                                                 {% endfor %}
                                             </select>
                                         </div>

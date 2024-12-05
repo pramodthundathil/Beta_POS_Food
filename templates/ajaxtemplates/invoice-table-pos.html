@@ -1,7 +1,7 @@
  <div class="selected-item-view card">
                     <div class="top-head-invoice" style="width: 100%;display: flex;justify-content: space-evenly;">
                         <button class="btn btn-primary">Save</button> 
-                        <button class="btn btn-secondary">Save and Print</button> 
+                        <a href="{%url 'invoice' order.id %}" target="_blank" class="btn btn-secondary">Save and Print</a> 
                         <button class="btn btn-success">Payment</button> 
                         <button class="btn btn-warning">Hold</button>      
                     </div>
@@ -44,7 +44,7 @@
                     </div>
                     <div class="top-head-invoice" style="position: absolute; bottom: 0px;width: 100%;display: flex;justify-content: space-evenly;">
                         <button class="btn btn-primary">Save</button> 
-                        <button class="btn btn-secondary">Save and Print</button> 
+                        <a href="{%url 'invoice' order.id  %}" target="_blank" class="btn btn-secondary">Save and Print</a> 
                         <button class="btn btn-success">Payment</button> 
                         <button class="btn btn-warning">Hold</button>  
                     </div>
