@@ -51,7 +51,12 @@ urlpatterns = [
 
 # restaurant pos section
 
-    path("POS_REST",restaurant_view.POS_REST, name="POS_REST"),
+    path("POS_REST/<int:pk>",restaurant_view.POS_REST, name="POS_REST"),
+    path("search_product_pos",restaurant_view.search_product_pos, name="search_product_pos"),
+    path("search_product_pos_all",restaurant_view.search_product_pos_all, name="search_product_pos_all"),
+    path("CreateOrder_Rest",restaurant_view.CreateOrder_Rest, name="CreateOrder_Rest"),
+    path("add_order_item_rest_pos/<int:pk>",restaurant_view.add_order_item_rest_pos, name="add_order_item_rest_pos"),
+    path("delete_item_rest_pos/<int:pk>",restaurant_view.delete_item_rest_pos, name="delete_item_rest_pos"),
     
     
 

@@ -1,0 +1,418 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>BETA-POS</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'assets/images/favicon.ico' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/backend-plugin.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/backend.css?v=1.0.0' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/@fortawesome/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/remixicon/fonts/remixicon.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap_icons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/custom-pos.css' %}">
+
+    <!-- Bootstrap & Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
+        </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+        integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous">
+        </script>
+
+    <style>
+        .wrapper-item {
+            margin: auto;
+            margin-top: 100px;
+            text-align: center;
+        }
+
+        .category-view {
+            width: 100%;
+            margin: auto;
+            text-align: center;
+        }
+
+        .category-view li {
+            float: none;
+            list-style: none;
+            width: 100%;
+            height: 70px;
+            margin: auto;
+            margin-bottom: 20px;
+
+        }
+
+        .category-view button {
+            width: 100%;
+            height: 70px;
+            border: none;
+            transition: all 1s;
+        }
+
+        .category-view button:hover {
+            background-color: #FF9770;
+        }
+
+        .item-view {
+            /* border: .5px solid gray; */
+            padding: 20px;
+            height: 700px;
+            overflow: auto;
+        }
+
+        .selected-item-view {
+            /* border: .5px solid gray; */
+            height: 800px;
+            position: relative;
+        }
+
+        .products {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .products .product {
+            width: 200px;
+            height: 100px;
+            text-align: center;
+            box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+            background-color: #f4f5fa;
+            padding: 10px;
+            margin: 10px;
+        }
+
+        .products .product:hover {
+            background-color: aliceblue;
+        }
+
+        .top-head-invoice {
+            text-align: center;
+            width: 100%;
+            padding: 20px;
+            /* background-color: #FF9770; */
+            color: #4731b6;
+            border-radius: 10px 10px 0px 0px;
+        }
+        .delete-item-from-order:hover{
+        cursor:pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loader Start -->
+    <div id="loading">
+        <div id="loading-center"></div>
+    </div>
+    <!-- Loader End -->
+
+    <!-- Navbar -->
+    <div class="iq-top-navbar">
+        <div class="iq-navbar-custom">
+            <nav class="navbar navbar-expand-lg navbar-light p-0">
+                <div class="iq-navbar-logo d-flex align-items-center justify-content-between">
+                    <i class="ri-menu-line wrapper-menu"></i>
+                    <a href="{%url 'Index' %}" class="header-logo">
+                        <img src="{%static 'assets/images/logo.png' %}" class="img-fluid rounded-normal" alt="logo">
+                        <h5 class="logo-title ml-3">BETA-POS</h5>
+
+                    </a>
+                </div>
+                <div class="iq-search-bar device-search">
+                    <form action="#" class="searchbox">
+                        <!-- <a class="search-link" href="#"><i class="ri-search-line"></i></a>
+                        <input type="text" class="text search-input" placeholder="Search here..."> -->
+                    </form>
+                </div>
+                <div class="d-flex align-items-center">
+                    <a class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-label="Toggle navigation">
+                        <i class="ri-menu-3-line"></i>
+                    </a>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ml-auto navbar-list align-items-center">
+                            <li class="nav-item nav-icon dropdown">
+                                <a data-bs-toggle="offcanvas" href="#offcanvasExample" role="button"
+                                    aria-controls="offcanvasExample" class="dropdown-toggle btn border add-btn">
+                                    Recent Invoices
+                                </a>
+
+                            </li>
+                            <li class="nav-item nav-icon dropdown">
+                                <a href="{%url 'Index' %}"
+                                    class=" dropdown-toggle btn border add-btn shadow-none mx-2 d-none d-md-block">
+                                    Dashboard
+                                </a>
+
+                            </li>
+                            <li>
+                                <a href="{%url 'CreateOrder_Rest' %}"
+                                    class="btn border add-btn shadow-none mx-2 d-none d-md-block"><i
+                                        class="las la-plus mr-2"></i>New Order</a>
+
+
+                                <!-- off canvas  -->
+
+                            </li>
+
+
+                            <li class="nav-item nav-icon dropdown caption-content">
+                                <a href="#" class="search-toggle dropdown-toggle" id="dropdownMenuButton4"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img src="{%static 'assets/images/user/1.png' %}" class="img-fluid rounded"
+                                        alt="user">
+                                </a>
+                                <div class="iq-sub-dropdown dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <div class="card shadow-none m-0">
+                                        <div class="card-body p-0 text-center">
+                                            <div class="media-body profile-detail text-center">
+                                                <img src="{%static 'assets/images/page-img/profile-bg.jpg' %}"
+                                                    alt="profile-bg" class="rounded-top img-fluid mb-4">
+                                                <img src="{%static 'assets/images/user/1.png' %}" alt="profile-img"
+                                                    class="rounded profile-img img-fluid avatar-70">
+                                            </div>
+                                            <div class="p-3">
+                                                <h5 class="mb-1">{{request.user}}</h5>
+                                                <p class="mb-0">Since {{request.user.added_date}}</p>
+                                                <div class="d-flex align-items-center justify-content-center mt-3">
+                                                    <a href="" class="btn border mr-2">Profile</a>
+                                                    <a href="{%url 'SignOut' %}" class="btn border">Sign Out</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <div class="wrapper-item row ">
+            <div class="col-md-2">
+                <div class="category-view card">
+                    <div class="search mt-3">
+                        <h5>Category</h5>
+                        <hr>
+                    </div>
+                    <ul id="pills-tab" role="tablist">
+                        <li role="presentation">
+                            <button class="nav-link active pill-home" id="pills-home-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-home" type="button">All</button>
+                        </li>
+                        {% for cat in category %}
+                        <li role="presentation">
+                            <button class="nav-link" id="pills-{{ cat.name|slugify }}-tab" data-bs-toggle="pill"
+                                data-bs-target="#pills-{{ cat.name|slugify }}" type="button">{{cat.name}}</button>
+                        </li>
+                        {% endfor %}
+
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="item-view card">
+                    <div class="search mt-3">
+                        <input type="text" placeholder="Search" name="search" class="form-control search">
+                        <hr>
+                    </div>
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active " id="pills-home">
+                            {% include 'ajaxtemplates/product-in-pos.html'%}
+                        </div>
+                        {% for cat in category %}
+                        <div class="tab-pane fade" id="pills-{{ cat.name|slugify }}">
+                            <div class="products">
+                                {% for item in products %}
+                                {% if item.category.name == cat.name %}
+                                <div class="product single-product" data-item-id="{{item.id}}">
+                                    <h5>{{ item.name }}</h5>
+                                    <h6>Price: Rs.{{ item.unit_price }}</h6>
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <!-- <div class="tab-pane fade" id="pills-next">
+                            <div class="products">
+                                <div class="product">
+                                    <h5>Product 5</h5>
+                                    <h6>Price: Rs.150</h6>
+                                </div>
+                                <div class="product">
+                                    <h5>Product 7</h5>
+                                    <h6>Price: Rs.150</h6>
+                                </div>
+                                <div class="product">
+                                    <h5>Product 6</h5>
+                                    <h6>Price: Rs.150</h6>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" id="invoice">
+
+                {% include 'ajaxtemplates/invoice-table-pos.html'%}
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'assets/js/backend-bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/app.js' %}"></script>
+
+    <!-- app JavaScript -->
+    <script src="{%static 'assets/js/app.js' %}"></script>
+    <script src="{%static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+    <script src="{%static 'assets/js/select2.min.js' %}"></script>
+    <link rel="stylesheet" href="{%static 'assets/css/select2.min.css' %}">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> -->
+    <!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script> -->
+    <script src="{%static 'assets/js/jquery-ui.min.js' %}"></script>
+    <!-- custome scripts -->
+
+    <script>
+        $(document).ready(function () {
+            if (typeof $.ui !== 'undefined') {
+                console.log("jQuery UI loaded successfully.");
+            } else {
+                console.log("Error: jQuery UI not loaded.");
+            }
+
+
+            $(document).on('input', '.search', function (e) {
+                e.preventDefault();
+                var itemId = $(this).val();
+                console.log("Searching for: " + itemId); // Debugging log
+
+                $.ajax({
+                    url: "{% url 'search_product_pos' %}",
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        itemId: itemId, // Ensure the key matches the one in the view
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#pills-home").html(response.html);
+                        } else {
+                            alert(response.error);
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log("Error updating order item quantity:", errmsg);
+                    }
+                });
+            });
+
+            $(document).on('click', '.pill-home', function (e) {
+                e.preventDefault();
+                var itemId = $(this).val();
+                console.log("Searching for: " + itemId); // Debugging log
+
+                $.ajax({
+                    url: "{% url 'search_product_pos_all' %}",
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        itemId: itemId, // Ensure the key matches the one in the view
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#pills-home").html(response.html);
+                        } else {
+                            alert(response.error);
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log("Error updating order item quantity:", errmsg);
+                    }
+                });
+            });
+
+
+            // creating a order_for the project adding item to the order
+
+            $(document).on('click', '.single-product', function (e) {
+                e.preventDefault();
+
+                // Correct variable naming
+                var itemid = $(this).data('item-id');
+                console.log("Searching for: " + itemid); // Correct variable name
+
+                $.ajax({
+                    url: "{% url 'add_order_item_rest_pos' order.id %}",
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}", // Ensure curly braces
+                        itemid: itemid // Match with what is in the backend
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#invoice").html(response.html);
+                        } else {
+                            alert(response.error);
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log("Error updating order item quantity:", errmsg);
+                    }
+                });
+            });
+
+
+
+            $(document).on('click', '.delete-item-from-order', function (e) {
+                e.preventDefault();
+
+                // Correct variable naming
+                var itemid = $(this).data('item-id');
+                console.log("Searching for: " + itemid); // Correct variable name
+
+                $.ajax({
+                    url: "{% url 'delete_item_rest_pos' order.id %}",
+                    type: "POST",
+                    data: {
+                        csrfmiddlewaretoken: "{{ csrf_token }}", // Ensure curly braces
+                        itemid: itemid // Match with what is in the backend
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $("#invoice").html(response.html);
+                        } else {
+                            alert(response.error);
+                        }
+                    },
+                    error: function (xhr, errmsg, err) {
+                        console.log("Error updating order item quantity:", errmsg);
+                    }
+                });
+            });
+
+
+
+
+        })
+
+    </script>
+</body>
+
+</html>

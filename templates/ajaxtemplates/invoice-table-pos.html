@@ -1,0 +1,51 @@
+ <div class="selected-item-view card">
+                    <div class="top-head-invoice" style="width: 100%;display: flex;justify-content: space-evenly;">
+                        <button class="btn btn-primary">Save</button> 
+                        <button class="btn btn-secondary">Save and Print</button> 
+                        <button class="btn btn-success">Payment</button> 
+                        <button class="btn btn-warning">Hold</button>      
+                    </div>
+                    <div class="item-table-content">
+                        <table class="table table-stripped">
+                            <tr>
+                                <th class="bg-primary">
+                                    Item
+                                </th>
+                                <th class="bg-primary">
+                                    Quantity
+                                </th>
+                                <th class="bg-primary">
+                                    Price
+                                </th>
+                                <th class="bg-primary">
+                                    Total
+                                </th>
+                            </tr>
+                            {% for items in order_items %}
+                            <tr>
+                                <th class="text-left">
+                                   <span class="text-danger delete-item-from-order" data-item-id="{{ items.id }}">&#10007;</span> &nbsp;&nbsp; {{items.product}}
+                                </th>
+                                <td>
+                                    <a class="btn btn-sm btn-dark" style="border-radius: 0px !important;" href="">-</a>
+                                    <span style="padding: 6px;">{{items.quantity}}</span>
+                                    <a class="btn btn-sm btn-dark" style="border-radius: 0px !important;" href="">+</a>
+                                </td>
+                                <td>{{items.unit_price}}</td>
+                                <th>{{items.total_price}}</th>
+                            </tr>
+                            
+                            {% endfor %}
+                        </table>
+                    </div>
+                    <div class="top-head-invoice bg-secondary" style="position: absolute; bottom: 100px;width: 100%;">
+                        total  <span style="float: right;font-weight: bolder;" class="h5">{{order.total_amount}}</span>
+                        
+                    </div>
+                    <div class="top-head-invoice" style="position: absolute; bottom: 0px;width: 100%;display: flex;justify-content: space-evenly;">
+                        <button class="btn btn-primary">Save</button> 
+                        <button class="btn btn-secondary">Save and Print</button> 
+                        <button class="btn btn-success">Payment</button> 
+                        <button class="btn btn-warning">Hold</button>  
+                    </div>
+                </div>

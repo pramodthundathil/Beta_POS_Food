@@ -1,0 +1,9 @@
+<div class="products">
+    {% for item in products %}
+    <div class="product single-product" data-item-id="{{item.id}}">
+        <h5>{{item.name}}</h5>
+        <h6>Price: Rs.{{item.unit_price}}</h6>
+    </div>
+    {% endfor %}
+    
+</div>
