@@ -81,16 +81,18 @@ class PurchaseForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['category', 'name', 'inventory', 'unit_price', 'unit_quantity', 'unit', 'Number_of_stock',"barcode_number", 'description']
+        fields = ['category', 'name', 'inventory', 'unit_price', 'unit_quantity', 'unit', 'Number_of_stock',"barcode_number","tax","tax_value",'description']
         widgets = {
             'category': forms.Select(attrs={'class': 'form-control', 'id': 'category'}),
             'name': forms.TextInput(attrs={'class': 'form-control', 'id': 'name'}),
             'inventory': forms.Select(attrs={'class': 'form-control', 'id': 'inventory'}),
             'unit_price': forms.NumberInput(attrs={'class': 'form-control', 'id': 'price', 'step': '0.01', 'min': 0, 'pattern': '\d+(\.\d{1,2})?'}),
-            'unit_quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'unit_qantiry', 'step': '0.01', 'min': 0, 'pattern': '\d+(\.\d{1,2})?'}),
+            'unit_quantity': forms.NumberInput(attrs={'class': 'form-control', 'id': 'unit_quantity', 'step': '0.01', 'min': 0, 'pattern': '\d+(\.\d{1,2})?'}),
             'Number_of_stock': forms.NumberInput(attrs={'class': 'form-control', 'id': 'stock', 'min': 0}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'id': 'description', 'rows': 3}),
             'unit': forms.Select(attrs={'class': 'form-control', 'id': 'unit'}),
+            "tax":forms.Select(attrs={'class': 'form-control', 'id': 'tax'}),
+            "tax_value":forms.Select(attrs={'class': 'form-control', 'id': 'tax_value'}),
             'barcode_number': forms.TextInput(attrs={'class': 'form-control', 'id': 'barcode_number'}),
         }
 

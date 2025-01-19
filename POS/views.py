@@ -532,10 +532,11 @@ def invoice(request,pk):
         # if pdf:
         #     return HttpResponse(pdf, content_type='application/pdf')
         # return HttpResponse("Error generating PDF")
-
+    before_tax_and_discount = order.total_amount + order.total_tax + order.discount
         
     context = {
     "order": order,
+    "before_tax_and_discount":before_tax_and_discount,
     "order_items": order_items,
     "total_in_words": amount_in_words(round(order.total_amount,2))
     }

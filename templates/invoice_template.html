@@ -200,10 +200,11 @@
                 <h6>{{ total_in_words }}</h6>
             </div>
             <div class="amount-details">
-                <p><strong>Total Amount:</strong> {{ order.total_amount_before_discount|floatformat:2 }}</p>
+                <p><strong>Total Amount:</strong> {{ order.total_amount|floatformat:2 }}</p>
                 <p><strong>Discount:</strong> {{ order.discount|floatformat:2 }}</p>
                 <p><strong>Tax:</strong> {{ order.total_tax|floatformat:2 }}</p>
-                <p><strong>Net Amount:</strong> {{ order.total_amount|floatformat:2 }}</p>
+                <p><strong>Net Amount:</strong> 
+                    {{ before_tax_and_discount|floatformat:2 }}</p>
             </div>
         </div>
     </div>
